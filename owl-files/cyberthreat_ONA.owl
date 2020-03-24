@@ -1,0 +1,406 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#"
+     xml:base="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:xml="http://www.w3.org/XML/1998/namespace"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+    <owl:Ontology rdf:about="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Object Properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#caused_by -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#caused_by"/>
+    
+
+
+    <!-- http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#has_dirIP -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#has_dirIP"/>
+    
+
+
+    <!-- http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#has_dirMAC -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#has_dirMAC"/>
+    
+
+
+    <!-- http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#has_ocurred_in -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#has_ocurred_in"/>
+    
+
+
+    <!-- http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#is_type -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#is_type"/>
+    
+
+
+    <!-- http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#produces -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#produces"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Data properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#end_time -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#end_time"/>
+    
+
+
+    <!-- http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#generated_by -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#generated_by"/>
+    
+
+
+    <!-- http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#has_IMEI -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#has_IMEI"/>
+    
+
+
+    <!-- http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#has_IMSI -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#has_IMSI"/>
+    
+
+
+    <!-- http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#has_RSSI -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#has_RSSI"/>
+    
+
+
+    <!-- http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#has_modulation -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#has_modulation"/>
+    
+
+
+    <!-- http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#has_signal_frequency -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#has_signal_frequency"/>
+    
+
+
+    <!-- http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#has_signal_intensity -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#has_signal_intensity"/>
+    
+
+
+    <!-- http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#start_time -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#start_time"/>
+    
+
+
+    <!-- http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#uses -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#uses"/>
+    
+
+
+    <!-- http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#value -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#value"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#Anomaly_Type -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#Anomaly_Type"/>
+    
+
+
+    <!-- http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#Bluetooth_Sensor_Anomaly -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#Bluetooth_Sensor_Anomaly">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#Detected_Anomaly"/>
+        <rdfs:comment>has_dirMAC only MAC-Addr</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#Cause -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#Cause">
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#value"/>
+                <owl:someValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#Correlated_Anomaly -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#Correlated_Anomaly">
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#caused_by"/>
+                <owl:someValuesFrom rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#Cause"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#produces"/>
+                <owl:someValuesFrom rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#Effect"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#end_time"/>
+                <owl:someValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#dateTimeStamp"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#start_time"/>
+                <owl:someValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#dateTimeStamp"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:comment>caused_by some &quot;nonauthorized-user&quot;
+increases some Risk
+impact some xsd:float
+isMitigatedBy some Course_of_Action
+isMitigatedby some Safeguard</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#Cybersecurity_Sensor_Anomaly -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#Cybersecurity_Sensor_Anomaly">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#Detected_Anomaly"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#Detected_Anomaly -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#Detected_Anomaly">
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#caused_by"/>
+                <owl:someValuesFrom rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#Cause"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#is_type"/>
+                <owl:someValuesFrom rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#Anomaly_Type"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#produces"/>
+                <owl:someValuesFrom rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#Effect"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#end_time"/>
+                <owl:someValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#dateTimeStamp"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#start_time"/>
+                <owl:someValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#dateTimeStamp"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:comment>has_ocurred_in Location
+increases some Risk
+impact some xsd:float
+isMitigatedBy some Course_of_Action
+isMitigatedby some Safeguard</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#Effect -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#Effect">
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#value"/>
+                <owl:someValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:comment>damages some Asset</rdfs:comment>
+        <rdfs:comment>isMitigatedBy some Course_of_Action</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#Periodic_Anomaly -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#Periodic_Anomaly">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#Anomaly_Type"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#Permanent_Anomaly -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#Permanent_Anomaly">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#Anomaly_Type"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#Physical_Presence_Sensor_Anomaly -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#Physical_Presence_Sensor_Anomaly">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#Detected_Anomaly"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#RF_Sensor_Anomaly -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#RF_Sensor_Anomaly">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#Detected_Anomaly"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#generated_by"/>
+                <owl:someValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#has_modulation"/>
+                <owl:someValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#has_signal_frequency"/>
+                <owl:someValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#float"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#has_signal_intensity"/>
+                <owl:someValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#float"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:comment>generated_by some &quot;mando&quot;</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#RM_Sensor_Anomaly -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#RM_Sensor_Anomaly">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#Detected_Anomaly"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#generated_by"/>
+                <owl:someValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#has_RSSI"/>
+                <owl:someValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#float"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#has_IMEI"/>
+                <owl:allValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#has_IMSI"/>
+                <owl:allValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:comment>genretaed_by some &quot;Smartphone&quot;</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#UBA_Sensor_Anomaly -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#UBA_Sensor_Anomaly">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#Detected_Anomaly"/>
+        <rdfs:comment>detected_in some Asset (file, process, etc)</rdfs:comment>
+        <rdfs:comment>detected_in_Network some Network //creo que es similar al de arriba</rdfs:comment>
+        <rdfs:comment>related-to some User</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#Unique_Anomaly -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#Unique_Anomaly">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#Anomaly_Type"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#WiFi_Sensor_Anomaly -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#WiFi_Sensor_Anomaly">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#Detected_Anomaly"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#generated_by"/>
+                <owl:someValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:comment>uses some Hardware-PC-MOBILE--&gt; esto es si es un usuario interno
+at_network (red)
+has_dirMAC some MAC-Addr
+has_dirIP some IPV6ADDR/IPV4ADDR</rdfs:comment>
+    </owl:Class>
+</rdf:RDF>
+
+
+
+<!-- Generated by the OWL API (version 4.5.9.2019-02-01T07:24:44Z) https://github.com/owlcs/owlapi -->
+

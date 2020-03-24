@@ -1,0 +1,31 @@
+[{   
+  "version": "1.0",
+  "time": "<EPOCH>",
+  "id": "<ID>",
+  "type": "<TIPO>",
+  "event": "<EVENT>",
+  "anomalie": 1,
+  "data ": [
+   {
+      "dato1": "xxx",
+      "dato2": "xxx",
+      "dato3": "xxx"
+    }
+  ]
+}
+{   
+  "version": "2.0",
+  "time": "<EPOCH>",
+  "id": "<ID>",
+  "type": "<TIPO>",
+  "event": "<EVENT>",
+  "anomalie": 1,
+  "data ": [
+   {
+      "dato1": "xxx",
+      "dato2": "xxx",
+      "dato3": "xxx"
+    }
+  ]
+}
+]

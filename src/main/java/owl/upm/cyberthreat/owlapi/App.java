@@ -24,6 +24,13 @@ import org.semanticweb.owlapi.model.OWLOntologyFormat;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
 import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
+import org.semanticweb.owlapi.reasoner.ConsoleProgressMonitor;
+import org.semanticweb.owlapi.reasoner.NodeSet;
+import org.semanticweb.owlapi.reasoner.OWLReasoner;
+import org.semanticweb.owlapi.reasoner.OWLReasonerConfiguration;
+import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
+import org.semanticweb.owlapi.reasoner.SimpleConfiguration;
+import org.semanticweb.owlapi.reasoner.structural.StructuralReasonerFactory;
 
 /**
  * Hello world!
@@ -32,21 +39,13 @@ import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
 public class App 
 {
 	
+	private static File file = new File("./owl-files/cyberthreat_ONA.owl");
+	private static OWLOntologyManager man = OWLManager.createOWLOntologyManager();
+	private static IRI DOCUMENTIRI;
 	
-	
-	//Load ontology
-	public static void main(String[] args) throws OWLOntologyCreationException, OWLOntologyStorageException, FileNotFoundException {
-		OWLOntologyManager man = OWLManager.createOWLOntologyManager();
-		File file = new File("./owl-files/ontologias_merged_backup.owl");
+	private static void listClasses() throws OWLOntologyCreationException {
 		OWLOntology o = man.loadOntologyFromOntologyDocument(file);
-		System.out.println(o);
-		
-		//save
-		//File fileout = new File("./owl-files/ontologias_merged_v1.0.owl");
-		//man.saveOntology(o, new FunctionalSyntaxDocumentFormat(),new FileOutputStream(fileout));
-		
-        // List of classes
-        System.out.print("{");
+		System.out.print("List of Classes \n");
         for (Iterator<OWLClass> it = o.getClassesInSignature().iterator(); it.hasNext();) {
             OWLClass cls = it.next();
             System.out.print(cls);
@@ -54,10 +53,10 @@ public class App
                 System.out.print(" \n");
             }
         }
-        System.out.println("}");
+        System.out.println("\n");
         
         //List of dataProperties
-        System.out.print("{");
+        System.out.print("List of Data properties");
         for (Iterator<OWLDataProperty> it = o.getDataPropertiesInSignature().iterator(); it.hasNext();) {
         	OWLDataProperty cls = it.next();
             System.out.print(cls);
@@ -65,7 +64,58 @@ public class App
                 System.out.print(" \n");
             }
         }
-        System.out.println("}");
+        System.out.println("\n");
+	}
+	/*
+	private static void useReasoner() {
+		OWLOntology o = (OWLOntology) man.loadOntologyFromOntologyDocument(file);
+		//Pellet(http://clarkparsia.com/pellet)
+		OWLDataFactory factory = man.getOWLDataFactory();
+		
+		//OWLReasonerFactory reasonerFactory = new Reasoner.ReasonerFactory();
+		
+		ConsoleProgressMonitor progressMonitor = new ConsoleProgressMonitor();
+		OWLReasonerConfiguration config = new SimpleConfiguration(progressMonitor);
+		//OWLReasoner reasoner = reasonerFactory.createReasoner(o, config);
+		
+		reasoner.precomputeInferences();
+        // We can determine if the ontology is actually consistent (in this
+        // case, it should be).
+        boolean consistent = reasoner.isConsistent();
+        System.out.println("Consistent: " + consistent);
+        System.out.println("\n");
+        
+        //SUbclasses
+        OWLDataFactory fac = man.getOWLDataFactory();
+        OWLClass anomaly_type = fac.getOWLClass(IRI.create("DOCUMENTIRI#Anomaly_Type"));
+        NodeSet<OWLClass> subClases = reasoner.getSubClasses(anomaly_type, true);
+        Set<OWLClass> clases = subClases.getFlattened();
+        System.out.println("Subclasses of vegetarian: ");
+        for (OWLClass cls : clases) {
+            System.out.println("    " + cls);
+        }
+        System.out.println("\n");
+        
+	}*/
+	
+	private static void saveOntology() throws OWLOntologyCreationException, OWLOntologyStorageException, FileNotFoundException {
+		OWLOntology o = (OWLOntology) man.loadOntologyFromOntologyDocument(file);
+		File fileout = new File("./owl-files/example0.owl");
+		man.saveOntology(o, new FunctionalSyntaxDocumentFormat(),new FileOutputStream(fileout));
+		System.out.println("Saving ontology...");
+	}
+	//Load ontology
+	public static void main(String[] args) throws OWLOntologyCreationException, OWLOntologyStorageException, FileNotFoundException {
+		OWLOntology o = (OWLOntology) man.loadOntologyFromOntologyDocument(file);
+		DOCUMENTIRI = man.getOntologyDocumentIRI(o);
+		System.out.println(DOCUMENTIRI);
+		//save
+		//saveOntology();
+		
+        // List of classes
+		//listClasses();
+        
+		
 	}
 
 }
