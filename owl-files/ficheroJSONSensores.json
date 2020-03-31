@@ -2,9 +2,9 @@
   "version": "1.0",
   "time": "<EPOCH>",
   "id": "<ID>",
-  "type": "<TIPO>",
+  "type": "WiFi",
   "event": "<EVENT>",
-  "anomalie": 1,
+  "anomaly": 1,
   "data ": [
    {
       "dato1": "xxx",
@@ -17,9 +17,9 @@
   "version": "2.0",
   "time": "<EPOCH>",
   "id": "<ID>",
-  "type": "<TIPO>",
+  "type": "UBA",
   "event": "<EVENT>",
-  "anomalie": 1,
+  "anomaly": 1,
   "data ": [
    {
       "dato1": "xxx",
