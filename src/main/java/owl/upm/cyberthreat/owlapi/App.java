@@ -9,7 +9,6 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 import org.semanticweb.owlapi.apibinding.OWLManager;
-import org.semanticweb.owlapi.formats.FunctionalSyntaxDocumentFormat;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassExpression;
@@ -20,7 +19,6 @@ import org.semanticweb.owlapi.model.OWLObject;
 import org.semanticweb.owlapi.model.OWLObjectPropertyRangeAxiom;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
-import org.semanticweb.owlapi.model.OWLOntologyFormat;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
 import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
@@ -32,10 +30,7 @@ import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 import org.semanticweb.owlapi.reasoner.SimpleConfiguration;
 import org.semanticweb.owlapi.reasoner.structural.StructuralReasonerFactory;
 
-/**
- * Hello world!
- *
- */
+
 public class App 
 {
 	
@@ -101,7 +96,7 @@ public class App
 	private static void saveOntology() throws OWLOntologyCreationException, OWLOntologyStorageException, FileNotFoundException {
 		OWLOntology o = (OWLOntology) man.loadOntologyFromOntologyDocument(file);
 		File fileout = new File("./owl-files/example0.owl");
-		man.saveOntology(o, new FunctionalSyntaxDocumentFormat(),new FileOutputStream(fileout));
+		man.saveOntology(o,new FileOutputStream(fileout));
 		System.out.println("Saving ontology...");
 	}
 	//Load ontology

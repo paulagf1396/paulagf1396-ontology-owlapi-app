@@ -2,14 +2,14 @@
   "version": "1.0",
   "time": "<EPOCH>",
   "id": "<ID>",
-  "type": "WiFi",
+  "type": "WF",
   "event": "<EVENT>",
   "anomaly": 1,
   "data ": [
    {
-      "dato1": "xxx",
-      "dato2": "xxx",
-      "dato3": "xxx"
+      "time": "xxx",
+      "imei": "xxx",
+      "imsi": "xxx"
     }
   ]
 }
