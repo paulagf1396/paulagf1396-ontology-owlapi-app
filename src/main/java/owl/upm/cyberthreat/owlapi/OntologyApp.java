@@ -11,7 +11,10 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -20,8 +23,10 @@ import org.json.simple.JSONArray;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.junit.Test;
+import org.mindswap.pellet.PelletOptions;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.formats.FunctionalSyntaxDocumentFormat;
+import org.semanticweb.owlapi.formats.PrefixDocumentFormat;
 import org.semanticweb.owlapi.io.SystemOutDocumentTarget;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAxiom;
@@ -33,24 +38,30 @@ import org.semanticweb.owlapi.model.OWLDataProperty;
 import org.semanticweb.owlapi.model.OWLDataPropertyAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLIndividual;
+import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLObjectPropertyAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
+import org.semanticweb.owlapi.model.OWLOntologyIRIMapper;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
 import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 import org.semanticweb.owlapi.model.OWLSignature;
 import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
 import org.semanticweb.owlapi.model.PrefixManager;
 import org.semanticweb.owlapi.reasoner.Node;
+import org.semanticweb.owlapi.reasoner.NodeSet;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.reasoner.OWLReasonerConfiguration;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 import org.semanticweb.owlapi.reasoner.ReasonerProgressMonitor;
+import org.semanticweb.owlapi.reasoner.SimpleConfiguration;
+import org.semanticweb.owlapi.reasoner.impl.OWLClassNode;
 import org.semanticweb.owlapi.util.DefaultPrefixManager;
 import org.semanticweb.owlapi.util.InferredAxiomGenerator;
 import org.semanticweb.owlapi.util.InferredOntologyGenerator;
 import org.semanticweb.owlapi.util.InferredSubClassAxiomGenerator;
+import org.semanticweb.owlapi.util.PriorityCollection;
 import org.semanticweb.owlapi.util.Version;
 import org.swrlapi.core.SWRLAPIRule;
 import org.swrlapi.core.SWRLRuleEngine;
@@ -60,8 +71,7 @@ import org.swrlapi.parser.SWRLParseException;
 
 import com.clarkparsia.pellet.owlapiv3.PelletReasoner;
 import com.clarkparsia.pellet.owlapiv3.PelletReasonerFactory;
-
-
+import com.google.common.base.Optional;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
@@ -77,6 +87,10 @@ public class OntologyApp {
 	private static String base;
 	private static IRI documentIRI;
 	private static int loadedAnomalyInstances;
+	private static Anomaly anomaly;
+	private static DRM drm;
+	private static STIX stix;
+	
 	
 	private static void saveOntologyinFile(OWLOntologyManager man, OWLOntology o) throws OWLOntologyCreationException, OWLOntologyStorageException, FileNotFoundException {
 		
@@ -89,32 +103,29 @@ public class OntologyApp {
 	public int loadAnomaliesFromBBDD (OWLOntology o, OWLOntologyManager man, String fileAnomaliesJSON, String base, OWLDataFactory dataFactory) throws IOException, ParseException {
 		
 		int numInstances = 0;
-		//Si el fichero esta vacío	
+		//if the file is empty, returns 0	
 		if(fileAnomaliesJSON.isEmpty()) {
 			return 0;
-		}
-		
+		}		
 		JSONParser jsonParser = new JSONParser();
-		System.out.println("cargando fichero JSON ...");
+		System.out.println("loading JSON file...\n");
 		FileReader reader = new FileReader("./owl-files/ficheroJSONSensores.json");
 
-		//cargando objeto json...
+		//loadinf JSONObject...
 		Object obj = jsonParser.parse(reader);
-		//Cogiendo JSONArray
+		//Loading JSONArray
 		JSONArray dataList = (JSONArray) obj;
-		System.out.println("LISTA DE OBJETOS JSON");
+		System.out.println("JSONObject List obtained from file:\n");
         System.out.println(dataList);
         
-        //Se anaden las instancias a la clase correspondiente
+        //The instances are loaded to the corresponding class
         for(int i = 0; i< dataList.size(); i++) {
-        	JSONObject jObject = (JSONObject) dataList.get(i);
-        
+        	JSONObject jObject = (JSONObject) dataList.get(i); 
         	if(jObject.get("anomaly").toString().equals("1") ) {
-       
+        		//If anomaly=1 means that there has been an anomaly. 0 means there hasnt been any.
         		OWLIndividual anomaly_instance = dataFactory.getOWLNamedIndividual(IRI.create(base +"#"+"Anomalia"+i));
-        		loadAnomalyInstances(man,anomaly_instance,o, dataFactory, jObject);	
+        		anomaly.loadAnomalyInstances(man,anomaly_instance,o, dataFactory, jObject);	
         		numInstances++;
-        		
         	}else {
         		//Amenazas y Riesgos
         	}
@@ -124,131 +135,129 @@ public class OntologyApp {
         return numInstances;
 		
 	}
-	
-	//Clasifica las anomalias que llegan en los diferentes tipos de anomalias en la ontologia
-	private static void  loadAnomalyInstances (OWLOntologyManager man, OWLIndividual anomaly_instance, OWLOntology o, OWLDataFactory dataFactory, JSONObject anomaly) {
-        PrefixManager pm = new DefaultPrefixManager(base + "#");
 
-
-		//Classes from Anmoaly Ontology
-		OWLClass wifi_sensor_anomaly = dataFactory.getOWLClass(":WiFi_Sensor_Anomaly", pm);
-		OWLClass uba_sensor_anomaly = dataFactory.getOWLClass(":UBA_Sensor_Anomaly", pm);
-		OWLClass rm_sensor_anomaly = dataFactory.getOWLClass(":RM_Sensor_Anomaly", pm);
-		OWLClass rf_sensor_anomaly = dataFactory.getOWLClass(":RF_Sensor_Anomaly", pm);
-		OWLClass ids_sensor_anomaly = dataFactory.getOWLClass(":Cybersecurity_Sensor_Anomaly", pm);
-		OWLClass bt_sensor_anomaly = dataFactory.getOWLClass(":Bluetooth_Sensor_Anomaly", pm);
-		OWLClass event = dataFactory.getOWLClass(":Event",pm);
+	//Crear individuals
+	public void createIndividuals(OWLOntology o, OWLOntologyManager man, OWLDataFactory dataFactory, String base, String cls, String individualName, int isType) throws OWLOntologyStorageException {
 		
-		String type = anomaly.get("type").toString();
-		if(type.equals("WF")) {
+		//Anomaly=2, DRM = 1 , STIX = 0
+		
+		if(isType ==0) {
+			stix.createSTIXInstances(man, o, dataFactory, cls, individualName);
+		}
+		else if(isType==1){
 			
-			OWLClassAssertionAxiom axioma0 = dataFactory.getOWLClassAssertionAxiom(wifi_sensor_anomaly, anomaly_instance);
-			man.addAxiom(o, axioma0);
-
-			//Si existe evento lo anado a las caracteristicas
-			/*if(!anomaly.get("event").toString().isEmpty()) {
-				OWLObjectProperty oproperty = dataFactory.getOWLObjectProperty(":caused_by", pm);
-				String event_wifiAnomaly = anomaly.get("event").toString();
-	    		OWLIndividual event_instance = dataFactory.getOWLNamedIndividual(IRI.create(base +"#"+event_wifiAnomaly));
-	    		OWLClassAssertionAxiom axioma1 = dataFactory.getOWLClassAssertionAxiom(event, event_instance);
-				OWLObjectPropertyAssertionAxiom oAxiom = dataFactory.getOWLObjectPropertyAssertionAxiom(oproperty, anomaly_instance, event_instance);
-				man.addAxiom(o, axioma1);
-				man.addAxiom(o, oAxiom);
-			}*/
-			System.out.println(axioma0);
-
+			drm.createDRMInstances(man, o, dataFactory, cls, individualName);
+			
+		}else if(isType==2){
+			anomaly.createAnomalyInstances(man, o, dataFactory, cls, individualName);
+		}else {
+			System.out.println("The ontology type selected does not exist");
 		}
-		else if(type.equals("UBA")) {
-			OWLClassAssertionAxiom axioma = dataFactory.getOWLClassAssertionAxiom(uba_sensor_anomaly, anomaly_instance);
-			man.addAxiom(o, axioma);
-		}
-		else if(type.equals("RM")) {
-			OWLClassAssertionAxiom axioma = dataFactory.getOWLClassAssertionAxiom(rm_sensor_anomaly, anomaly_instance);
-			man.addAxiom(o, axioma);
-		}
-		else if(type.equals("RF")) {
-			OWLClassAssertionAxiom axioma = dataFactory.getOWLClassAssertionAxiom(rf_sensor_anomaly, anomaly_instance);
-			man.addAxiom(o, axioma);
-		}
-		else if(type.equals("Bluetooth")){
-			OWLClassAssertionAxiom axioma = dataFactory.getOWLClassAssertionAxiom(bt_sensor_anomaly, anomaly_instance);
-			man.addAxiom(o, axioma);
-		}
-		else if(type.equals("IDS")){
-			OWLClassAssertionAxiom axioma = dataFactory.getOWLClassAssertionAxiom(ids_sensor_anomaly, anomaly_instance);
-			man.addAxiom(o, axioma);
-		}
-    	System.out.println(anomaly_instance);
-		
-		
-	}
-	
-	//Cargar individuals
-	private void loadIndividuals(OWLOntology o, OWLOntologyManager man, OWLDataFactory dataFactory, String base) throws OWLOntologyStorageException {
-		PrefixManager pm = new DefaultPrefixManager(base + "#");
-		OWLClass wifi_sensor_anomaly = dataFactory.getOWLClass(":WiFi_Sensor_Anomaly", pm);
-
-		OWLIndividual anomaly_instance = dataFactory.getOWLNamedIndividual(IRI.create(base +"#"+"WA"));
-		OWLClassAssertionAxiom axioma1 = dataFactory.getOWLClassAssertionAxiom(wifi_sensor_anomaly, anomaly_instance);
-		OWLDataProperty oproperty = dataFactory.getOWLDataProperty(":has_ocurred_in", pm);
-
-		OWLDataPropertyAssertionAxiom oAxiom = dataFactory.getOWLDataPropertyAssertionAxiom(oproperty, anomaly_instance, "APP1");
-		man.addAxiom(o, axioma1);
-		man.addAxiom(o, oAxiom);
-
-		
 		man.saveOntology(o);
 	}
 	
+	//Crear Data Properties
 	
-	//Cargo el Razonador Pellet
-	@Test
-	public void loadReasoner(OWLOntology o, OWLOntologyManager man, OWLDataFactory dataFactory, String base) throws OWLOntologyStorageException {
+	public void createDataProperty(OWLOntology o, OWLOntologyManager man, OWLDataFactory dataFactory, String base, String object, String property, String value) {
+		PrefixManager pm = new DefaultPrefixManager(base + "#");
+		
+		OWLDataProperty dproperty = dataFactory.getOWLDataProperty(":"+property, pm);
+		OWLIndividual instance = dataFactory.getOWLNamedIndividual(IRI.create(base +"#"+object));
+		OWLDataPropertyAssertionAxiom dAxiom = dataFactory.getOWLDataPropertyAssertionAxiom(dproperty, instance, value);
+		man.addAxiom(o, dAxiom);
+	}
+	
+	//Crear Object Properties
+	public void createObjectProperty(OWLOntology o, OWLOntologyManager man, OWLDataFactory dataFactory, String base, String object1, String object2, String property) {
+		PrefixManager pm = new DefaultPrefixManager(base + "#");
+		
+		OWLObjectProperty oproperty = dataFactory.getOWLObjectProperty(":"+property, pm);
+		OWLIndividual instance1 = dataFactory.getOWLNamedIndividual(IRI.create(base +"#"+object1));
+		OWLIndividual instance2 = dataFactory.getOWLNamedIndividual(IRI.create(base +"#"+object2));
 
-  
+		OWLObjectPropertyAssertionAxiom oAxiom = dataFactory.getOWLObjectPropertyAssertionAxiom(oproperty, instance1, instance2);
+		man.addAxiom(o, oAxiom);
+	}
+	
+	//Load Pellet Reasoner
+	public void loadReasoner(OWLOntology o, OWLOntologyManager man, OWLDataFactory dataFactory, String base) throws OWLOntologyStorageException {
+		
 		OWLReasonerFactory reasonerFactory = PelletReasonerFactory.getInstance();
 		PelletReasoner reasoner =  (PelletReasoner) reasonerFactory.createReasoner(o);
+		System.out.println(PelletOptions.IGNORE_UNSUPPORTED_AXIOMS);
+		PelletOptions.IGNORE_UNSUPPORTED_AXIOMS = false;
+		System.out.println(PelletOptions.IGNORE_UNSUPPORTED_AXIOMS);
 		
-		System.out.println("Utilizando reasoner: "+ reasoner.getReasonerName());
-		System.out.println("La consistencia de la ontologia es "+reasoner.isConsistent());
+		System.out.println("Using reasoner: "+ reasoner.getReasonerName());
+		System.out.println("The ontology consistency is "+reasoner.isConsistent());
+		System.out.println("Executing rules...");
+		reasoner.getKB().realize();
+		reasoner.precomputeInferences();
+		System.out.println("**********************Class tree**********************");
+		reasoner.getKB().printClassTree();
+		System.out.println("******************************************************");
+		System.out.println("Loading infered axioms to the ontology...");
+		loadInferedAxiomsByReasoner(o, man, dataFactory, base, reasoner);
+		System.out.println("Done.");
+		
+		System.out.println("Dynamic Risk Calculation");
+		dynamicRiskCalculation(o, man, dataFactory, base, reasoner);
 
 	}
 	public void loadInferedAxiomsByReasoner(OWLOntology o, OWLOntologyManager man, OWLDataFactory dataFactory, String base, OWLReasoner reasoner) throws OWLOntologyStorageException {
 
-		//Se escribe lo inferido en la ontología
+		//What was inferred is written to the ontology
         List<InferredAxiomGenerator<? extends OWLAxiom>> gens = new ArrayList<InferredAxiomGenerator<? extends OWLAxiom>>();
         gens.add(new InferredSubClassAxiomGenerator());
 
-        // create the inferred ontology generator
+        //Create the inferred ontology generator
         InferredOntologyGenerator iog = new InferredOntologyGenerator(reasoner, gens);
         iog.fillOntology(dataFactory, o);
+        
         man.saveOntology(o);
+        
 	}
 	
 	
-	//Cargo el SWRL rules engine
+	//Load SWRL rules engine
 	public void loadSWRLRuleENgine(OWLOntology o, OWLOntologyManager man, OWLDataFactory dataFactory, String base) throws SWRLParseException, SWRLBuiltInException, OWLOntologyStorageException {
-		 loadIndividuals(o, man, dataFactory, base);
+		
+		
 		 // Create a SWRL rule engine using the SWRLAPI
 		 SWRLRuleEngine swrlRuleEngine = SWRLAPIFactory.createSWRLRuleEngine(o);
-		 
-		 //System.out.println("Cargando regla...");
-		 
-		 // Create a SWRL rule  
-		 //SWRLAPIRule rule = swrlRuleEngine.createSWRLRule("Example1", "cyberthreat_DRM:recoveryPointObjective(?av, ?rpo) ^ cyberthreat_DRM:recoveryTimeObjective(?av, ?rto) ^ cyberthreat_DRM:Data(?new_data) ^ cyberthreat_DRM:dependsOn(?rs, ?new_data) ^ cyberthreat_DRM:integrity(?av, ?i) ^ cyberthreat_DRM:confidentiality(?av, ?c) ^ cyberthreat_DRM:evaluates(?av, ?rs) ^ cyberthreat_DRM:Asset_Valuation(?av) ^ cyberthreat_DRM:availability(?av, ?a) ^ cyberthreat_DRM:Risk_Scope(?rs) ^ cyberthreat_DRM:authenticity(?av, ?au) ^ swrlx:makeOWLThing(?x, ?av, ?new_data) ^ cyberthreat_DRM:accounting(?av, ?ac) -> cyberthreat_DRM:recoveryPointObjective(?x, ?rpo) ^ cyberthreat_DRM:confidentiality(?x, ?c) ^ cyberthreat_DRM:integrity(?x, ?i) ^ cyberthreat_DRM:accounting(?x, ?ac) ^ cyberthreat_DRM:authenticity(?x, ?au) ^ cyberthreat_DRM:evaluates(?x, ?new_data) ^ cyberthreat_DRM:availability(?x, ?a) ^ cyberthreat_DRM:Asset_Valuation(?x) ^ cyberthreat_DRM:recoveryTimeObjective(?x, ?rto) ^ cyberthreat_DRM:recoveryPointObjective(?new_data, ?rpo) ^ cyberthreat_DRM:confidentiality(?new_data, ?c) ^ cyberthreat_DRM:integrity(?new_data, ?i) ^ cyberthreat_DRM:accounting(?new_data, ?ac) ^ cyberthreat_DRM:authenticity(?new_data, ?au) ^ cyberthreat_DRM:availability(?new_data, ?a) ^ cyberthreat_DRM:recoveryTimeObjective(?new_data, ?rto)");
-		 
-		// SWRLAPIRule rule = swrlRuleEngine.createSWRLRule("Example1", "WiFi_Sensor_Anomaly(?wa) ^ has_ocurred_in(?wa, \"APP1\") ^ swrlx:makeOWLThing(?x, ?wa) -> Effect(?x)");
-		// man.addAxiom(o, rule);
-		 //System.out.println("Regla cargada");
-
-		 
+	 
 		 // Run the SWRL rules in the ontology
 		 swrlRuleEngine.infer();
 		
 		 //Sino guardo la ontologia no se guarda lo generado por las reglas
-		 System.out.println("Guardar ontologia");
 		 man.saveOntology(o);
+		 System.out.println("Ontology saved.");
+	}
 	
+	public int dynamicRiskCalculation(OWLOntology o, OWLOntologyManager man, OWLDataFactory dataFactory, String base, OWLReasoner reasoner) {
+		String base_DRM = "http://www.semanticweb.org/upm/ontologies/2019/11/cyberthreat_DRM";
+		PrefixManager pmDRM = new DefaultPrefixManager(base_DRM + "#");
+		OWLClass rr = dataFactory.getOWLClass(":ResidualRisk", pmDRM);
+		int residualRiskValue = 0 ;
+		int n=0;
+		NodeSet<OWLNamedIndividual> instances = reasoner.getInstances(rr, true);
+		Set<OWLNamedIndividual> setInstances = instances.getFlattened();
+        System.out.println("Subclasses of ResidualRisk: ");
+        for (OWLNamedIndividual cls : setInstances) {
+        	
+            System.out.println("    " + cls);
+            Set<OWLDataProperty> dpp = cls.getDataPropertiesInSignature();
+            OWLDataProperty actualRisk = dataFactory.getOWLDataProperty(":actualRisk", pmDRM);
+            for(OWLDataProperty dp : dpp) {
+            	if (dp.equals(actualRisk)) {
+            		System.out.println("The actual Risk of "+cls+ " is "+dp);
+            	}
+            }
+            
+        }
+        System.out.println("\n");
+		return residualRiskValue;
+		
 	}
 
 	
@@ -259,26 +268,34 @@ public class OntologyApp {
 		System.out.println("Loading Ontology...");
 		File file = new File("./owl-files/cibersituational-onto.owl");
 		OWLOntologyManager man = OWLManager.createOWLOntologyManager();
-		
 		OWLOntology o =  man.loadOntologyFromOntologyDocument(file);
 		documentIRI = o.getOntologyID().getOntologyIRI().get();
 		base = documentIRI.toString();
-		System.out.println(base);
+		System.out.println("Ontology loaded\n");
+		
+
 		
 		OWLDataFactory dataFactory = man.getOWLDataFactory();
+		anomaly= new Anomaly(dataFactory, man, base);
+		drm= new DRM(dataFactory, man, base);
+		stix = new STIX(dataFactory, man, base);
+		
 
 		//File to load information
+		System.out.println("Loading data into the ontology...\n");
 		File fileAnomalies = new File("./owl-files/ficheroJSONSensores.json");
 		String fileAnomaliesJSON = fileAnomalies.toString();
 		loadedAnomalyInstances = onto_object.loadAnomaliesFromBBDD(o, man, fileAnomaliesJSON, base, dataFactory);
-		System.out.println("Se han cargado "+loadedAnomalyInstances+ " instancias de Anomalias\n");
-		
-
-		//Cargar razonador
-		//onto_object.loadReasoner(o, man, dataFactory, base);
+		System.out.println("There have been loaded "+loadedAnomalyInstances+ " instances of new anomalies\n");
 		
 		//Cargar rules
+		System.out.println("Loading rules...\n");
 		onto_object.loadSWRLRuleENgine(o, man, dataFactory, base);
+		
+		//Cargar razonador
+		System.out.println("Starting the reasoner...\n");
+		onto_object.loadReasoner(o, man, dataFactory, base);
+		
 		
 	}
 

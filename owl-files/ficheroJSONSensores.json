@@ -17,7 +17,22 @@
   "version": "2.0",
   "time": "<EPOCH>",
   "id": "<ID>",
-  "type": "UBA",
+  "type": "BT",
+  "event": "<EVENT>",
+  "anomaly": 1,
+  "data ": [
+   {
+      "dato1": "xxx",
+      "dato2": "xxx",
+      "dato3": "xxx"
+    }
+  ]
+}
+{   
+  "version": "2.0",
+  "time": "<EPOCH>",
+  "id": "<ID>",
+  "type": "RF",
   "event": "<EVENT>",
   "anomaly": 1,
   "data ": [
