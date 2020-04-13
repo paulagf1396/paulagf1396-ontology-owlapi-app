@@ -33,11 +33,14 @@ import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLClassExpression;
+import org.semanticweb.owlapi.model.OWLDataAllValuesFrom;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLDataProperty;
 import org.semanticweb.owlapi.model.OWLDataPropertyAssertionAxiom;
+import org.semanticweb.owlapi.model.OWLDataRange;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLIndividual;
+import org.semanticweb.owlapi.model.OWLLiteral;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLObjectPropertyAssertionAxiom;
@@ -157,7 +160,6 @@ public class OntologyApp {
 	}
 	
 	//Crear Data Properties
-	
 	public void createDataProperty(OWLOntology o, OWLOntologyManager man, OWLDataFactory dataFactory, String base, String object, String property, String value) {
 		PrefixManager pm = new DefaultPrefixManager(base + "#");
 		
@@ -234,29 +236,34 @@ public class OntologyApp {
 		 System.out.println("Ontology saved.");
 	}
 	
-	public int dynamicRiskCalculation(OWLOntology o, OWLOntologyManager man, OWLDataFactory dataFactory, String base, OWLReasoner reasoner) {
+	public float dynamicRiskCalculation(OWLOntology o, OWLOntologyManager man, OWLDataFactory dataFactory, String base, OWLReasoner reasoner) {
 		String base_DRM = "http://www.semanticweb.org/upm/ontologies/2019/11/cyberthreat_DRM";
 		PrefixManager pmDRM = new DefaultPrefixManager(base_DRM + "#");
+		PrefixManager pm = new DefaultPrefixManager(base + "#");
+
 		OWLClass rr = dataFactory.getOWLClass(":ResidualRisk", pmDRM);
-		int residualRiskValue = 0 ;
+		float residualRiskTotalValue = 0 ;
 		int n=0;
 		NodeSet<OWLNamedIndividual> instances = reasoner.getInstances(rr, true);
 		Set<OWLNamedIndividual> setInstances = instances.getFlattened();
         System.out.println("Subclasses of ResidualRisk: ");
         for (OWLNamedIndividual cls : setInstances) {
-        	
             System.out.println("    " + cls);
-            Set<OWLDataProperty> dpp = cls.getDataPropertiesInSignature();
-            OWLDataProperty actualRisk = dataFactory.getOWLDataProperty(":actualRisk", pmDRM);
-            for(OWLDataProperty dp : dpp) {
-            	if (dp.equals(actualRisk)) {
-            		System.out.println("The actual Risk of "+cls+ " is "+dp);
-            	}
+            OWLDataProperty actualRisk = dataFactory.getOWLDataProperty(":actualRisk", pmDRM);            
+            Set<OWLLiteral> dp = reasoner.getDataPropertyValues(cls, actualRisk);
+            for (OWLLiteral d :dp) {
+        	  //Valor de la propiedad actualRisk (7.0)
+        	   String s = d.getLiteral();
+        	   float d_float = Float.parseFloat(s);
+        	   residualRiskTotalValue = residualRiskTotalValue + d_float;
+        	   System.out.println(residualRiskTotalValue);
             }
-            
+            //Valor de todo al completo ["7.0"^^xsd:float] (esto es un set), por tanto hay que hacer un for
+            n++;
         }
+        System.out.println("The residual risk total value is : "+residualRiskTotalValue/n);
         System.out.println("\n");
-		return residualRiskValue;
+		return (residualRiskTotalValue/n);
 		
 	}
 

@@ -172,7 +172,7 @@ public class Anomaly {
 	
 	public void  createAnomalyInstances (OWLOntologyManager man, OWLOntology o, OWLDataFactory dataFactory, String anomalyType, String individualName) {
 	       
-		OWLIndividual anomaly_instance = dataFactory.getOWLNamedIndividual(IRI.create(this.base +"#"+individualName));
+		OWLIndividual anomaly_instance = dataFactory.getOWLNamedIndividual(IRI.create(this.baseO +"#"+individualName));
 
 		if(anomalyType.equals("WF")) {
 			OWLClassAssertionAxiom axioma0 = dataFactory.getOWLClassAssertionAxiom(wifi_sensor_anomaly, anomaly_instance);
