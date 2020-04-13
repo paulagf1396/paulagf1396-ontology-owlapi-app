@@ -16,9 +16,17 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.json.simple.JSONObject;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.PiePlot3D;
+import org.jfree.data.general.DefaultPieDataset;
+import org.jfree.data.general.PieDataset;
+import org.jfree.util.Rotation;
 import org.json.simple.JSONArray;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -84,7 +92,6 @@ import com.google.gson.JsonParser;
 
 
 
-
 public class OntologyApp {
 
 	private static String base;
@@ -93,8 +100,12 @@ public class OntologyApp {
 	private static Anomaly anomaly;
 	private static DRM drm;
 	private static STIX stix;
+	public static  Map<String, Float> dataset;
+	private static Chart chart;
 	
-	
+	public OntologyApp() {
+		
+	}
 	private static void saveOntologyinFile(OWLOntologyManager man, OWLOntology o) throws OWLOntologyCreationException, OWLOntologyStorageException, FileNotFoundException {
 		
 		File fileout = new File("./owl-files/example0.owl");
@@ -204,6 +215,7 @@ public class OntologyApp {
 		
 		System.out.println("Dynamic Risk Calculation");
 		dynamicRiskCalculation(o, man, dataFactory, base, reasoner);
+		
 
 	}
 	public void loadInferedAxiomsByReasoner(OWLOntology o, OWLOntologyManager man, OWLDataFactory dataFactory, String base, OWLReasoner reasoner) throws OWLOntologyStorageException {
@@ -236,7 +248,7 @@ public class OntologyApp {
 		 System.out.println("Ontology saved.");
 	}
 	
-	public float dynamicRiskCalculation(OWLOntology o, OWLOntologyManager man, OWLDataFactory dataFactory, String base, OWLReasoner reasoner) {
+	public Map<String, Float> dynamicRiskCalculation(OWLOntology o, OWLOntologyManager man, OWLDataFactory dataFactory, String base, OWLReasoner reasoner) {
 		String base_DRM = "http://www.semanticweb.org/upm/ontologies/2019/11/cyberthreat_DRM";
 		PrefixManager pmDRM = new DefaultPrefixManager(base_DRM + "#");
 		PrefixManager pm = new DefaultPrefixManager(base + "#");
@@ -257,16 +269,17 @@ public class OntologyApp {
         	   float d_float = Float.parseFloat(s);
         	   residualRiskTotalValue = residualRiskTotalValue + d_float;
         	   System.out.println(residualRiskTotalValue);
+        	   dataset.put(cls.toString(), d_float);
             }
             //Valor de todo al completo ["7.0"^^xsd:float] (esto es un set), por tanto hay que hacer un for
             n++;
         }
         System.out.println("The residual risk total value is : "+residualRiskTotalValue/n);
         System.out.println("\n");
-		return (residualRiskTotalValue/n);
+		return dataset;
 		
 	}
-
+	
 	
 	public static void main(String[] args) throws OWLOntologyCreationException, IOException, ParseException, SWRLParseException, SWRLBuiltInException, OWLOntologyStorageException {
 		OntologyApp onto_object =new OntologyApp();
@@ -286,7 +299,7 @@ public class OntologyApp {
 		anomaly= new Anomaly(dataFactory, man, base);
 		drm= new DRM(dataFactory, man, base);
 		stix = new STIX(dataFactory, man, base);
-		
+		chart = new Chart(o, man, dataFactory, "Riesgo Residual de cada Riesgo", dataset);
 
 		//File to load information
 		System.out.println("Loading data into the ontology...\n");
@@ -296,12 +309,15 @@ public class OntologyApp {
 		System.out.println("There have been loaded "+loadedAnomalyInstances+ " instances of new anomalies\n");
 		
 		//Cargar rules
-		System.out.println("Loading rules...\n");
-		onto_object.loadSWRLRuleENgine(o, man, dataFactory, base);
+		//System.out.println("Loading rules...\n");
+		//onto_object.loadSWRLRuleENgine(o, man, dataFactory, base);
 		
 		//Cargar razonador
-		System.out.println("Starting the reasoner...\n");
-		onto_object.loadReasoner(o, man, dataFactory, base);
+		//System.out.println("Starting the reasoner...\n");
+		//onto_object.loadReasoner(o, man, dataFactory, base);
+		
+		
+
 		
 		
 	}
