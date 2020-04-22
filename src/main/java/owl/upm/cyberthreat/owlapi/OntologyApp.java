@@ -114,7 +114,7 @@ public class OntologyApp {
 	}
 	
 	 
-	public int loadAnomaliesFromBBDD (OWLOntology o, OWLOntologyManager man, String fileAnomaliesJSON, String base, OWLDataFactory dataFactory) throws IOException, ParseException {
+	public int loadAnomaliesFromBBDD (OWLOntology o, OWLOntologyManager man, String fileAnomaliesJSON, String base, OWLDataFactory dataFactory) throws IOException, ParseException, OWLOntologyStorageException {
 		
 		int numInstances = 0;
 		//if the file is empty, returns 0	
@@ -137,7 +137,8 @@ public class OntologyApp {
         	JSONObject jObject = (JSONObject) dataList.get(i); 
         	if(jObject.get("anomaly").toString().equals("1") ) {
         		//If anomaly=1 means that there has been an anomaly. 0 means there hasnt been any.
-        		OWLIndividual anomaly_instance = dataFactory.getOWLNamedIndividual(IRI.create(base +"#"+"Anomalia"+i));
+        		String id = jObject.get("id").toString();
+        		OWLIndividual anomaly_instance = dataFactory.getOWLNamedIndividual(IRI.create(base +"#"+"Anomalia"+id));
         		anomaly.loadAnomalyInstances(man,anomaly_instance,o, dataFactory, jObject);	
         		numInstances++;
         	}else {
@@ -146,6 +147,7 @@ public class OntologyApp {
         	
         }
         reader.close();
+        man.saveOntology(o);
         return numInstances;
 		
 	}
@@ -286,7 +288,7 @@ public class OntologyApp {
 		
 		System.out.println("");
 		System.out.println("Loading Ontology...");
-		File file = new File("./owl-files/cibersituational-onto.owl");
+		File file = new File("./owl-files/cibersituational-onto-tmp.owl");
 		OWLOntologyManager man = OWLManager.createOWLOntologyManager();
 		OWLOntology o =  man.loadOntologyFromOntologyDocument(file);
 		documentIRI = o.getOntologyID().getOntologyIRI().get();
@@ -299,7 +301,7 @@ public class OntologyApp {
 		anomaly= new Anomaly(dataFactory, man, base);
 		drm= new DRM(dataFactory, man, base);
 		stix = new STIX(dataFactory, man, base);
-		chart = new Chart(o, man, dataFactory, "Riesgo Residual de cada Riesgo", dataset);
+		//chart = new Chart(o, man, dataFactory, "Riesgo Residual de cada Riesgo", dataset);
 
 		//File to load information
 		System.out.println("Loading data into the ontology...\n");

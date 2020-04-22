@@ -1,0 +1,46 @@
+[{   
+  "version": "1.0",
+  "time": "<EPOCH>",
+  "id": "001",
+  "type": "WF",
+  "event": "<EVENT>",
+  "anomaly": 1,
+  "data ": [
+   {
+      "time": "xxx",
+      "imei": "xxx",
+      "imsi": "xxx"
+    }
+  ]
+},
+{   
+  "version": "2.0",
+  "time": "<EPOCH>",
+  "id": "002",
+  "type": "BT",
+  "event": "<EVENT>",
+  "anomaly": 1,
+  "data ": [
+   {
+      "dato1": "xxx",
+      "dato2": "xxx",
+      "dato3": "xxx"
+    }
+  ]
+},
+{   
+  "version": "2.0",
+  "time": "<EPOCH>",
+  "id": "003",
+  "type": "RF",
+  "event": "<EVENT>",
+  "anomaly": 1,
+  "data ": [
+   {
+      "dato1": "xxx",
+      "dato2": "xxx",
+      "dato3": "xxx"
+    }
+  ]
+}
+]

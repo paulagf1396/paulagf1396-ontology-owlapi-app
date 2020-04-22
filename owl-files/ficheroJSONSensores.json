@@ -1,7 +1,7 @@
 [{   
   "version": "1.0",
   "time": "<EPOCH>",
-  "id": "<ID>",
+  "id": "001",
   "type": "WF",
   "event": "<EVENT>",
   "anomaly": 1,
@@ -12,11 +12,11 @@
       "imsi": "xxx"
     }
   ]
-}
+},
 {   
   "version": "2.0",
   "time": "<EPOCH>",
-  "id": "<ID>",
+  "id": "002",
   "type": "BT",
   "event": "<EVENT>",
   "anomaly": 1,
@@ -27,11 +27,11 @@
       "dato3": "xxx"
     }
   ]
-}
+},
 {   
   "version": "2.0",
   "time": "<EPOCH>",
-  "id": "<ID>",
+  "id": "003",
   "type": "RF",
   "event": "<EVENT>",
   "anomaly": 1,
