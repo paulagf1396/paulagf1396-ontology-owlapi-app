@@ -9,7 +9,11 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.RandomAccessFile;
 import java.io.Reader;
+import java.nio.channels.FileChannel;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -103,6 +107,8 @@ public class OntologyApp {
 	public static  Map<String, Float> dataset;
 	private static Chart chart;
 	
+	private static String pathAnomaliesFile = "./owl-files/ficheroJSONSensores.json";
+	
 	public OntologyApp() {
 		
 	}
@@ -114,16 +120,19 @@ public class OntologyApp {
 	}
 	
 	 
-	public int loadAnomaliesFromBBDD (OWLOntology o, OWLOntologyManager man, String fileAnomaliesJSON, String base, OWLDataFactory dataFactory) throws IOException, ParseException, OWLOntologyStorageException {
+	public int loadAnomaliesFromBBDD (OWLOntology o, OWLOntologyManager man, File filename, String base, OWLDataFactory dataFactory) throws IOException, ParseException, OWLOntologyStorageException {
 		
 		int numInstances = 0;
 		//if the file is empty, returns 0	
-		if(fileAnomaliesJSON.isEmpty()) {
+		if(filename.toString().isEmpty()) {
 			return 0;
-		}		
+		}
+		
+		filename  = copyFile(filename);
+
 		JSONParser jsonParser = new JSONParser();
 		System.out.println("loading JSON file...\n");
-		FileReader reader = new FileReader("./owl-files/ficheroJSONSensores.json");
+		FileReader reader = new FileReader(filename);
 
 		//loadinf JSONObject...
 		Object obj = jsonParser.parse(reader);
@@ -148,6 +157,7 @@ public class OntologyApp {
         }
         reader.close();
         man.saveOntology(o);
+        deleteFile(filename);
         return numInstances;
 		
 	}
@@ -282,22 +292,114 @@ public class OntologyApp {
 		
 	}
 	
+	// Metodo para crear el archivo de copia de la ontologia
+	@SuppressWarnings("resource")
+	public static File copyFile(File sourceFile) throws IOException {
+		String jsonAux = "./owl-files/ficheroJSONSensoresAux.json";
+		File destFile = new File(jsonAux);
+		
+		if (destFile.exists()) {
+			destFile.delete();
+		}
+		destFile.createNewFile();
+
+		FileChannel source = null;
+		FileChannel destination = null;
+		try {
+			source = new RandomAccessFile(sourceFile, "rw").getChannel();
+			destination = new RandomAccessFile(destFile, "rw").getChannel();
+
+			long position = 0;
+			long count = source.size();
+
+			source.transferTo(position, count, destination);
+		} finally {
+			if (source != null) {
+				source.close();
+			}
+			if (destination != null) {
+				destination.close();
+			}
+		}
+		//Vacia el ficheroJSONSensores donde se vanescribiendo las nuevas anomalias
+		new PrintWriter(sourceFile).close();
+		return destFile;
+	}
+	//To delete a file
+	public void deleteFile(File file) throws IOException {
+		File fileDestination = file;
+		try {
+			Files.delete(fileDestination.toPath());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
+	
+	
+	
+	public boolean isEmptyAnomaliesFile(File filename ) throws IOException, ParseException{
+		//if the file is empty, returns 0	
+		
+		boolean updated = false;
+
+		JSONParser jsonParser = new JSONParser();
+		System.out.println("loading JSON file...\n");
+		FileReader reader = new FileReader(filename);
+		System.out.println(filename.length()==0);
+		if (filename.length()==0) {
+        	updated=false;
+        	
+        	System.out.println("There hasn't any new anomaly");
+        	
+        }else {
+        	//loading JSONObject...
+    		Object obj = jsonParser.parse(reader);
+    		//Loading JSONArray
+    		JSONArray dataList = (JSONArray) obj;
+    		System.out.println("JSONObject List obtained from file:\n");
+            System.out.println(dataList);
+            
+            //The instances are loaded to the corresponding class
+            //No cambia
+            if (dataList.size()==0) {
+            	updated=false;
+            	System.out.println(dataList.isEmpty());
+            	System.out.println("There hasn't any new anomaly");
+            	
+            }
+            //Se han añadido nuevos
+            else if(dataList.size() > 0) {
+            	updated = true;   	
+            }
+        }
+		
+		
+       reader.close();
+       return updated;
+		
+	}
+	
 	
 	public static void main(String[] args) throws OWLOntologyCreationException, IOException, ParseException, SWRLParseException, SWRLBuiltInException, OWLOntologyStorageException {
 		OntologyApp onto_object =new OntologyApp();
 		
+		//Ontology files are loaded, copy and original
 		System.out.println("");
 		System.out.println("Loading Ontology...");
-		File file = new File("./owl-files/cibersituational-onto-tmp.owl");
+		File file = new File("./owl-files/cibersituational-onto.owl");
+		File fileTmp = new File("./owl-files/cibersituational-onto-tmp.owl");
+
+		
 		OWLOntologyManager man = OWLManager.createOWLOntologyManager();
-		OWLOntology o =  man.loadOntologyFromOntologyDocument(file);
+		OWLOntology o =  man.loadOntologyFromOntologyDocument(fileTmp);
+		OWLDataFactory dataFactory = man.getOWLDataFactory();
 		documentIRI = o.getOntologyID().getOntologyIRI().get();
 		base = documentIRI.toString();
 		System.out.println("Ontology loaded\n");
+	
 		
-
-		
-		OWLDataFactory dataFactory = man.getOWLDataFactory();
 		anomaly= new Anomaly(dataFactory, man, base);
 		drm= new DRM(dataFactory, man, base);
 		stix = new STIX(dataFactory, man, base);
@@ -305,10 +407,26 @@ public class OntologyApp {
 
 		//File to load information
 		System.out.println("Loading data into the ontology...\n");
-		File fileAnomalies = new File("./owl-files/ficheroJSONSensores.json");
-		String fileAnomaliesJSON = fileAnomalies.toString();
-		loadedAnomalyInstances = onto_object.loadAnomaliesFromBBDD(o, man, fileAnomaliesJSON, base, dataFactory);
+		boolean updated = false;
+		File ficheroJSONSensores = new File(pathAnomaliesFile);
+		updated = onto_object.isEmptyAnomaliesFile(ficheroJSONSensores);
+		while(!updated) {
+			
+			System.out.println("There aren't new anomalies\n");
+			
+			try {
+				Thread.sleep(5000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			updated = onto_object.isEmptyAnomaliesFile(ficheroJSONSensores);	
+		}
+		
+		loadedAnomalyInstances = onto_object.loadAnomaliesFromBBDD(o, man, ficheroJSONSensores, base, dataFactory);
 		System.out.println("There have been loaded "+loadedAnomalyInstances+ " instances of new anomalies\n");
+		
 		
 		//Cargar rules
 		//System.out.println("Loading rules...\n");
