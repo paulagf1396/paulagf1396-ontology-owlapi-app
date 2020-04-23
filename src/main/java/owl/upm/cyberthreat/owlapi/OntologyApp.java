@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -64,6 +65,7 @@ import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 import org.semanticweb.owlapi.model.OWLSignature;
 import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
 import org.semanticweb.owlapi.model.PrefixManager;
+import org.semanticweb.owlapi.reasoner.InferenceType;
 import org.semanticweb.owlapi.reasoner.Node;
 import org.semanticweb.owlapi.reasoner.NodeSet;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
@@ -105,20 +107,27 @@ public class OntologyApp {
 	private static DRM drm;
 	private static STIX stix;
 	public static  Map<String, Float> dataset;
-	private static Chart chart;
-	
+	private static Chart chart;	
 	private static String pathAnomaliesFile = "./owl-files/ficheroJSONSensores.json";
-	
+
+	 
 	public OntologyApp() {
-		
+	
 	}
 	private static void saveOntologyinFile(OWLOntologyManager man, OWLOntology o) throws OWLOntologyCreationException, OWLOntologyStorageException, FileNotFoundException {
 		
 		File fileout = new File("./owl-files/example0.owl");
 		man.saveOntology(o, new FunctionalSyntaxDocumentFormat(),new FileOutputStream(fileout));
 		System.out.println("Saving ontology...");
+		
 	}
 	
+	
+	/*************************************************************/
+    /**                                                         **/
+    /**              Load New Anomalies                         **/
+    /**                                                         **/
+    /*************************************************************/
 	 
 	public int loadAnomaliesFromBBDD (OWLOntology o, OWLOntologyManager man, File filename, String base, OWLDataFactory dataFactory) throws IOException, ParseException, OWLOntologyStorageException {
 		
@@ -146,9 +155,10 @@ public class OntologyApp {
         	JSONObject jObject = (JSONObject) dataList.get(i); 
         	if(jObject.get("anomaly").toString().equals("1") ) {
         		//If anomaly=1 means that there has been an anomaly. 0 means there hasnt been any.
-        		String id = jObject.get("id").toString();
-        		OWLIndividual anomaly_instance = dataFactory.getOWLNamedIndividual(IRI.create(base +"#"+"Anomalia"+id));
-        		anomaly.loadAnomalyInstances(man,anomaly_instance,o, dataFactory, jObject);	
+        		//String id = jObject.get("id").toString();
+        		//OWLIndividual anomaly_instance = dataFactory.getOWLNamedIndividual(IRI.create(base +"#"+"Anomalia"+id));
+        		anomaly.loadAnomalyInstances(man,o, dataFactory, jObject);
+        		
         		numInstances++;
         	}else {
         		//Amenazas y Riesgos
@@ -162,6 +172,11 @@ public class OntologyApp {
 		
 	}
 
+	/*************************************************************/
+    /**                                                         **/
+    /**        Methods to manipulate the ontology               **/
+    /**                                                         **/
+    /*************************************************************/
 	//Crear individuals
 	public void createIndividuals(OWLOntology o, OWLOntologyManager man, OWLDataFactory dataFactory, String base, String cls, String individualName, int isType) throws OWLOntologyStorageException {
 		
@@ -204,29 +219,34 @@ public class OntologyApp {
 		man.addAxiom(o, oAxiom);
 	}
 	
+	/*************************************************************/
+    /**                                                         **/
+    /**                         Reasoner                        **/
+    /**                                                         **/
+    /*************************************************************/
 	//Load Pellet Reasoner
-	public void loadReasoner(OWLOntology o, OWLOntologyManager man, OWLDataFactory dataFactory, String base) throws OWLOntologyStorageException {
+	public void loadReasoner(OWLOntology o, OWLOntologyManager man, OWLDataFactory dataFactory, String base, OWLReasoner reasoner) throws OWLOntologyStorageException {
 		
-		OWLReasonerFactory reasonerFactory = PelletReasonerFactory.getInstance();
-		PelletReasoner reasoner =  (PelletReasoner) reasonerFactory.createReasoner(o);
-		System.out.println(PelletOptions.IGNORE_UNSUPPORTED_AXIOMS);
-		PelletOptions.IGNORE_UNSUPPORTED_AXIOMS = false;
-		System.out.println(PelletOptions.IGNORE_UNSUPPORTED_AXIOMS);
+		
+		//System.out.println(PelletOptions.IGNORE_UNSUPPORTED_AXIOMS);
+		//PelletOptions.IGNORE_UNSUPPORTED_AXIOMS = false;
+		//System.out.println(PelletOptions.IGNORE_UNSUPPORTED_AXIOMS);
 		
 		System.out.println("Using reasoner: "+ reasoner.getReasonerName());
 		System.out.println("The ontology consistency is "+reasoner.isConsistent());
-		System.out.println("Executing rules...");
-		reasoner.getKB().realize();
-		reasoner.precomputeInferences();
-		System.out.println("**********************Class tree**********************");
-		reasoner.getKB().printClassTree();
-		System.out.println("******************************************************");
+		
+		//System.out.println("Executing rules...");
+		//reasoner.getKB().realize();
+		//reasoner.precomputeInferences();
+		//System.out.println("**********************Class tree**********************");
+		//reasoner.getKB().printClassTree();
+		//System.out.println("******************************************************");
 		System.out.println("Loading infered axioms to the ontology...");
-		loadInferedAxiomsByReasoner(o, man, dataFactory, base, reasoner);
+		//loadInferedAxiomsByReasoner(o, man, dataFactory, base, reasoner);
 		System.out.println("Done.");
 		
-		System.out.println("Dynamic Risk Calculation");
-		dynamicRiskCalculation(o, man, dataFactory, base, reasoner);
+		//System.out.println("Dynamic Risk Calculation");
+		//dynamicRiskCalculation(o, man, dataFactory, base, reasoner);
 		
 
 	}
@@ -240,10 +260,18 @@ public class OntologyApp {
         InferredOntologyGenerator iog = new InferredOntologyGenerator(reasoner, gens);
         iog.fillOntology(dataFactory, o);
         
+        
+        
+        
         man.saveOntology(o);
         
 	}
 	
+	/*************************************************************/
+    /**                                                         **/
+    /**                     Rules Engine                        **/
+    /**                                                         **/
+    /*************************************************************/
 	
 	//Load SWRL rules engine
 	public void loadSWRLRuleENgine(OWLOntology o, OWLOntologyManager man, OWLDataFactory dataFactory, String base) throws SWRLParseException, SWRLBuiltInException, OWLOntologyStorageException {
@@ -253,12 +281,20 @@ public class OntologyApp {
 		 SWRLRuleEngine swrlRuleEngine = SWRLAPIFactory.createSWRLRuleEngine(o);
 	 
 		 // Run the SWRL rules in the ontology
-		 swrlRuleEngine.infer();
+		// swrlRuleEngine.infer();
 		
 		 //Sino guardo la ontologia no se guarda lo generado por las reglas
 		 man.saveOntology(o);
+		 swrlRuleEngine = null;
 		 System.out.println("Ontology saved.");
 	}
+	
+	
+	/*************************************************************/
+    /**                                                         **/
+    /**              Dynamic Risk Calculation                   **/
+    /**                                                         **/
+    /*************************************************************/
 	
 	public Map<String, Float> dynamicRiskCalculation(OWLOntology o, OWLOntologyManager man, OWLDataFactory dataFactory, String base, OWLReasoner reasoner) {
 		String base_DRM = "http://www.semanticweb.org/upm/ontologies/2019/11/cyberthreat_DRM";
@@ -291,6 +327,12 @@ public class OntologyApp {
 		return dataset;
 		
 	}
+	
+	/*************************************************************/
+    /**                                                         **/
+    /**              Additional Methods                         **/
+    /**                                                         **/
+    /*************************************************************/
 	
 	// Metodo para crear el archivo de copia de la ontologia
 	@SuppressWarnings("resource")
@@ -337,8 +379,6 @@ public class OntologyApp {
 	}
 	
 	
-	
-	
 	public boolean isEmptyAnomaliesFile(File filename ) throws IOException, ParseException{
 		//if the file is empty, returns 0	
 		
@@ -371,7 +411,8 @@ public class OntologyApp {
             }
             //Se han añadido nuevos
             else if(dataList.size() > 0) {
-            	updated = true;   	
+            	updated = true; 
+            	
             }
         }
 		
@@ -400,19 +441,46 @@ public class OntologyApp {
 		System.out.println("Ontology loaded\n");
 	
 		
-		anomaly= new Anomaly(dataFactory, man, base);
-		drm= new DRM(dataFactory, man, base);
+		anomaly = new Anomaly(dataFactory, man, base);
+		drm = new DRM(dataFactory, man, base);
 		stix = new STIX(dataFactory, man, base);
 		//chart = new Chart(o, man, dataFactory, "Riesgo Residual de cada Riesgo", dataset);
 
+		//Cargar rules
+		System.out.println("Loading rules...\n");
+		onto_object.loadSWRLRuleENgine(o, man, dataFactory, base);
+		System.out.println("Rules loaded.\n");
+		
 		//File to load information
 		System.out.println("Loading data into the ontology...\n");
 		boolean updated = false;
 		File ficheroJSONSensores = new File(pathAnomaliesFile);
 		updated = onto_object.isEmptyAnomaliesFile(ficheroJSONSensores);
-		while(!updated) {
+		if(updated) {
+			loadedAnomalyInstances = onto_object.loadAnomaliesFromBBDD(o, man, ficheroJSONSensores, base, dataFactory);
+			System.out.println("There have been loaded "+loadedAnomalyInstances+ " instances of new anomalies\n");
+			updated = false;
+		}
+		
+		//Cargar razonador
+		System.out.println("Starting the reasoner...\n");
+		OWLReasonerFactory reasonerFactory = PelletReasonerFactory.getInstance();
+		PelletReasoner reasoner =  (PelletReasoner) reasonerFactory.createReasoner(o);
+		reasoner.precomputeInferences(InferenceType.DATA_PROPERTY_ASSERTIONS);
+		
+		while(true) {
 			
-			System.out.println("There aren't new anomalies\n");
+			
+			onto_object.loadReasoner(o, man, dataFactory, base, reasoner);
+
+			System.out.println("Controlling if there are new anomalies...\n");
+			updated = onto_object.isEmptyAnomaliesFile(ficheroJSONSensores);	
+			if(updated) {
+				loadedAnomalyInstances = onto_object.loadAnomaliesFromBBDD(o, man, ficheroJSONSensores, base, dataFactory);
+				System.out.println("There have been loaded "+loadedAnomalyInstances+ " instances of new anomalies\n");
+				updated = false;
+			}
+			
 			
 			try {
 				Thread.sleep(5000);
@@ -421,11 +489,10 @@ public class OntologyApp {
 				e.printStackTrace();
 			}
 			
-			updated = onto_object.isEmptyAnomaliesFile(ficheroJSONSensores);	
+			
 		}
 		
-		loadedAnomalyInstances = onto_object.loadAnomaliesFromBBDD(o, man, ficheroJSONSensores, base, dataFactory);
-		System.out.println("There have been loaded "+loadedAnomalyInstances+ " instances of new anomalies\n");
+		
 		
 		
 		//Cargar rules

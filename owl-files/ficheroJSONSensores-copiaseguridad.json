@@ -5,11 +5,11 @@
   "type": "WF",
   "event": "<EVENT>",
   "anomaly": 1,
-  "data ": [
+  "data": [
    {
-      "time": "xxx",
-      "imei": "xxx",
-      "imsi": "xxx"
+      "userid": "00:00:00:00:00:00:01",
+      "pwr": "400",
+      "essid": "Cisco"
     }
   ]
 },
@@ -20,11 +20,10 @@
   "type": "BT",
   "event": "<EVENT>",
   "anomaly": 1,
-  "data ": [
+  "data": [
    {
-      "dato1": "xxx",
-      "dato2": "xxx",
-      "dato3": "xxx"
+      "address": "xxx",
+      "rssi": "xxx"
     }
   ]
 },
@@ -32,14 +31,14 @@
   "version": "2.0",
   "time": "<EPOCH>",
   "id": "003",
-  "type": "RF",
+  "type": "RM",
   "event": "<EVENT>",
   "anomaly": 1,
-  "data ": [
+  "data": [
    {
-      "dato1": "xxx",
-      "dato2": "xxx",
-      "dato3": "xxx"
+      "time": "xxx",
+      "imei": "xxx",
+      "imsi": "xxx"
     }
   ]
 }

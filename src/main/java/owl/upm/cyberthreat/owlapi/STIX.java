@@ -1,5 +1,8 @@
 package owl.upm.cyberthreat.owlapi;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassAssertionAxiom;
@@ -16,7 +19,7 @@ public class STIX {
 		//Different Classes from DRM in the Ontology
 		private OWLDataFactory dataFactory;
 		private OWLOntologyManager man;
-		private String base;
+		public String base;
 		public static OWLClass attack_pattern;
 		public static OWLClass bundle ;
 		public static OWLClass campaign;
@@ -43,6 +46,9 @@ public class STIX {
 		public static OWLClass note;
 		public static OWLClass opinion;
 		public static OWLClass relationship;
+		
+		public static HashMap<String, OWLClass> ciberobservable_types = new HashMap<String, OWLClass>();
+		String [] ciberobservables_names = {"Artifact", "Autonomous_System", "Directory", "Domain_Name", "Email_Address", "Email_Message", "File", "IPV4Addr" , "IPV6Addr", "Mutex", "MAC-Addr", "Network_Traffic", "Process", "Software", "URL", "User_Account", "Windows_Registry_Key", "X509_Certificate"};
 
 		String baseO;
 
@@ -56,7 +62,7 @@ public class STIX {
 			 //http://.org/2020/...#
 			PrefixManager pm = new DefaultPrefixManager(this.base + "#");
 			
-			attack_pattern = dataFactory.getOWLClass(":Attack_Patter", pm);
+			attack_pattern = dataFactory.getOWLClass(":Attack_Pattern", pm);
 			bundle = dataFactory.getOWLClass(":Bundle", pm);
 			campaign = dataFactory.getOWLClass(":Campaign", pm);
 			course_of_action = dataFactory.getOWLClass(":Course_of_Action", pm);
@@ -84,6 +90,19 @@ public class STIX {
 			relationship = dataFactory.getOWLClass(":Relationship", pm);
 
 			this.baseO= base;
+			
+			loadCiberObservables(ciberobservables_names);
+			
+			
+		}
+		
+		private void loadCiberObservables(String[] names) {
+			PrefixManager pm = new DefaultPrefixManager(this.base + "#");
+			for (int i = 0; i<names.length-1; i++ ) {
+				String name = names[i];
+				OWLClass ontoClass = dataFactory.getOWLClass(":"+name, pm);
+				ciberobservable_types.put(name, ontoClass);
+			}
 		}
 		
 		
@@ -131,6 +150,10 @@ public class STIX {
 			return cyberobservable;
 		}
 
+		public OWLClass getCyberobservableType(String name) {
+			
+			return ciberobservable_types.get(name);
+		}
 
 		public static void setCyberobservable(OWLClass cyberobservable) {
 			STIX.cyberobservable = cyberobservable;
