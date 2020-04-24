@@ -1,15 +1,23 @@
 package owl.upm.cyberthreat.owlapi;
 
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.semanticweb.owlapi.model.AxiomType;
 import org.semanticweb.owlapi.model.IRI;
+import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassAssertionAxiom;
+import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLDataProperty;
 import org.semanticweb.owlapi.model.OWLDataPropertyAssertionAxiom;
+import org.semanticweb.owlapi.model.OWLDataPropertyDomainAxiom;
+import org.semanticweb.owlapi.model.OWLDataPropertyExpression;
+import org.semanticweb.owlapi.model.OWLDataPropertyRangeAxiom;
 import org.semanticweb.owlapi.model.OWLDataRange;
 import org.semanticweb.owlapi.model.OWLDatatype;
 import org.semanticweb.owlapi.model.OWLIndividual;
@@ -18,8 +26,12 @@ import org.semanticweb.owlapi.model.OWLObjectPropertyAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
 import org.semanticweb.owlapi.model.OWLOntologyStorageException;
+import org.semanticweb.owlapi.model.OWLRestriction;
+import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
 import org.semanticweb.owlapi.model.PrefixManager;
 import org.semanticweb.owlapi.util.DefaultPrefixManager;
+
+import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 
 public class Anomaly {
 	//Different Classes from Anomaly in the Ontology
@@ -177,6 +189,7 @@ public class Anomaly {
 	    		field = jObject.get("pwr").toString();
 	    		System.out.println(field);
 	    		if(field!=null) {
+	    			
 	    			createDataProperty(o, man, dataFactory, base, anomaly_instance, "pwr", field);
 
 	    		}
@@ -297,9 +310,11 @@ public class Anomaly {
 		}
 	//Crear Data Properties
 		public void createDataProperty(OWLOntology o, OWLOntologyManager man, OWLDataFactory dataFactory, String base, OWLIndividual object, String property, String value) {
-			PrefixManager pm = new DefaultPrefixManager(base + "#");
+			PrefixManager pm = new DefaultPrefixManager(baseO + "#");
 			
 			OWLDataProperty dproperty = dataFactory.getOWLDataProperty(":"+property, pm);	
+
+			
 			if (dproperty!=null &&  object!=null && value!=null) {
 				Set<OWLDataPropertyAssertionAxiom> properties = o.getDataPropertyAssertionAxioms(object);
 				for (OWLDataPropertyAssertionAxiom ax : properties) {
@@ -312,6 +327,22 @@ public class Anomaly {
 			}else {
 				System.out.println("Not properly data to create Data Property for anomaly instance");
 			}
+			
+			
+			
+
+			
+			Set<OWLDataPropertyRangeAxiom> c = o.getAxioms(AxiomType.DATA_PROPERTY_RANGE);
+			for(OWLDataPropertyRangeAxiom d : c) {
+					if(d.getProperty().equals(dproperty)) {
+						System.out.println("LLEGAST");
+						OWLDataRange r = d.getRange();
+						System.out.println(r);
+					
+						
+					}
+			}
+			
 			
 		}
 		
