@@ -1,2 +1,0 @@
-WiFi_Sensor_Anomaly(?wa) ^ has_ocurred_in(?wa, \"APP1\") ^ swrlx:makeOWLThing(?x, ?wa) -> Effect(?x);
-UBA_Sensor_Anomaly(?wa) ^ has_ocurred_in(?wa, \"APP1\") ^ swrlx:makeOWLThing(?x, ?wa) -> Effect(?x);

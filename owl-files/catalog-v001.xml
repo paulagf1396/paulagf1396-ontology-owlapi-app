@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <catalog prefer="public" xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog">
     <group id="Folder Repository, directory=, recursive=true, Auto-Update=true, version=2" prefer="public" xml:base="">
-        <uri id="Automatically generated entry, Timestamp=1587548985157" name="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA" uri="cyberthreat_ONA.owl"/>
-        <uri id="Automatically generated entry, Timestamp=1587548985157" name="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_STIXDRM" uri="ontologias_merged_backup.owl"/>
+        <uri id="Automatically generated entry, Timestamp=1587894537353" name="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA" uri="cyberthreat_ONA.owl"/>
+        <uri id="Automatically generated entry, Timestamp=1587894537353" name="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_STIXDRM" uri="ontologias_merged_backup.owl"/>
     </group>
 </catalog>

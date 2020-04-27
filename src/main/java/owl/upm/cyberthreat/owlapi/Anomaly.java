@@ -1,9 +1,12 @@
 package owl.upm.cyberthreat.owlapi;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.semanticweb.owlapi.model.AxiomType;
@@ -21,11 +24,13 @@ import org.semanticweb.owlapi.model.OWLDataPropertyRangeAxiom;
 import org.semanticweb.owlapi.model.OWLDataRange;
 import org.semanticweb.owlapi.model.OWLDatatype;
 import org.semanticweb.owlapi.model.OWLIndividual;
+import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLObjectPropertyAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
 import org.semanticweb.owlapi.model.OWLOntologyStorageException;
+import org.semanticweb.owlapi.model.OWLPropertyRange;
 import org.semanticweb.owlapi.model.OWLRestriction;
 import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
 import org.semanticweb.owlapi.model.PrefixManager;
@@ -48,6 +53,8 @@ public class Anomaly {
 		public static OWLClass bt_sensor_anomaly;
 		public static OWLClass event;
 		public static OWLClass effect;
+		
+		Map<String, String> dataset = new HashMap<String, String>();
 		
 		STIX stix;
 	
@@ -157,7 +164,7 @@ public class Anomaly {
 	//Classify the anomalies from ddbb in the different anomaly type in the ontology
 	public void  loadAnomalyInstances (OWLOntologyManager man, OWLOntology o, OWLDataFactory dataFactory, JSONObject anomaly) throws OWLOntologyStorageException {
 		PrefixManager pm = new DefaultPrefixManager(base + "#");
-		
+		PrefixManager pmO = new DefaultPrefixManager(baseO + "#");
 		
 		//TYPE
 		String type = anomaly.get("type").toString();
@@ -177,29 +184,35 @@ public class Anomaly {
 	    	if(data.size()>0) {
 	    		String field = null;
 	    		field = jObject.get("userid").toString();
-	    		System.out.println(field);
 	    		if(field!=null) {
 	    			OWLIndividual macaddr = dataFactory.getOWLNamedIndividual(IRI.create(stix.base +"#"+"userid"));
-	    			OWLClassAssertionAxiom axioma1 = dataFactory.getOWLClassAssertionAxiom(stix.getCyberobservableType("MAC-Addr"), macaddr);
-	    			createDataProperty(o, man, dataFactory, base, macaddr, "value", field);
+	    			OWLClassAssertionAxiom axioma1 = dataFactory.getOWLClassAssertionAxiom(stix.getCyberobservableType("MAC-Addr"), macaddr); 			
+	    			OWLDataProperty dproperty = dataFactory.getOWLDataProperty(":stix_value", pmO);	
+	    			createDataProperty(o, man, dataFactory, base, macaddr, dproperty, field);
 	    			man.addAxiom(o, axioma1);
+	    			dataset.put("Wifi_"+name, field);
+	    			
 	    			createObjectPropertySTIX(o, man, dataFactory, base, anomaly_instance, macaddr, "related-to");
 	    		}
 	    		
 	    		field = jObject.get("pwr").toString();
-	    		System.out.println(field);
 	    		if(field!=null) {
 	    			
-	    			createDataProperty(o, man, dataFactory, base, anomaly_instance, "pwr", field);
+	    			OWLDataProperty dproperty = dataFactory.getOWLDataProperty(":pwr", pmO);	
+	    			createDataProperty(o, man, dataFactory, base, anomaly_instance, dproperty, field);
 
 	    		}
 	    		
 	    		field = jObject.get("essid").toString();
-	    		System.out.println(field);
 	    		if(field!=null) {
-	    			createDataProperty(o, man, dataFactory, base, anomaly_instance, "has_essid", field);
+	    			OWLDataProperty dproperty = dataFactory.getOWLDataProperty(":has_essid", pmO);	
+	    			createDataProperty(o, man, dataFactory, base, anomaly_instance, dproperty, field);
 	    			
 	    		}
+	    		
+	    		OWLDataProperty dproperty = dataFactory.getOWLDataProperty(":suspicious_value", pmO);	
+    			createDataProperty(o, man, dataFactory, base, anomaly_instance, dproperty, "1");
+    			
 	    		
 	    	}
 
@@ -210,6 +223,10 @@ public class Anomaly {
     		OWLIndividual anomaly_instance = dataFactory.getOWLNamedIndividual(IRI.create(base +"#"+name));
 			OWLClassAssertionAxiom axioma = dataFactory.getOWLClassAssertionAxiom(uba_sensor_anomaly, anomaly_instance);
 			man.addAxiom(o, axioma);
+			
+			OWLDataProperty dproperty = dataFactory.getOWLDataProperty(":suspicious_value", pmO);	
+			createDataProperty(o, man, dataFactory, base, anomaly_instance, dproperty, "1");
+			
 		}
 		else if(type.equals("RM")) {
 			String id = anomaly.get("id").toString();
@@ -217,6 +234,42 @@ public class Anomaly {
     		OWLIndividual anomaly_instance = dataFactory.getOWLNamedIndividual(IRI.create(base +"#"+name));
 			OWLClassAssertionAxiom axioma = dataFactory.getOWLClassAssertionAxiom(rm_sensor_anomaly, anomaly_instance);
 			man.addAxiom(o, axioma);
+			
+			//DATA
+			
+	    	JSONArray data = (JSONArray) anomaly.get("data");
+	    	JSONObject jObject = (JSONObject) data.get(0); 
+	    	
+	    	if(data.size()>0) {
+	    		String field = null;
+	    		field = jObject.get("imei").toString();
+	    		if(field!=null) {
+	    			OWLDataProperty dproperty = dataFactory.getOWLDataProperty(":has_IMEI", pmO);	
+	    			createDataProperty(o, man, dataFactory, base, anomaly_instance, dproperty, field);
+
+	    		}
+	    		
+	    		field = jObject.get("imsi").toString();
+	    		if(field!=null) {
+	    			OWLDataProperty dproperty = dataFactory.getOWLDataProperty(":has_IMSI", pmO);	
+	    			createDataProperty(o, man, dataFactory, base, anomaly_instance, dproperty, field);
+
+	    			
+	    		}
+	    		field = jObject.get("rat").toString();
+	    		if(field!=null) {
+	    			OWLDataProperty dproperty = dataFactory.getOWLDataProperty(":rat", pmO);	
+	    			createDataProperty(o, man, dataFactory, base, anomaly_instance, dproperty, field);
+	    			
+	    		}
+	    		
+	    	}
+	    	
+	    	OWLDataProperty dproperty = dataFactory.getOWLDataProperty(":suspicious_value", pmO);	
+			createDataProperty(o, man, dataFactory, base, anomaly_instance, dproperty, "1");
+			
+			
+			
 		}
 		else if(type.equals("RF")) {
 			String id = anomaly.get("id").toString();
@@ -224,6 +277,10 @@ public class Anomaly {
     		OWLIndividual anomaly_instance = dataFactory.getOWLNamedIndividual(IRI.create(base +"#"+name));
 			OWLClassAssertionAxiom axioma = dataFactory.getOWLClassAssertionAxiom(rf_sensor_anomaly, anomaly_instance);
 			man.addAxiom(o, axioma);
+			
+			OWLDataProperty dproperty = dataFactory.getOWLDataProperty(":suspicious_value", pmO);	
+			createDataProperty(o, man, dataFactory, base, anomaly_instance, dproperty, "1");
+			
 		}
 		else if(type.equals("BT")){
 			String id = anomaly.get("id").toString();
@@ -237,26 +294,31 @@ public class Anomaly {
 			
 	    	JSONArray data = (JSONArray) anomaly.get("data");
 	    	JSONObject jObject = (JSONObject) data.get(0); 
-	    	
 	    	if(data.size()>0) {
 	    		String field = null;
 	    		field = jObject.get("rssi").toString();
-	    		System.out.println(field);
 	    		if(field!=null) {
-	    			createDataProperty(o, man, dataFactory, base, anomaly_instance, "has_RSSI", field);
+	    			OWLDataProperty dproperty = dataFactory.getOWLDataProperty(":has_RSSI", pmO);	
+	    			createDataProperty(o, man, dataFactory, base, anomaly_instance, dproperty, field);
 
 	    		}
 	    		
 	    		field = jObject.get("address").toString();
-	    		System.out.println(field);
 	    		if(field!=null) {
 	    			OWLIndividual macaddr = dataFactory.getOWLNamedIndividual(IRI.create(stix.base +"#"+"address"));
 	    			OWLClassAssertionAxiom axioma1 = dataFactory.getOWLClassAssertionAxiom(stix.getCyberobservableType("MAC-Addr"), macaddr);
+	    			OWLDataProperty dproperty = dataFactory.getOWLDataProperty(":stix_value", pmO);	
+	    			createDataProperty(o, man, dataFactory, base, macaddr, dproperty, field);
 	    			man.addAxiom(o, axioma1);
-	    			createObjectPropertySTIX(o, man, dataFactory, base, anomaly_instance, macaddr, "related-to");
+	    			dataset.put("BT_"+name, field);
+	    			createObjectPropertySTIX(o, man, dataFactory, base, anomaly_instance, macaddr, "related-to"); 			
 	    		}
 	    		
 	    	}
+	    	
+	    	OWLDataProperty dproperty = dataFactory.getOWLDataProperty(":suspicious_value", pmO);	
+			createDataProperty(o, man, dataFactory, base, anomaly_instance, dproperty, "1");
+			
 		}
 		else if(type.equals("IDS")){
 			String id = anomaly.get("id").toString();
@@ -264,6 +326,10 @@ public class Anomaly {
     		OWLIndividual anomaly_instance = dataFactory.getOWLNamedIndividual(IRI.create(base +"#"+name));
 			OWLClassAssertionAxiom axioma = dataFactory.getOWLClassAssertionAxiom(ids_sensor_anomaly, anomaly_instance);
 			man.addAxiom(o, axioma);
+			
+			OWLDataProperty dproperty = dataFactory.getOWLDataProperty(":suspicious_value", pmO);	
+			createDataProperty(o, man, dataFactory, base, anomaly_instance, dproperty, "1");
+			
 		}
     	
 		man.saveOntology(o);
@@ -304,16 +370,14 @@ public class Anomaly {
 	}
 	
 	
-		private void saber() {
-			
-			
-		}
 	//Crear Data Properties
-		public void createDataProperty(OWLOntology o, OWLOntologyManager man, OWLDataFactory dataFactory, String base, OWLIndividual object, String property, String value) {
-			PrefixManager pm = new DefaultPrefixManager(baseO + "#");
+		public void createDataProperty(OWLOntology o, OWLOntologyManager man, OWLDataFactory dataFactory, String base, OWLIndividual object, OWLDataProperty dproperty, String value) {
 			
-			OWLDataProperty dproperty = dataFactory.getOWLDataProperty(":"+property, pm);	
-
+			// Convenience methods of OWLDataFactory for common data types:
+			OWLDatatype integerDatatype = dataFactory.getIntegerOWLDatatype();
+			OWLDatatype floatDatatype = dataFactory.getFloatOWLDatatype();
+			OWLDatatype doubleDatatype = dataFactory.getDoubleOWLDatatype();
+			OWLDatatype booleanDatatype = dataFactory.getBooleanOWLDatatype();
 			
 			if (dproperty!=null &&  object!=null && value!=null) {
 				Set<OWLDataPropertyAssertionAxiom> properties = o.getDataPropertyAssertionAxioms(object);
@@ -321,7 +385,31 @@ public class Anomaly {
 					if (ax.getProperty().equals(dproperty) && ax.getSubject().equals(object)) {
 						man.removeAxiom(o, ax);
 					}	
-				}				
+				}
+				
+				if(StringUtils.isNumeric(value)) {
+					Set<OWLDataPropertyRangeAxiom> c = o.getAxioms(AxiomType.DATA_PROPERTY_RANGE);
+					for(OWLDataPropertyRangeAxiom d : c) {
+							if(d.getProperty().equals(dproperty)) {
+								OWLDataRange r = d.getRange();
+								if(r.equals(floatDatatype)) {
+									float valuef = Float.parseFloat(value);
+									OWLDataPropertyAssertionAxiom dAxiom = dataFactory.getOWLDataPropertyAssertionAxiom(dproperty, object, valuef);
+									man.addAxiom(o, dAxiom);
+									return;
+									
+								}
+								if(r.equals(integerDatatype)){
+									int valuei = Integer.parseInt(value);
+									OWLDataPropertyAssertionAxiom dAxiom = dataFactory.getOWLDataPropertyAssertionAxiom(dproperty, object, valuei);
+									man.addAxiom(o, dAxiom);return;
+								}
+									
+							}
+							
+						}
+					}
+				
 				OWLDataPropertyAssertionAxiom dAxiom = dataFactory.getOWLDataPropertyAssertionAxiom(dproperty, object, value);
 				man.addAxiom(o, dAxiom);
 			}else {
@@ -329,29 +417,12 @@ public class Anomaly {
 			}
 			
 			
-			
-
-			
-			Set<OWLDataPropertyRangeAxiom> c = o.getAxioms(AxiomType.DATA_PROPERTY_RANGE);
-			for(OWLDataPropertyRangeAxiom d : c) {
-					if(d.getProperty().equals(dproperty)) {
-						System.out.println("LLEGAST");
-						OWLDataRange r = d.getRange();
-						System.out.println(r);
-					
-						
-					}
-			}
-			
-			
-		}
-		
+		}	
 		
 		//Crear Object Properties STIX
 		public void createObjectPropertySTIX(OWLOntology o, OWLOntologyManager man, OWLDataFactory dataFactory, String base, OWLIndividual object1, OWLIndividual object2, String property) throws OWLOntologyStorageException {
 			PrefixManager pm = new DefaultPrefixManager(base + "#");
 			
-			System.out.println("Vas bien...");
 			OWLObjectProperty oproperty = dataFactory.getOWLObjectProperty(":"+property, pm);	
 			if (oproperty!=null &&  object1!=null && object2!=null) {
 				OWLObjectPropertyAssertionAxiom oAxiom = dataFactory.getOWLObjectPropertyAssertionAxiom(oproperty, object1, object2);
@@ -360,8 +431,7 @@ public class Anomaly {
 			}else {
 				System.out.println("Not properly data to create Object Property with a STIX Object for anomaly instance");
 			}
-			
-			
+					
 
 		}
 
@@ -380,6 +450,25 @@ public class Anomaly {
 				System.out.println("Not properly data to create Object Property with a DRM Object for anomaly instance");
 			}
 
+		}
+		
+		
+		private void setSuspiciousValue(OWLDataFactory dataFactory, OWLIndividual name, OWLOntology o) {
+			PrefixManager pm = new DefaultPrefixManager(base + "#");
+			PrefixManager pmO = new DefaultPrefixManager(baseO + "#");
+			float suspicious_value;
+			
+			OWLDataProperty dproperty = dataFactory.getOWLDataProperty(":suspicious_value", pmO);
+			OWLObjectProperty oproperty = dataFactory.getOWLObjectProperty(":related-to", pmO);
+
+
+			Set<OWLNamedIndividual> instances = o.getIndividualsInSignature();
+			for(OWLNamedIndividual i : instances) {
+
+				
+			}
+			
+			
 		}
 		
 }

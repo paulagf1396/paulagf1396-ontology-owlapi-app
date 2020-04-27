@@ -282,12 +282,57 @@ public class OntologyApp {
 	 
 		 // Run the SWRL rules in the ontology
 		// swrlRuleEngine.infer();
+		float umbral = 5;
+		swrlRuleEngine.createSWRLRule("Anomalies# Suspicious Value Umbral","cyberthreat_ONA:WiFi_Sensor_Anomaly(?w) ^ cibersituational-ontology:suspicious_value(?w, ?s) ^ swrlb:greaterThanOrEqual(?s, "+umbral+") ^ swrlx:makeOWLThing(?x, ?w) -> cibersituational-ontology:probability(?x, \"2.0\"^^xsd:float) ^ cyberthreat_DRM:DeliberatedUnauthorizedAccess(?x) ^ cibersituational-ontology:type(?x, \"Threat Deliberated Unauthorized Access\") ^ cibersituational-ontology:impact(?x, \"4.0\"^^xsd:float)");
+
+		
+		 //Sino guardo la ontologia no se guarda lo generado por las reglas
+		 man.saveOntology(o);
+		 swrlRuleEngine = null;
+		 
+	}
+	
+	
+	public void loadNewRule(OWLOntology o, OWLOntologyManager man, Anomaly anomaly) throws SWRLParseException, SWRLBuiltInException {
+		SWRLRuleEngine swrlRuleEngine = SWRLAPIFactory.createSWRLRuleEngine(o);
+		float intervalo = 1;
+		
+		for (Map.Entry<String, String> entry : anomaly.dataset.entrySet()) {
+			String key = entry.getKey();
+			String[] anom = key.split("_");
+			String value= anom[0];
+			if(value.equals("Wifi")){
+				SWRLAPIRule rule = swrlRuleEngine.createSWRLRule("Anomalies#"+value+"_Suspicious_Value_Calculation_Relate_to "+entry.getValue()+"","cyberthreat_ONA:WiFi_Sensor_Anomaly(?wifi) ^ cibersituational-ontology:suspicious_value(?wifi, ?s) ^ cibersituational-ontology:related-to(?wifi, ?mac)  ^ MAC-Addr(?mac, "+entry.getValue()+")-> swrlb:add(?s,"+intervalo+")");
+			}
+			if(value.equals("BT")){
+				SWRLAPIRule rule = swrlRuleEngine.createSWRLRule("Anomalies#"+value+" Suspicious Value Calculation","cyberthreat_ONA:WiFi_Sensor_Anomaly(?wifi) ^ cibersituational-ontology:suspicious_value(?wifi, ?s) ^ cibersituational-ontology:related-to(?wifi, ?mac)  ^ MAC-Addr(?mac, "+entry.getValue()+")-> swrlb:add(?s,"+intervalo+")");
+			}
+
+		}
+		
+		
+		if(swrlRuleEngine.equals(rule))
+	}
+		
+	//Infer
+	public void inferSWRLEngine(OWLOntology o, OWLOntologyManager man, OWLDataFactory dataFactory, String base) throws SWRLParseException, SWRLBuiltInException, OWLOntologyStorageException {
+		
+		
+		 // Create a SWRL rule engine using the SWRLAPI
+		 SWRLRuleEngine swrlRuleEngine = SWRLAPIFactory.createSWRLRuleEngine(o);
+	 
+		 // Run the SWRL rules in the ontology
+		 swrlRuleEngine.infer();
 		
 		 //Sino guardo la ontologia no se guarda lo generado por las reglas
 		 man.saveOntology(o);
 		 swrlRuleEngine = null;
 		 System.out.println("Ontology saved.");
 	}
+
+		
+	
+	
 	
 	
 	/*************************************************************/
@@ -330,9 +375,11 @@ public class OntologyApp {
 	
 	/*************************************************************/
     /**                                                         **/
-    /**              Additional Methods                         **/
+    /**              	Additional Methods                      **/
     /**                                                         **/
     /*************************************************************/
+	
+
 	
 	// Metodo para crear el archivo de copia de la ontologia
 	@SuppressWarnings("resource")
@@ -422,7 +469,6 @@ public class OntologyApp {
 		
 	}
 	
-	
 	public static void main(String[] args) throws OWLOntologyCreationException, IOException, ParseException, SWRLParseException, SWRLBuiltInException, OWLOntologyStorageException {
 		OntologyApp onto_object =new OntologyApp();
 		
@@ -468,36 +514,45 @@ public class OntologyApp {
 		PelletReasoner reasoner =  (PelletReasoner) reasonerFactory.createReasoner(o);
 		reasoner.precomputeInferences(InferenceType.DATA_PROPERTY_ASSERTIONS);
 		
+		//Cargar rules
+		System.out.println("Loading rules...\n");
+		onto_object.loadSWRLRuleENgine(o, man, dataFactory, base);
+		System.out.println("Done.\n");
+
+		
 		while(true) {
 			
 			
 			onto_object.loadReasoner(o, man, dataFactory, base, reasoner);
 
-			System.out.println("Controlling if there are new anomalies...\n");
+			System.out.println("Checking if there are new anomalies...\n");
 			updated = onto_object.isEmptyAnomaliesFile(ficheroJSONSensores);	
 			if(updated) {
 				loadedAnomalyInstances = onto_object.loadAnomaliesFromBBDD(o, man, ficheroJSONSensores, base, dataFactory);
 				System.out.println("There have been loaded "+loadedAnomalyInstances+ " instances of new anomalies\n");
 				updated = false;
+				
+				onto_object.loadNewRule(o, man, anomaly);
 			}
+			
+			
 			
 			
 			try {
 				Thread.sleep(5000);
+				//reasoner.precomputeInferences(InferenceType.);
+				//onto_object.inferSWRLEngine();
+				
+				//Thread.sleep(5000);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			
 			
 		}
+
 		
 		
-		
-		
-		//Cargar rules
-		//System.out.println("Loading rules...\n");
-		//onto_object.loadSWRLRuleENgine(o, man, dataFactory, base);
 		
 		//Cargar razonador
 		//System.out.println("Starting the reasoner...\n");

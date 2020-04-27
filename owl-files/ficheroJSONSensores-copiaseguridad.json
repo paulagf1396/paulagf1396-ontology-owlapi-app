@@ -22,8 +22,8 @@
   "anomaly": 1,
   "data": [
    {
-      "address": "xxx",
-      "rssi": "xxx"
+      "address": "00:00:ef:00:56:99:01",
+      "rssi": "29"
     }
   ]
 },
@@ -36,9 +36,9 @@
   "anomaly": 1,
   "data": [
    {
-      "time": "xxx",
-      "imei": "xxx",
-      "imsi": "xxx"
+      "rat": "3G",
+      "imei": "354096207395186",
+      "imsi": "310150123456776"
     }
   ]
 }
