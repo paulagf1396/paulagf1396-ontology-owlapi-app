@@ -57,6 +57,7 @@ import org.semanticweb.owlapi.model.OWLLiteral;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLObjectPropertyAssertionAxiom;
+import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyIRIMapper;
@@ -237,12 +238,12 @@ public class OntologyApp {
 		
 		//System.out.println("Executing rules...");
 		//reasoner.getKB().realize();
-		//reasoner.precomputeInferences();
+		reasoner.precomputeInferences();
 		//System.out.println("**********************Class tree**********************");
 		//reasoner.getKB().printClassTree();
 		//System.out.println("******************************************************");
 		System.out.println("Loading infered axioms to the ontology...");
-		//loadInferedAxiomsByReasoner(o, man, dataFactory, base, reasoner);
+		loadInferedAxiomsByReasoner(o, man, dataFactory, base, reasoner);
 		System.out.println("Done.");
 		
 		//System.out.println("Dynamic Risk Calculation");
@@ -266,6 +267,11 @@ public class OntologyApp {
         man.saveOntology(o);
         
 	}
+	
+	
+	
+	
+
 	
 	/*************************************************************/
     /**                                                         **/
@@ -311,7 +317,7 @@ public class OntologyApp {
 		}
 		
 		
-		if(swrlRuleEngine.equals(rule))
+		
 	}
 		
 	//Infer
@@ -469,6 +475,52 @@ public class OntologyApp {
 		
 	}
 	
+	 public boolean updateSuspiciousValue(OWLDataFactory dataFactory, OWLOntology o, OWLOntologyManager man, OWLReasoner reasoner) {
+		 	PrefixManager pm = new DefaultPrefixManager(base + "#");
+		 	
+		 	boolean done = false;
+			Set<OWLNamedIndividual> instances = o.getIndividualsInSignature();
+			 for(OWLNamedIndividual i:instances) {
+				 System.out.println(i);
+				 NodeSet<OWLNamedIndividual> wset = reasoner.getInstances(Anomaly.getWifi_sensor_anomaly(), true) ;
+				 for(OWLNamedIndividual winstance : wset.getFlattened()) {
+					 OWLObjectProperty oproperty = dataFactory.getOWLObjectProperty(":related-to", pm);	
+					 String mac1 = anomaly.obtainObjectPropertyValue(winstance, oproperty, o, reasoner);
+					 String mac2 = anomaly.obtainObjectPropertyValue(i, oproperty, o, reasoner);
+					 if(mac1 != null && mac2 !=null && mac1.equals(mac2)) {
+						 anomaly.modifiedSuspiciousValue(i, dataFactory, o, man, 1);
+						 done=true;
+					 }
+					 
+				 }
+				 NodeSet<OWLNamedIndividual> btset = reasoner.getInstances(Anomaly.getBt_sensor_anomaly(), true) ;
+				 for(OWLNamedIndividual btinstance : btset.getFlattened()) {
+					 OWLObjectProperty oproperty = dataFactory.getOWLObjectProperty(":related-to", pm);	
+					 String mac1 = anomaly.obtainObjectPropertyValue(btinstance, oproperty, o, reasoner);
+					 String mac2 = anomaly.obtainObjectPropertyValue(i, oproperty, o, reasoner);
+					 if(mac1 != null && mac2 !=null && mac1.equals(mac2)) {
+						 anomaly.modifiedSuspiciousValue(i, dataFactory, o, man, 1);
+						 done = true;
+					 }
+					 
+				 }
+				 
+				 NodeSet<OWLNamedIndividual> rfset = reasoner.getInstances(Anomaly.getRf_sensor_anomaly(), true) ;
+				 for(OWLNamedIndividual rfinstance : rfset.getFlattened()) {
+					 OWLDataProperty dproperty = dataFactory.getOWLDataProperty(":has_signal_frequency", pm);	
+					 String mac1 = anomaly.obtainDataPropertyValue(rfinstance, dproperty, o, reasoner);
+					 String mac2 = anomaly.obtainDataPropertyValue(i, dproperty, o, reasoner);
+					 if(mac1 != null && mac2 !=null && mac1.equals(mac2)) {
+						 anomaly.modifiedSuspiciousValue(i, dataFactory, o, man, 1);
+						 done = true;
+					 }
+					 
+				 }
+			 }
+			 return done;
+		 }
+	 
+	
 	public static void main(String[] args) throws OWLOntologyCreationException, IOException, ParseException, SWRLParseException, SWRLBuiltInException, OWLOntologyStorageException {
 		OntologyApp onto_object =new OntologyApp();
 		
@@ -515,9 +567,9 @@ public class OntologyApp {
 		reasoner.precomputeInferences(InferenceType.DATA_PROPERTY_ASSERTIONS);
 		
 		//Cargar rules
-		System.out.println("Loading rules...\n");
-		onto_object.loadSWRLRuleENgine(o, man, dataFactory, base);
-		System.out.println("Done.\n");
+		//System.out.println("Loading rules...\n");
+	//	onto_object.loadSWRLRuleENgine(o, man, dataFactory, base);
+		//System.out.println("Done.\n");
 
 		
 		while(true) {
@@ -531,28 +583,31 @@ public class OntologyApp {
 				loadedAnomalyInstances = onto_object.loadAnomaliesFromBBDD(o, man, ficheroJSONSensores, base, dataFactory);
 				System.out.println("There have been loaded "+loadedAnomalyInstances+ " instances of new anomalies\n");
 				updated = false;
+				System.out.println("Updated SUSPICIOUS VALUE "+onto_object.updateSuspiciousValue(dataFactory, o, man, reasoner));
 				
-				onto_object.loadNewRule(o, man, anomaly);
+				//onto_object.loadNewRule(o, man, anomaly);
 			}
-			
-			
-			
-			
+				
 			try {
 				Thread.sleep(5000);
 				//reasoner.precomputeInferences(InferenceType.);
 				//onto_object.inferSWRLEngine();
-				
-				//Thread.sleep(5000);
+			
 			} catch (InterruptedException e) {
 				e.printStackTrace();
-			}
-			
-			
+			}			
 		}
-
-		
-		
+	
+		//Verificar si es necesario modificar el sv value porque haya anomalias referentes al mismo sitio
+		/*Set<OWLNamedIndividual> instances = o.getIndividualsInSignature();
+		for(OWLNamedIndividual i : instances) {
+			anomaly.verifySuspiciousValue(dataFactory, o, i, reasoner);
+			
+			System.out.println("You have verified");
+		}*/
+		//razonar
+		//caluclar riesgo
+		//Esperar mas anomalias
 		
 		//Cargar razonador
 		//System.out.println("Starting the reasoner...\n");
