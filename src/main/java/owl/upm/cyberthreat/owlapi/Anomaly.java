@@ -618,13 +618,13 @@ public class Anomaly {
 			 
 			
 		 }
-		 
+		 /*
 		 public void updateSuspiciousValue(OWLDataFactory dataFactory, OWLOntology o, OWLOntologyManager man) {
 			Set<OWLNamedIndividual> instances = o.getIndividualsInSignature();
 			 for(OWLNamedIndividual i:instances) {
 				 System.out.println(i);
 				 System.out.println(i.getClass());
 			 }
-		 }
+		 }*/
 		
 }

@@ -15,7 +15,7 @@ public class DRM {
 			//Different Classes from DRM in the Ontology
 			private OWLDataFactory dataFactory;
 			private OWLOntologyManager man;
-			private String base;
+			public String base;
 			public static OWLClass asset;
 			public static OWLClass asset_valuation ;
 			public static OWLClass context;
