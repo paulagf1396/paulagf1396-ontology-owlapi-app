@@ -1,18 +1,37 @@
 package owl.upm.cyberthreat.owlapi;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.semanticweb.owlapi.model.AxiomType;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLDataFactory;
+import org.semanticweb.owlapi.model.OWLDataProperty;
+import org.semanticweb.owlapi.model.OWLDataPropertyAssertionAxiom;
+import org.semanticweb.owlapi.model.OWLDataPropertyRangeAxiom;
+import org.semanticweb.owlapi.model.OWLDataRange;
+import org.semanticweb.owlapi.model.OWLDatatype;
+import org.semanticweb.owlapi.model.OWLDatatypeDefinitionAxiom;
 import org.semanticweb.owlapi.model.OWLIndividual;
+import org.semanticweb.owlapi.model.OWLLiteral;
+import org.semanticweb.owlapi.model.OWLObjectProperty;
+import org.semanticweb.owlapi.model.OWLObjectPropertyAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
+import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 import org.semanticweb.owlapi.model.PrefixManager;
 import org.semanticweb.owlapi.rio.RioBinaryRdfStorerFactory;
 import org.semanticweb.owlapi.util.DefaultPrefixManager;
+import org.semanticweb.owlapi.vocab.OWL2Datatype;
 
 public class STIX {
 
@@ -368,119 +387,468 @@ public class STIX {
 		public static void setRelationship(OWLClass relationship) {
 			STIX.relationship = relationship;
 		}
-		public void  createSTIXInstances (OWLOntologyManager man, OWLOntology o, OWLDataFactory dataFactory, String stixType, String individualName) {
-		       
-			OWLIndividual stix_instance = dataFactory.getOWLNamedIndividual(IRI.create(this.baseO +"#"+individualName));
-
+		public void  createSTIXInstances (OWLOntologyManager man, OWLOntology o, OWLDataFactory dataFactory, JSONObject stix_element) throws OWLOntologyStorageException {
+			PrefixManager pm = new DefaultPrefixManager(base + "#");
+			PrefixManager pmO = new DefaultPrefixManager(baseO + "#");
+			
+			//TYPE
+			String stixType = stix_element.get("type").toString();	
 			if(stixType.equals("Attack_Pattern")) {
+				String name = stix_element.get("name").toString();
+				
+	    		OWLIndividual stix_instance = dataFactory.getOWLNamedIndividual(IRI.create(base +"#"+name));
 				OWLClassAssertionAxiom axioma0 = dataFactory.getOWLClassAssertionAxiom(attack_pattern, stix_instance);
 				man.addAxiom(o, axioma0);
 				System.out.println(axioma0);
+				System.out.println("The STIX instance was created");
 			}
 			else if(stixType.equals("Bundle")) {
-				OWLClassAssertionAxiom axioma = dataFactory.getOWLClassAssertionAxiom(bundle, stix_instance);
-				man.addAxiom(o, axioma);
+				String name = stix_element.get("name").toString();
+				
+	    		OWLIndividual stix_instance = dataFactory.getOWLNamedIndividual(IRI.create(base +"#"+name));
+				OWLClassAssertionAxiom axioma0 = dataFactory.getOWLClassAssertionAxiom(bundle, stix_instance);
+				man.addAxiom(o, axioma0);
+				System.out.println(axioma0);
+				System.out.println("The STIX instance was created");
 			}
-			else if(stixType.equals("Campaign")) {
-				OWLClassAssertionAxiom axioma = dataFactory.getOWLClassAssertionAxiom(campaign, stix_instance);
-				man.addAxiom(o, axioma);
+			
+			else if(stixType.equals("campaign") && !stixType.isEmpty()) {
+					String name = stix_element.get("name").toString();
+					
+		    		OWLIndividual stix_instance = dataFactory.getOWLNamedIndividual(IRI.create(base +"#"+name));
+					OWLClassAssertionAxiom axioma0 = dataFactory.getOWLClassAssertionAxiom(campaign, stix_instance);
+					man.addAxiom(o, axioma0);
+					System.out.println(axioma0);
+					
+					//DATA
+					
+					String field = null;
+					field = stix_element.get("id").toString();
+					if(field !=null) {
+						OWLDataProperty dproperty = dataFactory.getOWLDataProperty(":id", pmO);	
+		    			createDataProperty(o, man, dataFactory, base, stix_instance, dproperty, field);
+					}
+	    			
+					field = stix_element.get("created_by_ref").toString();
+					if(field !=null) {
+						OWLIndividual identityI = dataFactory.getOWLNamedIndividual(IRI.create(base +"#"+field));
+						OWLClassAssertionAxiom axiomaIdentity = dataFactory.getOWLClassAssertionAxiom(identity, identityI);
+						OWLDataProperty dproperty = dataFactory.getOWLDataProperty(":name", pmO);	
+		    			createDataProperty(o, man, dataFactory, base, identityI, dproperty, field);
+						man.addAxiom(o, axiomaIdentity);
+						createObjectProperty(o, man, dataFactory, base, stix_instance, identityI, "created_by_ref");
+					}
+					
+					
+					field = stix_element.get("created").toString();
+					if(field !=null) {
+						OWLDataProperty dproperty = dataFactory.getOWLDataProperty(":created", pmO);	
+		    			createDataProperty(o, man, dataFactory, base, stix_instance, dproperty, field);
+					}
+					
+					field = stix_element.get("name").toString();
+					if(field !=null) {
+						OWLDataProperty dproperty = dataFactory.getOWLDataProperty(":name", pmO);	
+		    			createDataProperty(o, man, dataFactory, base, stix_instance, dproperty, field);
+					}
+					
+					field = stix_element.get("modified").toString();
+					if(field !=null) {
+						OWLDataProperty dproperty4 = dataFactory.getOWLDataProperty(":modified", pmO);	
+		    			createDataProperty(o, man, dataFactory, base, stix_instance, dproperty4, field);
+					}
+					
+					field = stix_element.get("description").toString();
+					if(field !=null) {
+						OWLDataProperty dproperty5 = dataFactory.getOWLDataProperty(":description", pmO);	
+		    			createDataProperty(o, man, dataFactory, base, stix_instance, dproperty5, field);
+					}
+					
+	    			System.out.println("The STIX instance was created");
+					
 			}
+			
 			else if(stixType.equals("Course_of_Action")) {
-				OWLClassAssertionAxiom axioma = dataFactory.getOWLClassAssertionAxiom(course_of_action, stix_instance);
-				man.addAxiom(o, axioma);
+				String name = stix_element.get("name").toString();
+				
+	    		OWLIndividual stix_instance = dataFactory.getOWLNamedIndividual(IRI.create(base +"#"+name));
+				OWLClassAssertionAxiom axioma0 = dataFactory.getOWLClassAssertionAxiom(course_of_action, stix_instance);
+				man.addAxiom(o, axioma0);
+				System.out.println(axioma0);
+				System.out.println("The STIX instance was created");
 			}
 			else if(stixType.equals("Cyber_Observables")){
-				OWLClassAssertionAxiom axioma = dataFactory.getOWLClassAssertionAxiom(cyberobservable, stix_instance);
-				man.addAxiom(o, axioma);
+				String name = stix_element.get("name").toString();
+				
+	    		OWLIndividual stix_instance = dataFactory.getOWLNamedIndividual(IRI.create(base +"#"+name));
+				OWLClassAssertionAxiom axioma0 = dataFactory.getOWLClassAssertionAxiom(cyberobservable, stix_instance);
+				man.addAxiom(o, axioma0);
+				System.out.println(axioma0);
+				System.out.println("The STIX instance was created");
 			}
 			else if(stixType.equals("Dictionary")){
-				OWLClassAssertionAxiom axioma = dataFactory.getOWLClassAssertionAxiom(dictionary, stix_instance);
-				man.addAxiom(o, axioma);
+				String name = stix_element.get("name").toString();
+				
+	    		OWLIndividual stix_instance = dataFactory.getOWLNamedIndividual(IRI.create(base +"#"+name));
+				OWLClassAssertionAxiom axioma0 = dataFactory.getOWLClassAssertionAxiom(dictionary, stix_instance);
+				man.addAxiom(o, axioma0);
+				System.out.println(axioma0);
+				System.out.println("The STIX instance was created");
 			}
 			else if(stixType.equals("Identity")){
-				OWLClassAssertionAxiom axioma = dataFactory.getOWLClassAssertionAxiom(identity, stix_instance);
-				man.addAxiom(o, axioma);
+				String name = stix_element.get("name").toString();
+				
+	    		OWLIndividual stix_instance = dataFactory.getOWLNamedIndividual(IRI.create(base +"#"+name));
+				OWLClassAssertionAxiom axioma0 = dataFactory.getOWLClassAssertionAxiom(identity, stix_instance);
+				man.addAxiom(o, axioma0);
+				System.out.println(axioma0);
+				System.out.println("The STIX instance was created");
 			}
 			else if(stixType.equals("Incident")){
-				OWLClassAssertionAxiom axioma = dataFactory.getOWLClassAssertionAxiom(incident, stix_instance);
-				man.addAxiom(o, axioma);
+				String name = stix_element.get("name").toString();
+				
+	    		OWLIndividual stix_instance = dataFactory.getOWLNamedIndividual(IRI.create(base +"#"+name));
+				OWLClassAssertionAxiom axioma0 = dataFactory.getOWLClassAssertionAxiom(incident, stix_instance);
+				man.addAxiom(o, axioma0);
+				System.out.println(axioma0);
+				System.out.println("The STIX instance was created");
 			}
 			else if(stixType.equals("Indicator")){
-				OWLClassAssertionAxiom axioma = dataFactory.getOWLClassAssertionAxiom(indicator, stix_instance);
-				man.addAxiom(o, axioma);
+				String name = stix_element.get("name").toString();
+				
+	    		OWLIndividual stix_instance = dataFactory.getOWLNamedIndividual(IRI.create(base +"#"+name));
+				OWLClassAssertionAxiom axioma0 = dataFactory.getOWLClassAssertionAxiom(indicator, stix_instance);
+				man.addAxiom(o, axioma0);
+				System.out.println(axioma0);
+				System.out.println("The STIX instance was created");
 			}
 			else if(stixType.equals("Infraestructure")){
-				OWLClassAssertionAxiom axioma = dataFactory.getOWLClassAssertionAxiom(infraestructure, stix_instance);
-				man.addAxiom(o, axioma);
+				String name = stix_element.get("name").toString();
+				
+	    		OWLIndividual stix_instance = dataFactory.getOWLNamedIndividual(IRI.create(base +"#"+name));
+				OWLClassAssertionAxiom axioma0 = dataFactory.getOWLClassAssertionAxiom(infraestructure, stix_instance);
+				man.addAxiom(o, axioma0);
+				System.out.println(axioma0);
+				System.out.println("The STIX instance was created");
 			}
 			else if(stixType.equals("Intrusion_Set")){
-				OWLClassAssertionAxiom axioma = dataFactory.getOWLClassAssertionAxiom(intrusion_set, stix_instance);
-				man.addAxiom(o, axioma);
+				String name = stix_element.get("name").toString();
+				
+	    		OWLIndividual stix_instance = dataFactory.getOWLNamedIndividual(IRI.create(base +"#"+name));
+				OWLClassAssertionAxiom axioma0 = dataFactory.getOWLClassAssertionAxiom(intrusion_set, stix_instance);
+				man.addAxiom(o, axioma0);
+				System.out.println(axioma0);
+				System.out.println("The STIX instance was created");
 			}
 			else if(stixType.equals("Kill_Chain_Phase")){
-				OWLClassAssertionAxiom axioma = dataFactory.getOWLClassAssertionAxiom(kill_chain_phase, stix_instance);
-				man.addAxiom(o, axioma);
+				String name = stix_element.get("name").toString();
+				
+	    		OWLIndividual stix_instance = dataFactory.getOWLNamedIndividual(IRI.create(base +"#"+name));
+				OWLClassAssertionAxiom axioma0 = dataFactory.getOWLClassAssertionAxiom(kill_chain_phase, stix_instance);
+				man.addAxiom(o, axioma0);
+				System.out.println(axioma0);
+				System.out.println("The STIX instance was created");
 			}
 			else if(stixType.equals("Malware")){
-				OWLClassAssertionAxiom axioma = dataFactory.getOWLClassAssertionAxiom(malware, stix_instance);
-				man.addAxiom(o, axioma);
+				String name = stix_element.get("name").toString();
+				
+	    		OWLIndividual stix_instance = dataFactory.getOWLNamedIndividual(IRI.create(base +"#"+name));
+				OWLClassAssertionAxiom axioma0 = dataFactory.getOWLClassAssertionAxiom(malware, stix_instance);
+				man.addAxiom(o, axioma0);
+				System.out.println(axioma0);
+				System.out.println("The STIX instance was created");
 			}
 			else if(stixType.equals("Malware_Analysis")){
-				OWLClassAssertionAxiom axioma = dataFactory.getOWLClassAssertionAxiom(malware_analysis, stix_instance);
-				man.addAxiom(o, axioma);
+				String name = stix_element.get("name").toString();
+				
+	    		OWLIndividual stix_instance = dataFactory.getOWLNamedIndividual(IRI.create(base +"#"+name));
+				OWLClassAssertionAxiom axioma0 = dataFactory.getOWLClassAssertionAxiom(malware_analysis, stix_instance);
+				man.addAxiom(o, axioma0);
+				System.out.println(axioma0);
+				System.out.println("The STIX instance was created");
 			}
 			else if(stixType.equals("Marking_Definition")){
-				OWLClassAssertionAxiom axioma = dataFactory.getOWLClassAssertionAxiom(marking_definition, stix_instance);
-				man.addAxiom(o, axioma);
+				String name = stix_element.get("name").toString();
+				
+	    		OWLIndividual stix_instance = dataFactory.getOWLNamedIndividual(IRI.create(base +"#"+name));
+				OWLClassAssertionAxiom axioma0 = dataFactory.getOWLClassAssertionAxiom(marking_definition, stix_instance);
+				man.addAxiom(o, axioma0);
+				System.out.println(axioma0);
+				System.out.println("The STIX instance was created");
 			}
 			else if(stixType.equals("Observed_Data")){
-				OWLClassAssertionAxiom axioma = dataFactory.getOWLClassAssertionAxiom(observed_data, stix_instance);
-				man.addAxiom(o, axioma);
+				String name = stix_element.get("name").toString();
+				
+	    		OWLIndividual stix_instance = dataFactory.getOWLNamedIndividual(IRI.create(base +"#"+name));
+				OWLClassAssertionAxiom axioma0 = dataFactory.getOWLClassAssertionAxiom(observed_data, stix_instance);
+				man.addAxiom(o, axioma0);
+				System.out.println(axioma0);
+				System.out.println("The STIX instance was created");
 			}
 			else if(stixType.equals("Report")){
-				OWLClassAssertionAxiom axioma = dataFactory.getOWLClassAssertionAxiom(report, stix_instance);
-				man.addAxiom(o, axioma);
+				String name = stix_element.get("name").toString();
+				
+	    		OWLIndividual stix_instance = dataFactory.getOWLNamedIndividual(IRI.create(base +"#"+name));
+				OWLClassAssertionAxiom axioma0 = dataFactory.getOWLClassAssertionAxiom(report, stix_instance);
+				man.addAxiom(o, axioma0);
+				System.out.println(axioma0);
+				System.out.println("The STIX instance was created");
 			}
 			else if(stixType.equals("Sighting")){
-				OWLClassAssertionAxiom axioma = dataFactory.getOWLClassAssertionAxiom(sighting, stix_instance);
-				man.addAxiom(o, axioma);
+				String name = stix_element.get("name").toString();
+				
+	    		OWLIndividual stix_instance = dataFactory.getOWLNamedIndividual(IRI.create(base +"#"+name));
+				OWLClassAssertionAxiom axioma0 = dataFactory.getOWLClassAssertionAxiom(sighting, stix_instance);
+				man.addAxiom(o, axioma0);
+				System.out.println(axioma0);
+				System.out.println("The STIX instance was created");
 			}
-			else if(stixType.equals("Threat_Actor")){
-				OWLClassAssertionAxiom axioma = dataFactory.getOWLClassAssertionAxiom(threat_actor, stix_instance);
-				man.addAxiom(o, axioma);
+			else if(stixType.equals("threat-actor")){
+				String name = stix_element.get("name").toString();
+				
+	    		OWLIndividual stix_instance = dataFactory.getOWLNamedIndividual(IRI.create(base +"#"+name));
+				OWLClassAssertionAxiom axioma0 = dataFactory.getOWLClassAssertionAxiom(threat_actor, stix_instance);
+				man.addAxiom(o, axioma0);
+				System.out.println(axioma0);
+				
+				//DATA
+				
+				String field = null;
+				field= stix_element.get("id").toString();
+				if(field !=null) {
+					OWLDataProperty dproperty = dataFactory.getOWLDataProperty(":id", pmO);	
+	    			createDataProperty(o, man, dataFactory, base, stix_instance, dproperty, field);
+				}
+				
+				field= stix_element.get("created_by_ref").toString();
+				if(field !=null) {
+					OWLIndividual identityI = dataFactory.getOWLNamedIndividual(IRI.create(base +"#"+field));
+					OWLClassAssertionAxiom axiomaIdentity = dataFactory.getOWLClassAssertionAxiom(identity, identityI);
+					OWLDataProperty dproperty = dataFactory.getOWLDataProperty(":name", pmO);	
+	    			createDataProperty(o, man, dataFactory, base, identityI, dproperty, field);
+					man.addAxiom(o, axiomaIdentity);
+					createObjectProperty(o, man, dataFactory, base, stix_instance, identityI, "created_by_ref");
+				
+	    			
+				}
+				
+				field= stix_element.get("created").toString();
+				if(field !=null) {
+					OWLDataProperty dproperty = dataFactory.getOWLDataProperty(":created", pmO);	
+	    			createDataProperty(o, man, dataFactory, base, stix_instance, dproperty, field);
+				}
+				
+				/*field= stix_element.get("threat_actor_types").toString();
+				if(field !=null) {
+					
+					OWLDataProperty dproperty = dataFactory.getOWLDataProperty(":threat_actor_types", pmO);	
+	    			createDataProperty(o, man, dataFactory, base, stix_instance, dproperty, field);
+				}*/
+				
+				field= stix_element.get("name").toString();
+				if(field !=null) {
+					OWLDataProperty dproperty = dataFactory.getOWLDataProperty(":name", pmO);	
+	    			createDataProperty(o, man, dataFactory, base, stix_instance, dproperty, field);
+				}
+				
+				field= stix_element.get("description").toString();
+				if(field !=null) {
+					OWLDataProperty dproperty = dataFactory.getOWLDataProperty(":description", pmO);	
+	    			createDataProperty(o, man, dataFactory, base, stix_instance, dproperty, field);
+				}
+				
+				
+				
+				
+				System.out.println("The STIX instance was created");
 			}
 			else if(stixType.equals("Tool")){
-				OWLClassAssertionAxiom axioma = dataFactory.getOWLClassAssertionAxiom(tool, stix_instance);
-				man.addAxiom(o, axioma);
+				String name = stix_element.get("name").toString();
+				
+	    		OWLIndividual stix_instance = dataFactory.getOWLNamedIndividual(IRI.create(base +"#"+name));
+				OWLClassAssertionAxiom axioma0 = dataFactory.getOWLClassAssertionAxiom(tool, stix_instance);
+				man.addAxiom(o, axioma0);
+				System.out.println(axioma0);
+				System.out.println("The STIX instance was created");
 			}
 			else if(stixType.equals("Vulnerability")){
-				OWLClassAssertionAxiom axioma = dataFactory.getOWLClassAssertionAxiom(vulnerability, stix_instance);
-				man.addAxiom(o, axioma);
+				String name = stix_element.get("name").toString();
+				
+	    		OWLIndividual stix_instance = dataFactory.getOWLNamedIndividual(IRI.create(base +"#"+name));
+				OWLClassAssertionAxiom axioma0 = dataFactory.getOWLClassAssertionAxiom(vulnerability, stix_instance);
+				man.addAxiom(o, axioma0);
+				System.out.println(axioma0);
+				System.out.println("The STIX instance was created");
 			}
 			else if(stixType.equals("Grouping")){
-				OWLClassAssertionAxiom axioma = dataFactory.getOWLClassAssertionAxiom(grouping, stix_instance);
-				man.addAxiom(o, axioma);
+				String name = stix_element.get("name").toString();
+				
+	    		OWLIndividual stix_instance = dataFactory.getOWLNamedIndividual(IRI.create(base +"#"+name));
+				OWLClassAssertionAxiom axioma0 = dataFactory.getOWLClassAssertionAxiom(grouping, stix_instance);
+				man.addAxiom(o, axioma0);
+				System.out.println(axioma0);
+				System.out.println("The STIX instance was created");
 			}
 			else if(stixType.equals("Location")){
-				OWLClassAssertionAxiom axioma = dataFactory.getOWLClassAssertionAxiom(location, stix_instance);
-				man.addAxiom(o, axioma);
+				String name = stix_element.get("name").toString();
+				
+	    		OWLIndividual stix_instance = dataFactory.getOWLNamedIndividual(IRI.create(base +"#"+name));
+				OWLClassAssertionAxiom axioma0 = dataFactory.getOWLClassAssertionAxiom(location, stix_instance);
+				man.addAxiom(o, axioma0);
+				System.out.println(axioma0);
+				System.out.println("The STIX instance was created");
 			}
 			else if(stixType.equals("Note")){
-				OWLClassAssertionAxiom axioma = dataFactory.getOWLClassAssertionAxiom(note, stix_instance);
-				man.addAxiom(o, axioma);
+				String name = stix_element.get("name").toString();
+				
+	    		OWLIndividual stix_instance = dataFactory.getOWLNamedIndividual(IRI.create(base +"#"+name));
+				OWLClassAssertionAxiom axioma0 = dataFactory.getOWLClassAssertionAxiom(note, stix_instance);
+				man.addAxiom(o, axioma0);
+				System.out.println(axioma0);
+				System.out.println("The STIX instance was created");
 			}
 			else if(stixType.equals("Opinion")){
-				OWLClassAssertionAxiom axioma = dataFactory.getOWLClassAssertionAxiom(opinion, stix_instance);
-				man.addAxiom(o, axioma);
+				String name = stix_element.get("name").toString();
+				
+	    		OWLIndividual stix_instance = dataFactory.getOWLNamedIndividual(IRI.create(base +"#"+name));
+				OWLClassAssertionAxiom axioma0 = dataFactory.getOWLClassAssertionAxiom(opinion, stix_instance);
+				man.addAxiom(o, axioma0);
+				System.out.println(axioma0);
+				System.out.println("The STIX instance was created");
 			}
 			else if(stixType.equals("Relationship")){
-				OWLClassAssertionAxiom axioma = dataFactory.getOWLClassAssertionAxiom(relationship, stix_instance);
-				man.addAxiom(o, axioma);
+				String name = stix_element.get("name").toString();
+				
+	    		OWLIndividual stix_instance = dataFactory.getOWLNamedIndividual(IRI.create(base +"#"+name));
+				OWLClassAssertionAxiom axioma0 = dataFactory.getOWLClassAssertionAxiom(relationship, stix_instance);
+				man.addAxiom(o, axioma0);
+				System.out.println(axioma0);
+				System.out.println("The STIX instance was created");
+
 			}
 			else {
 				System.out.println("The STIX type selected does not exist");
 			}
 			
-	    	System.out.println("The individual "+stix_instance+ " was created");	
 		}
+		
+public void createDataProperty(OWLOntology o, OWLOntologyManager man, OWLDataFactory dataFactory, String base, OWLIndividual object, OWLDataProperty dproperty, String value) {
+			
+			// Convenience methods of OWLDataFactory for common data types:
+			OWLDatatype integerDatatype = dataFactory.getIntegerOWLDatatype();
+			OWLDatatype floatDatatype = dataFactory.getFloatOWLDatatype();
+			OWLDatatype doubleDatatype = dataFactory.getDoubleOWLDatatype();
+			
+			
+			
+			if (dproperty!=null &&  object!=null && value!=null) {
+				Set<OWLDataPropertyAssertionAxiom> properties = o.getDataPropertyAssertionAxioms(object);
+				for (OWLDataPropertyAssertionAxiom ax : properties) {
+					if (ax.getProperty().equals(dproperty) && ax.getSubject().equals(object)) {
+						man.removeAxiom(o, ax);
+					}	
+				}
+				
+				//Si es un double/integer/float
+				if(StringUtils.isNumeric(value) || StringUtils.contains(value, ".") || StringUtils.startsWith(value, "-")) {
+					Set<OWLDataPropertyRangeAxiom> c = o.getAxioms(AxiomType.DATA_PROPERTY_RANGE);
+					for(OWLDataPropertyRangeAxiom d : c) {
+							if(d.getProperty().equals(dproperty)) {
+								OWLDataRange r = d.getRange();
+								if(r.equals(floatDatatype)) {
+									float valuef = Float.parseFloat(value);
+									System.out.println("FLOAT VALUE "+valuef);
+									OWLDataPropertyAssertionAxiom dAxiom = dataFactory.getOWLDataPropertyAssertionAxiom(dproperty, object, valuef);
+									man.addAxiom(o, dAxiom);
+									return;
+								}
+								if(r.equals(integerDatatype)){
+									int valuei = Integer.parseInt(value);
+									OWLDataPropertyAssertionAxiom dAxiom = dataFactory.getOWLDataPropertyAssertionAxiom(dproperty, object, valuei);
+									man.addAxiom(o, dAxiom);return;
+									
+								}
+								if(r.equals(doubleDatatype)){
+									double valued = Double.parseDouble(value);
+									System.out.println("DOUBLE VALUE "+valued);
+									OWLDataPropertyAssertionAxiom dAxiom = dataFactory.getOWLDataPropertyAssertionAxiom(dproperty, object, valued);
+									man.addAxiom(o, dAxiom);return;
+								}
+								
+									
+							}
+							
+						}
+					
+					}
+				
+				//Si es una fecha
+				if (StringUtils.endsWith(value, "000Z")) {	
+					DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.ENGLISH);
+					LocalDate date = LocalDate.parse(value, formatter);
+					if(date!=null) {
+						System.out.println("DATE TIME VALUE "+value);
+						OWLLiteral dateTimeStamp =  dataFactory.getOWLLiteral(value,OWL2Datatype.XSD_DATE_TIME_STAMP);
+						OWLDataPropertyAssertionAxiom dAxiom = dataFactory.getOWLDataPropertyAssertionAxiom(dproperty, object, dateTimeStamp);
+						man.addAxiom(o, dAxiom);return;
+					}	
+				}
+				
+				//si es string
+				OWLDataPropertyAssertionAxiom dAxiom = dataFactory.getOWLDataPropertyAssertionAxiom(dproperty, object, value);
+				man.addAxiom(o, dAxiom);
+			}else {
+				System.out.println("Not properly data to create Data Property for stix instance");
+			}
+			
+			
+		}	
+
+public void createDataPropertyArray(OWLOntology o, OWLOntologyManager man, OWLDataFactory dataFactory, String base, OWLIndividual object, OWLDataProperty dproperty, String[] value) {
+	PrefixManager pmO = new DefaultPrefixManager(baseO + "#");
+	// Convenience methods of OWLDataFactory for common data types:
+	OWLDatatype integerDatatype = dataFactory.getIntegerOWLDatatype();
+	OWLDatatype floatDatatype = dataFactory.getFloatOWLDatatype();
+	OWLDatatype doubleDatatype = dataFactory.getDoubleOWLDatatype();
+	
+
+	
+	OWLDatatype open_vocab = dataFactory.getOWLDatatype(":stix:open-vocab", pmO);
+	//OWLDatatypeDefinitionAxiom datatypeDef = dataFactory.getOWLDatatypeDefinitionAxiom(concessionaryAgeDatatype, concessionaryAge);
+	
+	if (dproperty!=null &&  object!=null && value!=null) {
+		Set<OWLDataPropertyAssertionAxiom> properties = o.getDataPropertyAssertionAxioms(object);
+		for (OWLDataPropertyAssertionAxiom ax : properties) {
+			if (ax.getProperty().equals(dproperty) && ax.getSubject().equals(object)) {
+				man.removeAxiom(o, ax);
+			}	
+		}
+		
+		
+		
+		
+	}else {
+		System.out.println("Not properly data to create Data Property for stix instance");
+	}
+	
+	
+}	
+		
+
+		//Crear Object Properties DRM
+	public void createObjectProperty(OWLOntology o, OWLOntologyManager man, OWLDataFactory dataFactory, String base, OWLIndividual object1, OWLIndividual object2, String property) throws OWLOntologyStorageException {
+		PrefixManager pm = new DefaultPrefixManager(base + "#");
+		
+		OWLObjectProperty oproperty = dataFactory.getOWLObjectProperty(":"+property, pm);	
+		if (oproperty!=null &&  object1!=null && object2!=null) {
+			OWLObjectPropertyAssertionAxiom oAxiom = dataFactory.getOWLObjectPropertyAssertionAxiom(oproperty, object1, object2);
+			man.addAxiom(o, oAxiom);
+	
+		}else {
+			System.out.println("Not properly data to create Object Property for stix instance");
+		}
+				
+	
+	}
+
 }

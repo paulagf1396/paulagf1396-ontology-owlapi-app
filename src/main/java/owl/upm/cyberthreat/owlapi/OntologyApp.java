@@ -109,6 +109,7 @@ public class OntologyApp {
 	public static  Map<String, Float> dataset;
 	private static Chart chart;	
 	private static String pathAnomaliesFile = "./owl-files/ficheroJSONSensores.json";
+	private static String pathSTIXFile = "./owl-files/ficheroJSONSTIX.json";
 
 	 
 	public OntologyApp() {
@@ -125,7 +126,7 @@ public class OntologyApp {
 	
 	/*************************************************************/
     /**                                                         **/
-    /**              Load New Anomalies                         **/
+    /**              Load New Instances                         **/
     /**                                                         **/
     /*************************************************************/
 	 
@@ -172,13 +173,49 @@ public class OntologyApp {
 		
 	}
 
+public int loadSTIXInstances (OWLOntology o, OWLOntologyManager man, File filename, String base, OWLDataFactory dataFactory) throws IOException, ParseException, OWLOntologyStorageException {
+		
+		int numInstances = 0;
+		//if the file is empty, returns 0	
+		if(filename.toString().isEmpty()) {
+			return 0;
+		}
+		
+		filename  = copyFile(filename);
+
+		JSONParser jsonParser = new JSONParser();
+		System.out.println("loading JSON file...\n");
+		FileReader reader = new FileReader(filename);
+
+		//loadinf JSONObject...
+		Object obj = jsonParser.parse(reader);
+		//Loading JSONArray
+		JSONArray dataList = (JSONArray) obj;
+		System.out.println("JSONObject List obtained from file:\n");
+        System.out.println(dataList);
+        
+        //The instances are loaded to the corresponding class
+        for(int i = 0; i< dataList.size(); i++) {
+        	JSONObject jObject = (JSONObject) dataList.get(i); 
+    		stix.createSTIXInstances(man,o, dataFactory, jObject);
+    		numInstances++;
+        
+        	
+        }
+        reader.close();
+        man.saveOntology(o);
+        deleteFile(filename);
+        return numInstances;
+		
+	}
+
 	/*************************************************************/
     /**                                                         **/
     /**        Methods to manipulate the ontology               **/
     /**                                                         **/
     /*************************************************************/
 	//Crear individuals
-	public void createIndividuals(OWLOntology o, OWLOntologyManager man, OWLDataFactory dataFactory, String base, String cls, String individualName, int isType) throws OWLOntologyStorageException {
+	/*public void createIndividuals(OWLOntology o, OWLOntologyManager man, OWLDataFactory dataFactory, String base, String cls, String individualName, int isType) throws OWLOntologyStorageException {
 		
 		//Anomaly=2, DRM = 1 , STIX = 0
 		
@@ -195,7 +232,7 @@ public class OntologyApp {
 			System.out.println("The ontology type selected does not exist");
 		}
 		man.saveOntology(o);
-	}
+	}*/
 	
 	//Crear Data Properties
 	public void createDataProperty(OWLOntology o, OWLOntologyManager man, OWLDataFactory dataFactory, String base, String object, String property, String value) {
@@ -237,7 +274,7 @@ public class OntologyApp {
 		
 		//System.out.println("Executing rules...");
 		//reasoner.getKB().realize();
-		reasoner.precomputeInferences();
+		//reasoner.precomputeInferences();
 		//System.out.println("**********************Class tree**********************");
 		//reasoner.getKB().printClassTree();
 		//System.out.println("******************************************************");
@@ -415,7 +452,7 @@ public class OntologyApp {
 		
 	}
 	
-	 public boolean updateSuspiciousValue(OWLDataFactory dataFactory, OWLOntology o, OWLOntologyManager man, OWLReasoner reasoner, String base) {
+	 public boolean updateSuspiciousValue(OWLDataFactory dataFactory, OWLOntology o, OWLOntologyManager man, OWLReasoner reasoner, String base) throws OWLOntologyStorageException {
 		 	PrefixManager pm = new DefaultPrefixManager(base + "#");
 		 	
 		 	boolean done = false;
@@ -457,6 +494,7 @@ public class OntologyApp {
 					 
 				 }
 			 }
+			 man.saveOntology(o);
 			 return done;
 		 }
 	 
@@ -506,7 +544,7 @@ public class OntologyApp {
 		
 		
 		//File to load information
-		System.out.println("Loading data into the ontology...\n");
+		System.out.println("Loading data from BBDD into the ontology...\n");
 		boolean updated = false;
 		File ficheroJSONSensores = new File(pathAnomaliesFile);
 		updated = onto_object.isEmptyAnomaliesFile(ficheroJSONSensores);
@@ -518,6 +556,24 @@ public class OntologyApp {
 		}else {
 			System.out.println("There are no new anomalies");
 		}
+		
+		
+		//Load STIX elements
+		//File to load information
+		System.out.println("Loading STIX data into the ontology...\n");
+		boolean updatedSTIX = false;
+		File ficheroJSONSTIX = new File(pathSTIXFile);
+		updatedSTIX = onto_object.isEmptyAnomaliesFile(ficheroJSONSTIX);
+		if(updatedSTIX) {
+			//se crcea nueva ontologia copiando las anomalias y sustituye la o actual por otra
+			int loadedSTIXInstances=0;
+			loadedSTIXInstances = onto_object.loadSTIXInstances(o, man, ficheroJSONSTIX, base, dataFactory);
+			System.out.println("There have been loaded "+loadedSTIXInstances+ " instances of STIX\n");
+			updatedSTIX = false;
+		}else {
+			System.out.println("There are no new stix elements");
+		}
+		
 		
 		//Razona sobre la nueva ontologia, ejecuto reglas 1 vez
 		
