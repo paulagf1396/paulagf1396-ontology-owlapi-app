@@ -108,8 +108,10 @@ public class OntologyApp {
 	private static STIX stix;
 	public static  Map<String, Float> dataset;
 	private static Chart chart;	
-	private static String pathAnomaliesFile = "./owl-files/ficheroJSONSensores.json";
-	private static String pathSTIXFile = "./owl-files/ficheroJSONSTIX.json";
+	private static String pathAnomaliesFile = Configuration.getPath().get("ficheroJSONSensores");
+	private static String pathSTIXFile = Configuration.getPath().get("ficheroJSONSTIX");
+	
+	
 
 	 
 	public OntologyApp() {
@@ -321,7 +323,7 @@ public int loadSTIXInstances (OWLOntology o, OWLOntologyManager man, File filena
 	 
 		 // Run the SWRL rules in the ontology
 		// swrlRuleEngine.infer();
-		float umbral = 5;
+		float umbral = Configuration.umbral;
 		//Threat Inventory
 		swrlRuleEngine.createSWRLRule("Anomalies#1 Suspicious Value Umbral Wifi","cyberthreat_ONA:WiFi_Sensor_Anomaly(?w) ^ cibersituational-ontology:suspicious_value(?w, ?s) ^ swrlb:greaterThanOrEqual(?s, "+umbral+") ^ swrlx:makeOWLThing(?x, ?w) -> cibersituational-ontology:probability(?x, \"2.0\"^^xsd:float) ^ cyberthreat_DRM:DeliberatedUnauthorizedAccess(?x) ^ cibersituational-ontology:type(?x, \"Threat Deliberated Unauthorized Access\") ^ cibersituational-ontology:impact(?x, \"4.0\"^^xsd:float) ^ cyberthreat_STIXDRM:isGeneratedBy(?x, ?w)");
 		swrlRuleEngine.createSWRLRule("Anomalies#2 Suspicious Value Umbral Bluetooth","cyberthreat_ONA:Bluetooth_Sensor_Anomaly(?b) ^ cibersituational-ontology:suspicious_value(?b, ?s) ^ swrlb:greaterThanOrEqual(?s, "+umbral+") ^ swrlx:makeOWLThing(?x, ?b) -> cibersituational-ontology:probability(?x, \"2.0\"^^xsd:float) ^ cyberthreat_DRM:DeliberatedUnauthorizedAccess(?x) ^ cibersituational-ontology:type(?x, \"Threat Deliberated Unauthorized Access\") ^ cibersituational-ontology:impact(?x, \"4.0\"^^xsd:float) ^ cyberthreat_STIXDRM:isGeneratedBy(?x, ?b)");
@@ -523,6 +525,7 @@ public int loadSTIXInstances (OWLOntology o, OWLOntologyManager man, File filena
 		anomaly = new Anomaly(dataFactory, man, base);
 		drm = new DRM(dataFactory, man, base);
 		stix = new STIX(dataFactory, man, base);
+		Configuration.runConfiguration();
 		
 
 		// CARGAR ACTIVOS
