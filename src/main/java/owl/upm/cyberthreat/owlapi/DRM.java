@@ -32,6 +32,9 @@ public class DRM {
 			public static OWLClass risk_owner;
 			public static OWLClass risk_probability;
 			String baseO;
+			
+			
+			
 
 			
 			

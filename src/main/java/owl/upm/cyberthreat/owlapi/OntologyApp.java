@@ -14,13 +14,17 @@ import java.io.RandomAccessFile;
 import java.io.Reader;
 import java.nio.channels.FileChannel;
 import java.nio.file.Files;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -41,6 +45,7 @@ import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.formats.FunctionalSyntaxDocumentFormat;
 import org.semanticweb.owlapi.formats.PrefixDocumentFormat;
 import org.semanticweb.owlapi.io.SystemOutDocumentTarget;
+import org.semanticweb.owlapi.model.AxiomType;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLClass;
@@ -79,6 +84,7 @@ import org.semanticweb.owlapi.util.DefaultPrefixManager;
 import org.semanticweb.owlapi.util.InferredAxiomGenerator;
 import org.semanticweb.owlapi.util.InferredOntologyGenerator;
 import org.semanticweb.owlapi.util.InferredSubClassAxiomGenerator;
+import org.semanticweb.owlapi.util.OWLEntityRemover;
 import org.semanticweb.owlapi.util.PriorityCollection;
 import org.semanticweb.owlapi.util.Version;
 import org.swrlapi.core.SWRLAPIRule;
@@ -110,6 +116,8 @@ public class OntologyApp {
 	private static Chart chart;	
 	private static String pathAnomaliesFile = Configuration.getPath().get("ficheroJSONSensores");
 	private static String pathSTIXFile = Configuration.getPath().get("ficheroJSONSTIX");
+	
+	Map<String, Float> amenazasReales = new HashMap<String, Float>();
 	
 	
 
@@ -276,7 +284,7 @@ public int loadSTIXInstances (OWLOntology o, OWLOntologyManager man, File filena
 		
 		//System.out.println("Executing rules...");
 		//reasoner.getKB().realize();
-		//reasoner.precomputeInferences();
+		reasoner.precomputeInferences();
 		//System.out.println("**********************Class tree**********************");
 		//reasoner.getKB().printClassTree();
 		//System.out.println("******************************************************");
@@ -365,6 +373,33 @@ public int loadSTIXInstances (OWLOntology o, OWLOntologyManager man, File filena
     /*************************************************************/
 	
 
+	@SuppressWarnings("resource")
+	public static File copyFileOWL(File sourceFile, File destFile) throws IOException {
+		if (destFile.exists()) {
+			destFile.delete();
+		}
+		destFile.createNewFile();
+
+		FileChannel source = null;
+		FileChannel destination = null;
+		try {
+			source = new RandomAccessFile(sourceFile, "rw").getChannel();
+			destination = new RandomAccessFile(destFile, "rw").getChannel();
+
+			long position = 0;
+			long count = source.size();
+
+			source.transferTo(position, count, destination);
+		} finally {
+			if (source != null) {
+				source.close();
+			}
+			if (destination != null) {
+				destination.close();
+			}
+		}
+		return destFile;
+	}
 	
 	// Metodo para crear el archivo de copia de la ontologia
 	@SuppressWarnings("resource")
@@ -455,50 +490,206 @@ public int loadSTIXInstances (OWLOntology o, OWLOntologyManager man, File filena
 	}
 	
 	 public boolean updateSuspiciousValue(OWLDataFactory dataFactory, OWLOntology o, OWLOntologyManager man, OWLReasoner reasoner, String base) throws OWLOntologyStorageException {
-		 	PrefixManager pm = new DefaultPrefixManager(base + "#");
-		 	
-		 	boolean done = false;
-			Set<OWLNamedIndividual> instances = o.getIndividualsInSignature();
-			 for(OWLNamedIndividual i:instances) {
-				 System.out.println(i);
-				 NodeSet<OWLNamedIndividual> wset = reasoner.getInstances(Anomaly.getWifi_sensor_anomaly(), true) ;
-				 for(OWLNamedIndividual winstance : wset.getFlattened()) {
-					 OWLObjectProperty oproperty = dataFactory.getOWLObjectProperty(":related-to", pm);	
-					 String mac1 = anomaly.obtainObjectPropertyValue(winstance, oproperty, o, reasoner);
-					 String mac2 = anomaly.obtainObjectPropertyValue(i, oproperty, o, reasoner);
-					 if(mac1 != null && mac2 !=null && mac1.equals(mac2)) {
-						 anomaly.modifiedSuspiciousValue(i, dataFactory, o, man, 1);
-						 done=true;
-					 }
-					 
-				 }
-				 NodeSet<OWLNamedIndividual> btset = reasoner.getInstances(Anomaly.getBt_sensor_anomaly(), true) ;
-				 for(OWLNamedIndividual btinstance : btset.getFlattened()) {
-					 OWLObjectProperty oproperty = dataFactory.getOWLObjectProperty(":related-to", pm);	
-					 String mac1 = anomaly.obtainObjectPropertyValue(btinstance, oproperty, o, reasoner);
-					 String mac2 = anomaly.obtainObjectPropertyValue(i, oproperty, o, reasoner);
-					 if(mac1 != null && mac2 !=null && mac1.equals(mac2)) {
-						 anomaly.modifiedSuspiciousValue(i, dataFactory, o, man, 1);
-						 done = true;
-					 }
-					 
+	 	PrefixManager pm = new DefaultPrefixManager(base + "#");
+	 	
+	 	boolean done = false;
+		Set<OWLNamedIndividual> instances = o.getIndividualsInSignature();
+		 for(OWLNamedIndividual i:instances) {
+			 System.out.println("Instance i "+i);
+			 float n=0;
+			 NodeSet<OWLNamedIndividual> wset = reasoner.getInstances(Anomaly.getWifi_sensor_anomaly(), true) ;
+			 for(OWLNamedIndividual winstance : wset.getFlattened()) {
+				 System.out.println("Instance winstance "+winstance);
+				 OWLObjectProperty oproperty = dataFactory.getOWLObjectProperty(":related-to", pm);
+				 String mac1 = anomaly.obtainObjectPropertyValue(winstance, oproperty, o, reasoner);
+				 String mac2 = anomaly.obtainObjectPropertyValue(i, oproperty, o, reasoner);
+				 
+				 if(mac1 != null && mac2 !=null && mac1.equals(mac2) && i!=winstance) {
+					 n++;
+					 System.out.println(n);
+				 }				
+			 }
+			 if(n!=0) {
+				 anomaly.modifiedSuspiciousValue(i, dataFactory, o, man, n);
+				 done=true;
+				 n=0;
+			 }
+		 }
+		 
+		 for(OWLNamedIndividual i:instances) { 
+			 float k=0;
+			 NodeSet<OWLNamedIndividual> btset = reasoner.getInstances(Anomaly.getBt_sensor_anomaly(), true) ;
+			 for(OWLNamedIndividual btinstance : btset.getFlattened()) {
+				 
+				 OWLObjectProperty oproperty = dataFactory.getOWLObjectProperty(":related-to", pm);	
+				 String mac1 = anomaly.obtainObjectPropertyValue(btinstance, oproperty, o, reasoner);
+				 String mac2 = anomaly.obtainObjectPropertyValue(i, oproperty, o, reasoner);
+				 if(mac1 != null && mac2 !=null && mac1.equals(mac2) && i!=btinstance) {
+					 anomaly.modifiedSuspiciousValue(i, dataFactory, o, man, 1);
+					 done = true;
+					 k++;
 				 }
 				 
-				 NodeSet<OWLNamedIndividual> rfset = reasoner.getInstances(Anomaly.getRf_sensor_anomaly(), true) ;
-				 for(OWLNamedIndividual rfinstance : rfset.getFlattened()) {
-					 OWLDataProperty dproperty = dataFactory.getOWLDataProperty(":has_signal_frequency", pm);	
-					 String mac1 = anomaly.obtainDataPropertyValue(rfinstance, dproperty, o, reasoner);
-					 String mac2 = anomaly.obtainDataPropertyValue(i, dproperty, o, reasoner);
-					 if(mac1 != null && mac2 !=null && mac1.equals(mac2)) {
-						 anomaly.modifiedSuspiciousValue(i, dataFactory, o, man, 1);
-						 done = true;
-					 }
-					 
+			 }
+			 if(k!=0) {
+				 anomaly.modifiedSuspiciousValue(i, dataFactory, o, man, k);
+				 done=true;
+				 k=0;
+			 }
+		 	
+		 } 
+		 
+		 for(OWLNamedIndividual i:instances) {
+			 float j =0;
+			 NodeSet<OWLNamedIndividual> rfset = reasoner.getInstances(Anomaly.getRf_sensor_anomaly(), true) ;
+			 for(OWLNamedIndividual rfinstance : rfset.getFlattened()) {
+
+				 System.out.println("Anomalia RF2 "+rfinstance);
+				 OWLDataProperty dproperty = dataFactory.getOWLDataProperty(":has_signal_frequency", pm);	
+				 String mac1 = anomaly.obtainDataPropertyValue(rfinstance, dproperty, o, reasoner);
+				 String mac2 = anomaly.obtainDataPropertyValue(i, dproperty, o, reasoner);
+				 if(mac1 != null && mac2 !=null && mac1.equals(mac2) && i!= rfinstance) {
+					 anomaly.modifiedSuspiciousValue(i, dataFactory, o, man, 1);
+					 done = true;
+					 j++;
 				 }
 			 }
-			 man.saveOntology(o);
-			 return done;
+			 if(j!=0) {
+				 anomaly.modifiedSuspiciousValue(i, dataFactory, o, man, j);
+				 done=true;
+				 j=0;
+			 }
 		 }
+		
+		man.saveOntology(o);
+		return done;
+	 }
+	 
+	 public String obtainDataPropertyValue(OWLIndividual individual,OWLDataProperty dproperty, OWLOntology o, OWLReasoner reasoner) {
+	        //System.out.println("obtenerValorPropiedadData");
+	        //System.out.println(" individuoS: "+individuoS+", propiedadS: "+propiedadS);
+	        
+			
+	        String result = null;
+	   
+	        Set<OWLDataPropertyAssertionAxiom> properties = o.getDataPropertyAssertionAxioms(individual);
+				for (OWLDataPropertyAssertionAxiom ax : properties) {
+					if (ax.getProperty().equals(dproperty) && ax.getSubject().equals(individual)) {
+				             result = ax.getObject().getLiteral().toString();
+				         }
+				}
+	        return(result);
+	    }
+	 
+	 public String obtainObjectPropertyValue(OWLIndividual individual,OWLObjectProperty oproperty, OWLOntology o, OWLReasoner reasoner) {
+	        //System.out.println("obtenerValorPropiedadData");
+	        //System.out.println(" individuoS: "+individuoS+", propiedadS: "+propiedadS);
+	        
+			
+	        String result = null;
+	   
+	        Set<OWLObjectPropertyAssertionAxiom> properties = o.getObjectPropertyAssertionAxioms(individual);
+				for (OWLObjectPropertyAssertionAxiom ax : properties) {
+					if (ax.getProperty().equals(oproperty) && ax.getSubject().equals(individual)) {
+				             result = ax.getObject().toString();
+				         }
+				}
+	        return(result);
+	    }
+	 
+	 public boolean duplicatedThreats(OWLDataFactory dataFactory, OWLOntology o, OWLOntologyManager man, OWLReasoner reasoner, String base) throws OWLOntologyStorageException {
+		PrefixManager pm = new DefaultPrefixManager(base + "#");
+		PrefixManager pmDRM = new DefaultPrefixManager(drm.base + "#");
+		Map<String, OWLNamedIndividual> amenazasReales = new HashMap<String, OWLNamedIndividual>();
+		Set<OWLNamedIndividual> amenazasFalsas = new HashSet<OWLNamedIndividual>();
+		System.out.println("YOU ARE IN THREAT DUPLICATED");
+		
+		boolean result = false;
+		
+		OWLClass threatClass = dataFactory.getOWLClass(":Threat",pmDRM);
+		System.out.println(threatClass);
+		OWLDataProperty type = dataFactory.getOWLDataProperty(":type", pm);
+		OWLObjectProperty threatens = dataFactory.getOWLObjectProperty(":threatens", pmDRM);
+		OWLDataProperty start_time = dataFactory.getOWLDataProperty(":start_time", pm);
+		 
+		Set<OWLNamedIndividual> setInstances = o.getIndividualsInSignature();
+        for (OWLNamedIndividual i : setInstances) {
+        	Set<OWLClassAssertionAxiom> classes = o.getClassAssertionAxioms(i);
+        	for (OWLClassAssertionAxiom ax : classes) {
+				if (ax.getClassExpression().equals(threatClass)) {
+					System.out.println(i);
+					amenazasFalsas.add(i);
+					
+			     }
+			}
+          }
+        System.out.println(amenazasFalsas.size());
+        for(OWLNamedIndividual t: amenazasFalsas) {
+        	String typet = obtainDataPropertyValue(t, type, o, reasoner);
+        	System.out.println(typet);
+        	String amenazadot = obtainObjectPropertyValue(t, threatens, o, reasoner);
+        	System.out.println(amenazadot);
+        	float imt = Float.parseFloat(obtainDataPropertyValue(t, start_time, o, reasoner));
+        	for(OWLNamedIndividual tt: amenazasFalsas) {
+        		String typett = obtainDataPropertyValue(tt, type, o, reasoner);
+            	String amenazadott = obtainObjectPropertyValue(tt, threatens, o, reasoner);
+            	System.out.println(typett);
+            	System.out.println(amenazadott);
+            	float imtt = Float.parseFloat(obtainDataPropertyValue(tt, start_time, o, reasoner));
+            	if(typet!=null && typett!=null && amenazadot!= null && amenazadott!=null) {
+	            	if(typet.equals(typett) && amenazadot.equals(amenazadott) ) {
+	            		amenazasReales.put(typet, t);
+	            		System.out.println("Estas metiendo las amenazas guays en el map");
+	            		System.out.println(t);    		
+	            	}
+            	}
+        	}
+        }
+        System.out.println(amenazasReales.size());
+        OWLEntityRemover remover = new OWLEntityRemover(Collections.singleton(o));
+        for(OWLNamedIndividual t: amenazasFalsas) {
+        	for(Map.Entry<String, OWLNamedIndividual> entry : amenazasReales.entrySet()) {
+        		if(!t.equals(entry.getValue())) {
+        			t.accept(remover);
+        			result=true;
+        			
+        		}
+        		
+        	}
+        }
+        man.applyChanges(remover.getChanges());
+        man.saveOntology(o);
+        remover.reset();
+        return result;
+	 }
+	 
+	 public int numeroAmenazas(OWLDataFactory dataFactory, OWLOntology o, OWLOntologyManager man, OWLReasoner reasoner, String base) {
+			PrefixManager pm = new DefaultPrefixManager(base + "#");
+			PrefixManager pmDRM = new DefaultPrefixManager(drm.base + "#");
+			Map<String, OWLNamedIndividual> amenazasReales = new HashMap<String, OWLNamedIndividual>();
+			Set<OWLNamedIndividual> amenazasFalsas = new HashSet<OWLNamedIndividual>();
+			System.out.println("YOU ARE IN THREAT DUPLICATED");
+			
+			
+			
+			OWLClass threatClass = dataFactory.getOWLClass(":Threat",pmDRM);
+			System.out.println(threatClass);
+						 
+			Set<OWLNamedIndividual> setInstances = o.getIndividualsInSignature();
+	        for (OWLNamedIndividual i : setInstances) {
+	        	Set<OWLClassAssertionAxiom> classes = o.getClassAssertionAxioms(i);
+	        	for (OWLClassAssertionAxiom ax : classes) {
+					if (ax.getClassExpression().equals(threatClass)) {
+						System.out.println(i);
+						amenazasFalsas.add(i);
+						
+				     }
+				}
+	          }
+	        return amenazasFalsas.size();
+	 }
+	 
+	 
 	 
 	
 	public static void main(String[] args) throws OWLOntologyCreationException, IOException, ParseException, SWRLParseException, SWRLBuiltInException, OWLOntologyStorageException {
@@ -510,8 +701,10 @@ public int loadSTIXInstances (OWLOntology o, OWLOntologyManager man, File filena
 		//Ontology files are loaded, copy and original
 		System.out.println("");
 		System.out.println("Loading Ontology...");
-		File file = new File("./owl-files/cibersituational-ontov2.owl");
+		//File file = new File("./owl-files/cibersituational-ontov2.owl");
 		File fileTmp = new File("./owl-files/cibersituational-ontov2-tmp.owl");
+		//File fileTmp2 = new File("./owl-files/cibersituational-ontov2-tmp2.owl");
+		//File copytmp2 = copyFileOWL(fileTmp, fileTmp2);
 
 		
 		OWLOntologyManager man = OWLManager.createOWLOntologyManager();
@@ -546,39 +739,50 @@ public int loadSTIXInstances (OWLOntology o, OWLOntologyManager man, File filena
 		//String base2 = iri.toString();
 		
 		
-		//File to load information
-		System.out.println("Loading data from BBDD into the ontology...\n");
-		boolean updated = false;
-		File ficheroJSONSensores = new File(pathAnomaliesFile);
-		updated = onto_object.isEmptyAnomaliesFile(ficheroJSONSensores);
-		if(updated) {
-			//se crcea nueva ontologia copiando las anomalias y sustituye la o actual por otra
-			loadedAnomalyInstances = onto_object.loadAnomaliesFromBBDD(o, man, ficheroJSONSensores, base, dataFactory);
-			System.out.println("There have been loaded "+loadedAnomalyInstances+ " instances of new anomalies\n");
-			updated = false;
-		}else {
-			System.out.println("There are no new anomalies");
-		}
-		
-		
-		//Load STIX elements
-		//File to load information
-		System.out.println("Loading STIX data into the ontology...\n");
-		boolean updatedSTIX = false;
-		File ficheroJSONSTIX = new File(pathSTIXFile);
-		updatedSTIX = onto_object.isEmptyAnomaliesFile(ficheroJSONSTIX);
-		if(updatedSTIX) {
-			//se crcea nueva ontologia copiando las anomalias y sustituye la o actual por otra
-			int loadedSTIXInstances=0;
-			loadedSTIXInstances = onto_object.loadSTIXInstances(o, man, ficheroJSONSTIX, base, dataFactory);
-			System.out.println("There have been loaded "+loadedSTIXInstances+ " instances of STIX\n");
-			updatedSTIX = false;
-		}else {
-			System.out.println("There are no new stix elements");
-		}
-		
-		
+		while(true) {
+			
+			while(true) {
+				//File to load information
+				System.out.println("Loading data from BBDD into the ontology...\n");
+				boolean updated = false;
+				File ficheroJSONSensores = new File(pathAnomaliesFile);
+				updated = onto_object.isEmptyAnomaliesFile(ficheroJSONSensores);
+				if(updated) {
+					//se crcea nueva ontologia copiando las anomalias y sustituye la o actual por otra
+					loadedAnomalyInstances = onto_object.loadAnomaliesFromBBDD(o, man, ficheroJSONSensores, base, dataFactory);
+					System.out.println("There have been loaded "+loadedAnomalyInstances+ " instances of new anomalies\n");
+
+				}
+				
+				//Load STIX elements
+				//File to load information
+				System.out.println("Loading STIX data into the ontology...\n");
+				boolean updatedSTIX = false;
+				File ficheroJSONSTIX = new File(pathSTIXFile);
+				updatedSTIX = onto_object.isEmptyAnomaliesFile(ficheroJSONSTIX);
+				if(updatedSTIX) {
+					//se crea nueva ontologia copiando las anomalias y sustituye la o actual por otra
+					int loadedSTIXInstances=0;
+					loadedSTIXInstances = onto_object.loadSTIXInstances(o, man, ficheroJSONSTIX, base, dataFactory);
+					System.out.println("There have been loaded "+loadedSTIXInstances+ " instances of STIX\n");
+				}
+				
+				if(updated || updatedSTIX){
+					updated=false;
+					updatedSTIX =false;
+					break;
+				}
+				
+				try {
+					Thread.sleep(5000);
+				
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}			
+				
+			}
 		//Razona sobre la nueva ontologia, ejecuto reglas 1 vez
+		
 		
 		//Cargar razonador
 		System.out.println("Starting the reasoner...\n");
@@ -592,43 +796,74 @@ public int loadSTIXInstances (OWLOntology o, OWLOntologyManager man, File filena
 		onto_object.inferSWRLEngine(o, man, dataFactory, base);
 		System.out.println("Done.\n");
 		
-		//deberia calcularme el riesgo y sacar grafica
 
-		//Me guardo todo y 
-		while(true) {
-			
-
-			System.out.println("Checking if there are new anomalies...\n");
-			updated = onto_object.isEmptyAnomaliesFile(ficheroJSONSensores);	
-			if(updated) {
-				loadedAnomalyInstances = onto_object.loadAnomaliesFromBBDD(o, man, ficheroJSONSensores, base, dataFactory);
-				System.out.println("There have been loaded "+loadedAnomalyInstances+ " instances of new anomalies\n");
-				updated = false;
-				System.out.println("Updated SUSPICIOUS VALUE "+onto_object.updateSuspiciousValue(dataFactory, o, man, reasoner, base));
-				break;
-				//onto_object.loadNewRule(o, man, anomaly);
-			}
-				
-			try {
-				Thread.sleep(5000);
-			
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}			
+		if(loadedAnomalyInstances!=0) {
+			System.out.println("Updated SUSPICIOUS VALUE "+onto_object.updateSuspiciousValue(dataFactory, o, man, reasoner, base));
 		}
-		onto_object.loadReasoner(o, man, dataFactory, base, reasoner);
-		System.out.println("Infering from rules...\n");
-		onto_object.inferSWRLEngine(o, man, dataFactory, base);
-		System.out.println("Done.\n");
+		loadedAnomalyInstances=0;
+		
+		}
+		
+		/*
+		while(true) {
+		
+			//Me guardo todo y 
+			while(true) {
+				
+	
+				System.out.println("Checking if there are new anomalies...\n");
+				updated = onto_object.isEmptyAnomaliesFile(ficheroJSONSensores);	
+				if(updated) {
+					loadedAnomalyInstances = onto_object.loadAnomaliesFromBBDD(o, man, ficheroJSONSensores, base, dataFactory);
+					System.out.println("There have been loaded "+loadedAnomalyInstances+ " instances of new anomalies\n");					
+					
+				}
+				System.out.println("Checking if there are new STIX elements...\n");
+				updatedSTIX = onto_object.isEmptyAnomaliesFile(ficheroJSONSTIX);	
+				if(updatedSTIX) {
+					int loadedSTIXInstances=0;
+					loadedSTIXInstances = onto_object.loadSTIXInstances(o, man, ficheroJSONSTIX, base, dataFactory);
+					System.out.println("There have been loaded "+loadedSTIXInstances+ " instances of STIX\n");
+				}
+				
+				if(updated || updatedSTIX){
+					updated=false;
+					updatedSTIX =false;
+					break;
+				}
+				
+				try {
+					Thread.sleep(5000);
+				
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}			
+			}
+			onto_object.loadReasoner(o, man, dataFactory, base, reasoner);
+			System.out.println("Infering from rules...\n");
+			onto_object.inferSWRLEngine(o, man, dataFactory, base);
+			System.out.println("Done.\n");
+			if(loadedAnomalyInstances!=0) {
+				System.out.println("Updated SUSPICIOUS VALUE "+onto_object.updateSuspiciousValue(dataFactory, o, man, reasoner, base));
+			}
+			loadedAnomalyInstances=0;
 		
 		
-		Risk r = new Risk();
-		Map<String, Float> dataRRisk = new HashMap<String, Float>();
-		dataRRisk = r.residualRiskCalculation(o, man, dataFactory, base, reasoner, drm.base);
-		Map<String, Float> dataPRisk = new HashMap<String, Float>();
-		dataPRisk = r.potentialRiskCalculation(o, man, dataFactory, base, reasoner, drm.base);
-		chart = new Chart(dataRRisk,dataPRisk );
-		chart.barchartPaint("Residual Risk", "Potential Risk");
+		}*/
+		
+		//System.out.println(onto_object.duplicatedThreats(dataFactory, o, man, reasoner, base));
+		
+		//Risk r = new Risk();
+		//Map<String, Float> dataRRisk = new HashMap<String, Float>();
+		//dataRRisk = r.residualRiskCalculation(o, man, dataFactory, base, reasoner, drm.base);
+		//Map<String, Float> dataPRisk = new HashMap<String, Float>();
+		//dataPRisk = r.potentialRiskCalculation(o, man, dataFactory, base, reasoner, drm.base);
+		
+		//System.out.println("El riesgo residual discreto es: "+dataRRisk);
+		//System.out.println("El riesgo potential discreto es: "+dataPRisk);
+		
+		//chart = new Chart(dataRRisk2,dataPRisk2 );
+		//chart.barchartPaint("Residual Risk", "Potential Risk");
 		
 		
 		//Verificar si es necesario modificar el sv value porque haya anomalias referentes al mismo sitio

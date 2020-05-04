@@ -468,7 +468,7 @@ public class STIX {
 					
 			}
 			
-			else if(stixType.equals("Course_of_Action")) {
+			else if(stixType.equals("course-of-action")) {
 				String name = stix_element.get("name").toString();
 				
 	    		OWLIndividual stix_instance = dataFactory.getOWLNamedIndividual(IRI.create(base +"#"+name));
@@ -486,7 +486,7 @@ public class STIX {
 				System.out.println(axioma0);
 				System.out.println("The STIX instance was created");
 			}
-			else if(stixType.equals("Dictionary")){
+			else if(stixType.equals("dictionary")){
 				String name = stix_element.get("name").toString();
 				
 	    		OWLIndividual stix_instance = dataFactory.getOWLNamedIndividual(IRI.create(base +"#"+name));
@@ -495,7 +495,7 @@ public class STIX {
 				System.out.println(axioma0);
 				System.out.println("The STIX instance was created");
 			}
-			else if(stixType.equals("Identity")){
+			else if(stixType.equals("identity")){
 				String name = stix_element.get("name").toString();
 				
 	    		OWLIndividual stix_instance = dataFactory.getOWLNamedIndividual(IRI.create(base +"#"+name));
@@ -504,7 +504,7 @@ public class STIX {
 				System.out.println(axioma0);
 				System.out.println("The STIX instance was created");
 			}
-			else if(stixType.equals("Incident")){
+			else if(stixType.equals("incident")){
 				String name = stix_element.get("name").toString();
 				
 	    		OWLIndividual stix_instance = dataFactory.getOWLNamedIndividual(IRI.create(base +"#"+name));
@@ -513,7 +513,7 @@ public class STIX {
 				System.out.println(axioma0);
 				System.out.println("The STIX instance was created");
 			}
-			else if(stixType.equals("Indicator")){
+			else if(stixType.equals("indicator")){
 				String name = stix_element.get("name").toString();
 				
 	    		OWLIndividual stix_instance = dataFactory.getOWLNamedIndividual(IRI.create(base +"#"+name));
@@ -522,7 +522,7 @@ public class STIX {
 				System.out.println(axioma0);
 				System.out.println("The STIX instance was created");
 			}
-			else if(stixType.equals("Infraestructure")){
+			else if(stixType.equals("infraestructure")){
 				String name = stix_element.get("name").toString();
 				
 	    		OWLIndividual stix_instance = dataFactory.getOWLNamedIndividual(IRI.create(base +"#"+name));
@@ -531,7 +531,7 @@ public class STIX {
 				System.out.println(axioma0);
 				System.out.println("The STIX instance was created");
 			}
-			else if(stixType.equals("Intrusion_Set")){
+			else if(stixType.equals("intrusion-set")){
 				String name = stix_element.get("name").toString();
 				
 	    		OWLIndividual stix_instance = dataFactory.getOWLNamedIndividual(IRI.create(base +"#"+name));
@@ -540,7 +540,7 @@ public class STIX {
 				System.out.println(axioma0);
 				System.out.println("The STIX instance was created");
 			}
-			else if(stixType.equals("Kill_Chain_Phase")){
+			else if(stixType.equals("kill-chain-phase")){
 				String name = stix_element.get("name").toString();
 				
 	    		OWLIndividual stix_instance = dataFactory.getOWLNamedIndividual(IRI.create(base +"#"+name));
@@ -549,7 +549,7 @@ public class STIX {
 				System.out.println(axioma0);
 				System.out.println("The STIX instance was created");
 			}
-			else if(stixType.equals("Malware")){
+			else if(stixType.equals("malware")){
 				String name = stix_element.get("name").toString();
 				
 	    		OWLIndividual stix_instance = dataFactory.getOWLNamedIndividual(IRI.create(base +"#"+name));
@@ -558,7 +558,7 @@ public class STIX {
 				System.out.println(axioma0);
 				System.out.println("The STIX instance was created");
 			}
-			else if(stixType.equals("Malware_Analysis")){
+			else if(stixType.equals("malware-analysis")){
 				String name = stix_element.get("name").toString();
 				
 	    		OWLIndividual stix_instance = dataFactory.getOWLNamedIndividual(IRI.create(base +"#"+name));
@@ -567,7 +567,7 @@ public class STIX {
 				System.out.println(axioma0);
 				System.out.println("The STIX instance was created");
 			}
-			else if(stixType.equals("Marking_Definition")){
+			else if(stixType.equals("marking-definition")){
 				String name = stix_element.get("name").toString();
 				
 	    		OWLIndividual stix_instance = dataFactory.getOWLNamedIndividual(IRI.create(base +"#"+name));
@@ -576,7 +576,7 @@ public class STIX {
 				System.out.println(axioma0);
 				System.out.println("The STIX instance was created");
 			}
-			else if(stixType.equals("Observed_Data")){
+			else if(stixType.equals("observed-data")){
 				String name = stix_element.get("name").toString();
 				
 	    		OWLIndividual stix_instance = dataFactory.getOWLNamedIndividual(IRI.create(base +"#"+name));
@@ -585,7 +585,7 @@ public class STIX {
 				System.out.println(axioma0);
 				System.out.println("The STIX instance was created");
 			}
-			else if(stixType.equals("Report")){
+			else if(stixType.equals("report")){
 				String name = stix_element.get("name").toString();
 				
 	    		OWLIndividual stix_instance = dataFactory.getOWLNamedIndividual(IRI.create(base +"#"+name));
@@ -594,7 +594,7 @@ public class STIX {
 				System.out.println(axioma0);
 				System.out.println("The STIX instance was created");
 			}
-			else if(stixType.equals("Sighting")){
+			else if(stixType.equals("sighting")){
 				String name = stix_element.get("name").toString();
 				
 	    		OWLIndividual stix_instance = dataFactory.getOWLNamedIndividual(IRI.create(base +"#"+name));
@@ -662,7 +662,7 @@ public class STIX {
 				
 				System.out.println("The STIX instance was created");
 			}
-			else if(stixType.equals("Tool")){
+			else if(stixType.equals("tool")){
 				String name = stix_element.get("name").toString();
 				
 	    		OWLIndividual stix_instance = dataFactory.getOWLNamedIndividual(IRI.create(base +"#"+name));
@@ -671,7 +671,7 @@ public class STIX {
 				System.out.println(axioma0);
 				System.out.println("The STIX instance was created");
 			}
-			else if(stixType.equals("Vulnerability")){
+			else if(stixType.equals("vulnerability")){
 				String name = stix_element.get("name").toString();
 				
 	    		OWLIndividual stix_instance = dataFactory.getOWLNamedIndividual(IRI.create(base +"#"+name));
@@ -680,7 +680,7 @@ public class STIX {
 				System.out.println(axioma0);
 				System.out.println("The STIX instance was created");
 			}
-			else if(stixType.equals("Grouping")){
+			else if(stixType.equals("grouping")){
 				String name = stix_element.get("name").toString();
 				
 	    		OWLIndividual stix_instance = dataFactory.getOWLNamedIndividual(IRI.create(base +"#"+name));
@@ -689,7 +689,7 @@ public class STIX {
 				System.out.println(axioma0);
 				System.out.println("The STIX instance was created");
 			}
-			else if(stixType.equals("Location")){
+			else if(stixType.equals("location")){
 				String name = stix_element.get("name").toString();
 				
 	    		OWLIndividual stix_instance = dataFactory.getOWLNamedIndividual(IRI.create(base +"#"+name));
@@ -698,7 +698,7 @@ public class STIX {
 				System.out.println(axioma0);
 				System.out.println("The STIX instance was created");
 			}
-			else if(stixType.equals("Note")){
+			else if(stixType.equals("note")){
 				String name = stix_element.get("name").toString();
 				
 	    		OWLIndividual stix_instance = dataFactory.getOWLNamedIndividual(IRI.create(base +"#"+name));
@@ -707,7 +707,7 @@ public class STIX {
 				System.out.println(axioma0);
 				System.out.println("The STIX instance was created");
 			}
-			else if(stixType.equals("Opinion")){
+			else if(stixType.equals("opinion")){
 				String name = stix_element.get("name").toString();
 				
 	    		OWLIndividual stix_instance = dataFactory.getOWLNamedIndividual(IRI.create(base +"#"+name));
@@ -716,7 +716,7 @@ public class STIX {
 				System.out.println(axioma0);
 				System.out.println("The STIX instance was created");
 			}
-			else if(stixType.equals("Relationship")){
+			else if(stixType.equals("relationship")){
 				String name = stix_element.get("name").toString();
 				
 	    		OWLIndividual stix_instance = dataFactory.getOWLNamedIndividual(IRI.create(base +"#"+name));
@@ -805,7 +805,7 @@ public void createDataProperty(OWLOntology o, OWLOntologyManager man, OWLDataFac
 		}	
 
 public void createDataPropertyArray(OWLOntology o, OWLOntologyManager man, OWLDataFactory dataFactory, String base, OWLIndividual object, OWLDataProperty dproperty, String[] value) {
-	PrefixManager pmO = new DefaultPrefixManager(baseO + "#");
+	PrefixManager pm = new DefaultPrefixManager(this.base + "#");
 	// Convenience methods of OWLDataFactory for common data types:
 	OWLDatatype integerDatatype = dataFactory.getIntegerOWLDatatype();
 	OWLDatatype floatDatatype = dataFactory.getFloatOWLDatatype();
@@ -813,7 +813,7 @@ public void createDataPropertyArray(OWLOntology o, OWLOntologyManager man, OWLDa
 	
 
 	
-	OWLDatatype open_vocab = dataFactory.getOWLDatatype(":stix:open-vocab", pmO);
+	OWLDatatype open_vocab = dataFactory.getOWLDatatype(":stix:open-vocab", pm);
 	//OWLDatatypeDefinitionAxiom datatypeDef = dataFactory.getOWLDatatypeDefinitionAxiom(concessionaryAgeDatatype, concessionaryAge);
 	
 	if (dproperty!=null &&  object!=null && value!=null) {

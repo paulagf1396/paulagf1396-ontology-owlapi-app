@@ -1,9 +1,12 @@
 package owl.upm.cyberthreat.owlapi;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -41,6 +44,7 @@ import org.semanticweb.owlapi.reasoner.NodeSet;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.search.Searcher;
 import org.semanticweb.owlapi.util.DefaultPrefixManager;
+import org.semanticweb.owlapi.vocab.OWL2Datatype;
 
 import com.hp.hpl.jena.util.CharEncoding;
 import com.hp.hpl.jena.util.iterator.ExtendedIterator;
@@ -64,6 +68,7 @@ public class Anomaly {
 		Map<String, String> dataset = new HashMap<String, String>();
 		
 		STIX stix;
+		
 	
 		
 	public Anomaly (OWLDataFactory dataFactory, OWLOntologyManager man, String base) {
@@ -84,6 +89,8 @@ public class Anomaly {
 		effect = dataFactory.getOWLClass(":Effect",pm);
 		this.baseO=base;
 		stix = new STIX(dataFactory, man, this.baseO);
+		
+
 		
 	}
 	
@@ -176,12 +183,21 @@ public class Anomaly {
 		//TYPE
 		String type = anomaly.get("type").toString();
 		if(type.equals("WF") && !type.isEmpty()) {
+			
 			String id = anomaly.get("id").toString();
 			String name = "Anomalia"+id;
     		OWLIndividual anomaly_instance = dataFactory.getOWLNamedIndividual(IRI.create(base +"#"+name));
 			OWLClassAssertionAxiom axioma0 = dataFactory.getOWLClassAssertionAxiom(wifi_sensor_anomaly, anomaly_instance);
 			man.addAxiom(o, axioma0);
 			System.out.println(axioma0);
+			
+			String time  = anomaly.get("time").toString();
+    		if(time!=null) {
+    			OWLDataProperty dproperty = dataFactory.getOWLDataProperty(":start_time", pmO);	
+    			createDataPropertyDate(o, man, dataFactory, base, anomaly_instance, dproperty, time);
+    			
+    		}
+    		
 			
 			//DATA
 			
@@ -219,7 +235,7 @@ public class Anomaly {
 	    			createDataProperty(o, man, dataFactory, base, anomaly_instance, dproperty, field);
 	    			
 	    		}
-	    		
+	    	
 	    		
 	    		OWLDataProperty dproperty = dataFactory.getOWLDataProperty(":suspicious_value", pmO);		
 	    		initializationOfSuspiciousValue(dataFactory, anomaly_instance, dproperty,o);
@@ -227,6 +243,8 @@ public class Anomaly {
     			
 	    		
 	    	}
+	    	
+	    	
 
 		}
 		else if(type.equals("UBA")) {
@@ -483,7 +501,58 @@ public class Anomaly {
 							}
 							
 						}
+				}
+				
+				
+				OWLDataPropertyAssertionAxiom dAxiom = dataFactory.getOWLDataPropertyAssertionAxiom(dproperty, object, value);
+				man.addAxiom(o, dAxiom);
+			}else {
+				System.out.println("Not properly data to create Data Property for anomaly instance");
+			}
+			
+			
+		}	
+		
+public void createDataPropertyDate(OWLOntology o, OWLOntologyManager man, OWLDataFactory dataFactory, String base, OWLIndividual object, OWLDataProperty dproperty, String value) {
+					
+			
+			if (dproperty!=null &&  object!=null && value!=null) {
+				Set<OWLDataPropertyAssertionAxiom> properties = o.getDataPropertyAssertionAxioms(object);
+				for (OWLDataPropertyAssertionAxiom ax : properties) {
+					if (ax.getProperty().equals(dproperty) && ax.getSubject().equals(object)) {
+						man.removeAxiom(o, ax);
+					}	
+				}
+				
+
+				//Si es una fecha numerica en formato YYYYMMDDHHMMSS
+				if(StringUtils.isNumeric(value)) {
+					
+					
+					DateTimeFormatter formatterOut = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.ENGLISH);
+					String dateWithT = value.substring(0, 4)+"-"+value.substring(4, 6)+"-"+value.substring(6, 8)+ "T" + value.substring(8, 10)+":"+value.substring(10, 12)+":"+value.substring(12, 14)+".000Z";
+					
+					System.out.println(dateWithT);
+					
+					if(dateWithT!=null) {
+						System.out.println("DATE TIME VALUE "+dateWithT);
+						OWLLiteral dateTimeStamp =  dataFactory.getOWLLiteral(dateWithT,OWL2Datatype.XSD_DATE_TIME_STAMP);
+						OWLDataPropertyAssertionAxiom dAxiom = dataFactory.getOWLDataPropertyAssertionAxiom(dproperty, object, dateTimeStamp);
+						man.addAxiom(o, dAxiom);return;
 					}
+				}
+				//Si es una fecha
+				if (StringUtils.endsWith(value, "000Z")) {	
+					DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.ENGLISH);
+					LocalDate date = LocalDate.parse(value, formatter);
+					if(date!=null) {
+						System.out.println("DATE TIME VALUE "+value);
+						OWLLiteral dateTimeStamp =  dataFactory.getOWLLiteral(value,OWL2Datatype.XSD_DATE_TIME_STAMP);
+						OWLDataPropertyAssertionAxiom dAxiom = dataFactory.getOWLDataPropertyAssertionAxiom(dproperty, object, dateTimeStamp);
+						man.addAxiom(o, dAxiom);return;
+					}	
+				}
+				
 				
 				OWLDataPropertyAssertionAxiom dAxiom = dataFactory.getOWLDataPropertyAssertionAxiom(dproperty, object, value);
 				man.addAxiom(o, dAxiom);
@@ -546,13 +615,7 @@ public class Anomaly {
 				}
 			}
 			
-			
-			
-			
 			System.out.println("SUSPICIOUS VALUE "+suspicious_value);
-
-
-			
 			OWLDataPropertyAssertionAxiom dAxiom = dataFactory.getOWLDataPropertyAssertionAxiom(dproperty, individual, suspicious_value);
 			man.addAxiom(o, dAxiom);
 
@@ -563,7 +626,7 @@ public class Anomaly {
 	         //System.out.println("obtenerValorPropiedadData");
 	         //System.out.println(" individuoS: "+individuoS+", propiedadS: "+propiedadS);
 	         
-			System.out.println("YOU ARE IN DATA OBTAIN PROPERTY VALUE");
+			
 	         String result = null;
 	         String [] piece;
 	         String item;
@@ -581,16 +644,16 @@ public class Anomaly {
 		 public String obtainObjectPropertyValue(OWLIndividual individual,OWLObjectProperty oproperty, OWLOntology o, OWLReasoner reasoner) {
 	         //System.out.println("obtenerValorPropiedadObject");
 	         //System.out.println(" individuoS: "+individuoS+", propiedadS: "+propiedadS);
-	         System.out.println("YOU ARE IN OBTAIN OBJECT PROPERTY VALUE");
+	        
 	         String result = null;
 	         
 	         Set<OWLObjectPropertyAssertionAxiom> properties = o.getObjectPropertyAssertionAxioms(individual);
 				for (OWLObjectPropertyAssertionAxiom ax : properties) {
 					if (ax.getProperty().equals(oproperty) && ax.getSubject().equals(individual)) {
-				             result = ax.getObject().toStringID();
+				             result = ax.getObject().toString();
 				         }
 				}
-				System.out.println(result);
+				
 	         return(result);
 	     }
 		 
@@ -598,33 +661,29 @@ public class Anomaly {
 		 public void modifiedSuspiciousValue(OWLIndividual individual, OWLDataFactory dataFactory, OWLOntology o, OWLOntologyManager man, float valor) {
 			
 			float value = 0;
+			float vfinal = 0;
+			float intervalo = 1;
 			PrefixManager pm = new DefaultPrefixManager(baseO + "#");
 			OWLDataProperty sv = dataFactory.getOWLDataProperty(":suspicious_value", pm);
 			if (sv!=null &&  individual!=null) {
 					Set<OWLDataPropertyAssertionAxiom> properties = o.getDataPropertyAssertionAxioms(individual);
 					for (OWLDataPropertyAssertionAxiom ax : properties) {
 						if (ax.getProperty().equals(sv) && ax.getSubject().equals(individual)) {
-							String svalue = ax.getObject().getLiteral();
-							value = Float.parseFloat(svalue);
 							man.removeAxiom(o, ax);
 						}	
 					}
 			}
 			
-			valor = value+valor;
+			vfinal =  valor* intervalo;
+			System.out.println("Mi v final es :"+vfinal);
 			
-			OWLDataPropertyAssertionAxiom dAxiom = dataFactory.getOWLDataPropertyAssertionAxiom(sv, individual, valor);
+			OWLDataPropertyAssertionAxiom dAxiom = dataFactory.getOWLDataPropertyAssertionAxiom(sv, individual, vfinal);
 			man.addAxiom(o, dAxiom);
 			 
 			
-		 }
-		 /*
-		 public void updateSuspiciousValue(OWLDataFactory dataFactory, OWLOntology o, OWLOntologyManager man) {
-			Set<OWLNamedIndividual> instances = o.getIndividualsInSignature();
-			 for(OWLNamedIndividual i:instances) {
-				 System.out.println(i);
-				 System.out.println(i.getClass());
-			 }
-		 }*/
+		}
+		 
+		
+
 		
 }

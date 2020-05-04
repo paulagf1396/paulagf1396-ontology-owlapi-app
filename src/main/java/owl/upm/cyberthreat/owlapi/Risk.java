@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLClassExpression;
@@ -22,6 +23,9 @@ import org.semanticweb.owlapi.util.DefaultPrefixManager;
 
 public class Risk {
 
+	
+	Map<String, Float> rr = new HashMap<String, Float>();
+	Map<String, Float> pr = new HashMap<String, Float>();
 	
 	
 	public String obtainDataPropertyValue(OWLIndividual individual,OWLDataProperty dproperty, OWLOntology o, OWLReasoner reasoner) {
@@ -166,4 +170,19 @@ public class Risk {
         System.out.println("\n");
 		return pootentialRiskValues;
 	}
+	
+	public void riesgoIndividual(OWLOntology o, OWLOntologyManager man, OWLDataFactory dataFactory, String base, OWLReasoner reasoner, String base_DRM, OWLClass riesgo) {
+		PrefixManager pmDRM = new DefaultPrefixManager(base_DRM + "#");
+		
+		
+		
+		
+	}
+	
+	public void riesgoTotal(Map<String, Float> m, OWLOntology o, OWLOntologyManager man, OWLDataFactory dataFactory, String base, OWLReasoner reasoner, String base_DRM) {
+		
+		
+		
+	}
+	
 }
