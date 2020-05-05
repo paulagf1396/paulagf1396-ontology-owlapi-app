@@ -492,6 +492,7 @@ public int loadSTIXInstances (OWLOntology o, OWLOntologyManager man, File filena
 	 public boolean updateSuspiciousValue(OWLDataFactory dataFactory, OWLOntology o, OWLOntologyManager man, OWLReasoner reasoner, String base) throws OWLOntologyStorageException {
 	 	PrefixManager pm = new DefaultPrefixManager(base + "#");
 	 	
+	 	float intervalo = Configuration.intervalo;
 	 	boolean done = false;
 		Set<OWLNamedIndividual> instances = o.getIndividualsInSignature();
 		 for(OWLNamedIndividual i:instances) {
@@ -510,7 +511,7 @@ public int loadSTIXInstances (OWLOntology o, OWLOntologyManager man, File filena
 				 }				
 			 }
 			 if(n!=0) {
-				 anomaly.modifiedSuspiciousValue(i, dataFactory, o, man, n);
+				 anomaly.modifiedSuspiciousValue(i, dataFactory, o, man, n, intervalo);
 				 done=true;
 				 n=0;
 			 }
@@ -525,14 +526,13 @@ public int loadSTIXInstances (OWLOntology o, OWLOntologyManager man, File filena
 				 String mac1 = anomaly.obtainObjectPropertyValue(btinstance, oproperty, o, reasoner);
 				 String mac2 = anomaly.obtainObjectPropertyValue(i, oproperty, o, reasoner);
 				 if(mac1 != null && mac2 !=null && mac1.equals(mac2) && i!=btinstance) {
-					 anomaly.modifiedSuspiciousValue(i, dataFactory, o, man, 1);
 					 done = true;
 					 k++;
 				 }
 				 
 			 }
 			 if(k!=0) {
-				 anomaly.modifiedSuspiciousValue(i, dataFactory, o, man, k);
+				 anomaly.modifiedSuspiciousValue(i, dataFactory, o, man, k, intervalo);
 				 done=true;
 				 k=0;
 			 }
@@ -549,13 +549,12 @@ public int loadSTIXInstances (OWLOntology o, OWLOntologyManager man, File filena
 				 String mac1 = anomaly.obtainDataPropertyValue(rfinstance, dproperty, o, reasoner);
 				 String mac2 = anomaly.obtainDataPropertyValue(i, dproperty, o, reasoner);
 				 if(mac1 != null && mac2 !=null && mac1.equals(mac2) && i!= rfinstance) {
-					 anomaly.modifiedSuspiciousValue(i, dataFactory, o, man, 1);
 					 done = true;
 					 j++;
 				 }
 			 }
 			 if(j!=0) {
-				 anomaly.modifiedSuspiciousValue(i, dataFactory, o, man, j);
+				 anomaly.modifiedSuspiciousValue(i, dataFactory, o, man, j, intervalo);
 				 done=true;
 				 j=0;
 			 }

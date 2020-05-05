@@ -658,11 +658,11 @@ public void createDataPropertyDate(OWLOntology o, OWLOntologyManager man, OWLDat
 	     }
 		 
 		 
-		 public void modifiedSuspiciousValue(OWLIndividual individual, OWLDataFactory dataFactory, OWLOntology o, OWLOntologyManager man, float valor) {
+		 public void modifiedSuspiciousValue(OWLIndividual individual, OWLDataFactory dataFactory, OWLOntology o, OWLOntologyManager man, float valor, float intervalo) {
 			
 			float value = 0;
 			float vfinal = 0;
-			float intervalo = 1;
+			
 			PrefixManager pm = new DefaultPrefixManager(baseO + "#");
 			OWLDataProperty sv = dataFactory.getOWLDataProperty(":suspicious_value", pm);
 			if (sv!=null &&  individual!=null) {
