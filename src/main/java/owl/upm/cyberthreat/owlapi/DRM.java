@@ -1,5 +1,7 @@
 package owl.upm.cyberthreat.owlapi;
 
+import java.util.HashMap;
+
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassAssertionAxiom;
@@ -11,32 +13,44 @@ import org.semanticweb.owlapi.model.PrefixManager;
 import org.semanticweb.owlapi.util.DefaultPrefixManager;
 
 public class DRM {
-	
-			//Different Classes from DRM in the Ontology
-			private OWLDataFactory dataFactory;
-			private OWLOntologyManager man;
-			public String base;
-			public static OWLClass asset;
-			public static OWLClass asset_valuation ;
-			public static OWLClass context;
-			public static OWLClass safeguards;
-			public static OWLClass security_events;
-			public static OWLClass incident;
-			public static OWLClass risk_management;
-			public static OWLClass risk_assessment;
-			public static OWLClass threat;
-			public static OWLClass risk_severity;
-			public static OWLClass risk_scope;
-			public static OWLClass risk;
-			public static OWLClass risk_impact;
-			public static OWLClass risk_owner;
-			public static OWLClass risk_probability;
-			String baseO;
-			
-			
+
+		//Different Classes from DRM in the Ontology
+		private OWLDataFactory dataFactory;
+		private OWLOntologyManager man;
+		public static String base;
+		public static OWLClass asset;
+		public static OWLClass asset_valuation ;
+		public static OWLClass context;
+		public static OWLClass safeguards;
+		public static OWLClass security_events;
+		public static OWLClass incident;
+		public static OWLClass risk_management;
+		public static OWLClass risk_assessment;
+		public static OWLClass threat;
+		public static OWLClass risk_severity;
+		public static OWLClass risk_scope;
+		public static OWLClass risk;
+		public static OWLClass risk_impact;
+		public static OWLClass risk_owner;
+		public static OWLClass risk_probability;
+		public static String baseO;
+		
+		public static HashMap<String, OWLClass> threat_types = new HashMap<String, OWLClass>();
+		public static String [] threat_names = {"Accidents", "BadReputationThreat", "ConfigurationError", "CorporateBrandImageDamages", "DataProtectionRisks", "DelayedDelivery", "DeliberatedConfigFilesTampering", "DeliberatedHWTampering", 
+				"DeliberatedInformationDestruction", "DeliberatedInformationLeak", "DeliberatedInformationTampering", "DeliberatedMaliciousSWDistribution", "DeliberatedRegistersTampering", "DeliberatedSWTampering", "DeliberatedUnauthorizedAccess", "DenialOfService",
+				"DeviceLost", "DeviceTheft",  "Fire", "HWMaintenanceError", "HumanResourcesNotAvailable", "IdentityThief", "InsiderThreats", "MonitoringError", "NaturalDisasters", "NetworkOutage",
+				"NonIntentionalAdminError", "NonIntentionalInformationDestruction", "NonIntentionalInformationLeak", "NonIntentionalInformationTampering", "NonIntentionalMaliciousSWDistribution", "NonIntentionalUserError", "OtherLegalObligationRisks", "PartnershipsIssues",
+					"PhysicalFault", "PowerOutage", "PrivilegeEscalation", "SWMaintenanceError", "SWVulnerabilities", "SocialEngineering", "StakeholdersIssues", "StakeholdersSatisfaction", "StrategicPlanOnRisk",
+					"TechnicalComplexity", "Terrorism", "Untrustworthy", "UsersComplaints" ,"UnexpectedUsage"};
 			
 
-			
+		public static HashMap<String, OWLClass> risk_types = new HashMap<String, OWLClass>();
+		public static String [] risk_names = 	{"AccidentRisk", "BadReputationRisk", "ConfigurationErrorRisk", "CorporateBrandImageDamageRisk", "DataProtectionComplianceRisk", "DelayedDeliveryRisk", "DeliberatedConfigFilesTamperingRisk", "DeliberatedHWTamperingRisk",
+				"DeliberatedInformationDestructionRisk", "DeliberatedInformationLeakRisk", "DeliberatedInformationTamperingRisk", "DeliberatedMaliciousSWDistributionRisk", "DeliberatedRegistersTamperingRisk", "DeliberatedSWTamperingRisk", "DeliberatedUnauthorizedAccessRisk", "DenialOfServiceRisk",
+				"DeviceLostRisk", "DeviceTheftRisk", "FireRisk", "HWMaintenanceErrorRisk", "HumanResourcesNotAvailableRisk", "IdentityThiefRisk", "LogicalFailureRisk", "MonitoringErrorRisk", "NaturalDisasterRisk", "NetworkOutageRisk", "NonIntentionalAdminErrorRisk",
+				"NonIntentionalInformationDestructionRisk", "NonIntentionalInformationLeakRisk", "NonIntentionalInformationTamperingRisk", "NonIntentionalMaliciousSWDistributionRisk", "NonIntentionalUserErrorRisk", "OtherLegalComplianceRisk", "OtherRisk",
+				"PartnershipRisk", "PhysicalFailureRisk", "PowerOutageRisk", "PressNegativeImpactRisk", "SWMaintenanceErrorRisk", "SWVulnerabilitiesRisk", "SocialEngineeringRisk", "StakeholdersRisk", "StakeholdersSatisfactionRisk", "StrategicObjectiveRisk",
+				"TechnicalComplexityDerivedRisk", "TerrorismAttackRisk", "UntrustworthyRisk", "UsersComplaintsRisk", "FloodingRisk","EconomicLoss"};
 			
 		public DRM (OWLDataFactory dataFactory, OWLOntologyManager man, String base) {
 			this.dataFactory= dataFactory;
@@ -63,8 +77,30 @@ public class DRM {
 			risk_probability = dataFactory.getOWLClass(":Risk_Probability", pm);
 
 			this.baseO=base;
+			
+			loadThreatTypes(threat_names);
+			loadRiskTypes(risk_names);
+			
 		}
 
+		private void loadThreatTypes(String[] names) {
+			PrefixManager pm = new DefaultPrefixManager(this.base + "#");
+			for (int i = 0; i<names.length-1; i++ ) {
+				String name = names[i];
+				OWLClass ontoClass = dataFactory.getOWLClass(":"+name, pm);
+				threat_types.put(name, ontoClass);
+			}
+		}
+		
+		private void loadRiskTypes(String[] names) {
+			PrefixManager pm = new DefaultPrefixManager(this.base + "#");
+			for (int i = 0; i<names.length-1; i++ ) {
+				String name = names[i];
+				OWLClass ontoClass = dataFactory.getOWLClass(":"+name, pm);
+				risk_types.put(name, ontoClass);
+			}
+		}
+		
 
 
 		public static OWLClass getAsset() {
@@ -173,7 +209,10 @@ public class DRM {
 			DRM.threat = threat;
 		}
 
-
+		public OWLClass getThreatByType(String name) {
+			
+			return threat_types.get(name);
+		}
 
 		public static OWLClass getRisk_severity() {
 			return risk_severity;
@@ -209,7 +248,10 @@ public class DRM {
 			DRM.risk = risk;
 		}
 
-
+		public OWLClass getRiskByType(String name) {
+			
+			return risk_types.get(name);
+		}
 
 		public static OWLClass getRisk_impact() {
 			return risk_impact;

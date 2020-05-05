@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.json.simple.JSONObject;
+import org.apache.commons.lang3.StringUtils;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -112,12 +113,16 @@ public class OntologyApp {
 	private static Anomaly anomaly;
 	private static DRM drm;
 	private static STIX stix;
+	private static ThreatControl tcontrol;
 	public static  Map<String, Float> dataset;
 	private static Chart chart;	
 	private static String pathAnomaliesFile = Configuration.getPath().get("ficheroJSONSensores");
 	private static String pathSTIXFile = Configuration.getPath().get("ficheroJSONSTIX");
 	
 	Map<String, Float> amenazasReales = new HashMap<String, Float>();
+	
+	public static double numeroAmenazasPorRiesgo[];
+	
 	
 	
 
@@ -224,25 +229,6 @@ public int loadSTIXInstances (OWLOntology o, OWLOntologyManager man, File filena
     /**        Methods to manipulate the ontology               **/
     /**                                                         **/
     /*************************************************************/
-	//Crear individuals
-	/*public void createIndividuals(OWLOntology o, OWLOntologyManager man, OWLDataFactory dataFactory, String base, String cls, String individualName, int isType) throws OWLOntologyStorageException {
-		
-		//Anomaly=2, DRM = 1 , STIX = 0
-		
-		if(isType ==0) {
-			stix.createSTIXInstances(man, o, dataFactory, cls, individualName);
-		}
-		else if(isType==1){
-			
-			drm.createDRMInstances(man, o, dataFactory, cls, individualName);
-			
-		}else if(isType==2){
-			anomaly.createAnomalyInstances(man, o, dataFactory, cls, individualName);
-		}else {
-			System.out.println("The ontology type selected does not exist");
-		}
-		man.saveOntology(o);
-	}*/
 	
 	//Crear Data Properties
 	public void createDataProperty(OWLOntology o, OWLOntologyManager man, OWLDataFactory dataFactory, String base, String object, String property, String value) {
@@ -264,6 +250,25 @@ public int loadSTIXInstances (OWLOntology o, OWLOntologyManager man, File filena
 
 		OWLObjectPropertyAssertionAxiom oAxiom = dataFactory.getOWLObjectPropertyAssertionAxiom(oproperty, instance1, instance2);
 		man.addAxiom(o, oAxiom);
+	}
+	
+	public static void createDataProperty(OWLOntology o, OWLOntologyManager man, OWLDataFactory dataFactory, String base, OWLIndividual object, OWLDataProperty dproperty, Double value) {
+
+		if (dproperty!=null &&  object!=null && value!=null) {
+			Set<OWLDataPropertyAssertionAxiom> properties = o.getDataPropertyAssertionAxioms(object);
+			for (OWLDataPropertyAssertionAxiom ax : properties) {
+				if (ax.getProperty().equals(dproperty) && ax.getSubject().equals(object)) {
+					man.removeAxiom(o, ax);
+				}	
+			}
+			
+			OWLDataPropertyAssertionAxiom dAxiom = dataFactory.getOWLDataPropertyAssertionAxiom(dproperty, object, value);
+			man.addAxiom(o, dAxiom);
+		}else {
+			System.out.println("Not properly data to create Data Property");
+		}
+		
+		
 	}
 	
 	/*************************************************************/
@@ -564,11 +569,7 @@ public int loadSTIXInstances (OWLOntology o, OWLOntologyManager man, File filena
 		return done;
 	 }
 	 
-	 public String obtainDataPropertyValue(OWLIndividual individual,OWLDataProperty dproperty, OWLOntology o, OWLReasoner reasoner) {
-	        //System.out.println("obtenerValorPropiedadData");
-	        //System.out.println(" individuoS: "+individuoS+", propiedadS: "+propiedadS);
-	        
-			
+	 public static String obtainDataPropertyValue(OWLIndividual individual,OWLDataProperty dproperty, OWLOntology o, OWLReasoner reasoner) {
 	        String result = null;
 	   
 	        Set<OWLDataPropertyAssertionAxiom> properties = o.getDataPropertyAssertionAxioms(individual);
@@ -580,11 +581,7 @@ public int loadSTIXInstances (OWLOntology o, OWLOntologyManager man, File filena
 	        return(result);
 	    }
 	 
-	 public String obtainObjectPropertyValue(OWLIndividual individual,OWLObjectProperty oproperty, OWLOntology o, OWLReasoner reasoner) {
-	        //System.out.println("obtenerValorPropiedadData");
-	        //System.out.println(" individuoS: "+individuoS+", propiedadS: "+propiedadS);
-	        
-			
+	 public static String obtainObjectPropertyValue(OWLIndividual individual,OWLObjectProperty oproperty, OWLOntology o, OWLReasoner reasoner) {
 	        String result = null;
 	   
 	        Set<OWLObjectPropertyAssertionAxiom> properties = o.getObjectPropertyAssertionAxioms(individual);
@@ -596,97 +593,117 @@ public int loadSTIXInstances (OWLOntology o, OWLOntologyManager man, File filena
 	        return(result);
 	    }
 	 
-	 public boolean duplicatedThreats(OWLDataFactory dataFactory, OWLOntology o, OWLOntologyManager man, OWLReasoner reasoner, String base) throws OWLOntologyStorageException {
-		PrefixManager pm = new DefaultPrefixManager(base + "#");
-		PrefixManager pmDRM = new DefaultPrefixManager(drm.base + "#");
-		Map<String, OWLNamedIndividual> amenazasReales = new HashMap<String, OWLNamedIndividual>();
-		Set<OWLNamedIndividual> amenazasFalsas = new HashSet<OWLNamedIndividual>();
-		System.out.println("YOU ARE IN THREAT DUPLICATED");
-		
-		boolean result = false;
-		
-		OWLClass threatClass = dataFactory.getOWLClass(":Threat",pmDRM);
-		System.out.println(threatClass);
-		OWLDataProperty type = dataFactory.getOWLDataProperty(":type", pm);
-		OWLObjectProperty threatens = dataFactory.getOWLObjectProperty(":threatens", pmDRM);
-		OWLDataProperty start_time = dataFactory.getOWLDataProperty(":start_time", pm);
-		 
-		Set<OWLNamedIndividual> setInstances = o.getIndividualsInSignature();
-        for (OWLNamedIndividual i : setInstances) {
-        	Set<OWLClassAssertionAxiom> classes = o.getClassAssertionAxioms(i);
-        	for (OWLClassAssertionAxiom ax : classes) {
-				if (ax.getClassExpression().equals(threatClass)) {
-					System.out.println(i);
-					amenazasFalsas.add(i);
-					
-			     }
-			}
-          }
-        System.out.println(amenazasFalsas.size());
-        for(OWLNamedIndividual t: amenazasFalsas) {
-        	String typet = obtainDataPropertyValue(t, type, o, reasoner);
-        	System.out.println(typet);
-        	String amenazadot = obtainObjectPropertyValue(t, threatens, o, reasoner);
-        	System.out.println(amenazadot);
-        	float imt = Float.parseFloat(obtainDataPropertyValue(t, start_time, o, reasoner));
-        	for(OWLNamedIndividual tt: amenazasFalsas) {
-        		String typett = obtainDataPropertyValue(tt, type, o, reasoner);
-            	String amenazadott = obtainObjectPropertyValue(tt, threatens, o, reasoner);
-            	System.out.println(typett);
-            	System.out.println(amenazadott);
-            	float imtt = Float.parseFloat(obtainDataPropertyValue(tt, start_time, o, reasoner));
-            	if(typet!=null && typett!=null && amenazadot!= null && amenazadott!=null) {
-	            	if(typet.equals(typett) && amenazadot.equals(amenazadott) ) {
-	            		amenazasReales.put(typet, t);
-	            		System.out.println("Estas metiendo las amenazas guays en el map");
-	            		System.out.println(t);    		
-	            	}
-            	}
-        	}
-        }
-        System.out.println(amenazasReales.size());
-        OWLEntityRemover remover = new OWLEntityRemover(Collections.singleton(o));
-        for(OWLNamedIndividual t: amenazasFalsas) {
-        	for(Map.Entry<String, OWLNamedIndividual> entry : amenazasReales.entrySet()) {
-        		if(!t.equals(entry.getValue())) {
-        			t.accept(remover);
-        			result=true;
-        			
-        		}
-        		
-        	}
-        }
-        man.applyChanges(remover.getChanges());
-        man.saveOntology(o);
-        remover.reset();
-        return result;
-	 }
-	 
-	 public int numeroAmenazas(OWLDataFactory dataFactory, OWLOntology o, OWLOntologyManager man, OWLReasoner reasoner, String base) {
-			PrefixManager pm = new DefaultPrefixManager(base + "#");
+ 
+	 public static Risks nRiskConfig(OWLDataFactory dataFactory, OWLOntology o, OWLOntologyManager man, OWLReasoner reasoner, String base) throws OWLOntologyStorageException {
+			Risks risks = null;
+			
+			
+		 	PrefixManager pm = new DefaultPrefixManager(base + "#");
 			PrefixManager pmDRM = new DefaultPrefixManager(drm.base + "#");
-			Map<String, OWLNamedIndividual> amenazasReales = new HashMap<String, OWLNamedIndividual>();
-			Set<OWLNamedIndividual> amenazasFalsas = new HashSet<OWLNamedIndividual>();
-			System.out.println("YOU ARE IN THREAT DUPLICATED");
 			
-			
-			
+			Set<OWLNamedIndividual> amenazasExistentes = new HashSet<OWLNamedIndividual>();
 			OWLClass threatClass = dataFactory.getOWLClass(":Threat",pmDRM);
 			System.out.println(threatClass);
-						 
+				 
 			Set<OWLNamedIndividual> setInstances = o.getIndividualsInSignature();
 	        for (OWLNamedIndividual i : setInstances) {
 	        	Set<OWLClassAssertionAxiom> classes = o.getClassAssertionAxioms(i);
 	        	for (OWLClassAssertionAxiom ax : classes) {
 					if (ax.getClassExpression().equals(threatClass)) {
 						System.out.println(i);
-						amenazasFalsas.add(i);
+						amenazasExistentes.add(i);
 						
 				     }
 				}
-	          }
-	        return amenazasFalsas.size();
+	         }
+	        if(amenazasExistentes.size()>0) {
+	        	risks = nAmenazasConfiguration(amenazasExistentes, o, man, dataFactory, base, reasoner);
+	        	
+	        }else {
+	        	System.out.println("No existen amenazas");
+	        	
+	        }
+	        
+	        return risks;
 	 }
+	 
+	 public static Risks nAmenazasConfiguration(Set<OWLNamedIndividual> amenazasExistentes, OWLOntology o, OWLOntologyManager man, OWLDataFactory dataFactory, String base, OWLReasoner reasoner) throws OWLOntologyStorageException {
+			Map<String, OWLNamedIndividual> riskinstances = new HashMap<String, OWLNamedIndividual>();
+			
+			PrefixManager pm = new DefaultPrefixManager(drm.base + "#");
+			PrefixManager pmO = new DefaultPrefixManager(base + "#");
+			
+			numeroAmenazasPorRiesgo = new double[DRM.risk_names.length];
+			for(int i=0; i< numeroAmenazasPorRiesgo.length-1; i++ ) {
+				numeroAmenazasPorRiesgo[i] =0.0;
+			}
+			
+			for(OWLNamedIndividual t: amenazasExistentes) {
+				OWLDataProperty numType = dataFactory.getOWLDataProperty(":numType", pmO);
+				String num = obtainDataPropertyValue(t, numType, o, reasoner);
+				int numero=-1;
+				if(StringUtils.isNumeric(num)) {
+					numero = Integer.parseInt(num);
+				}
+				
+				switch(numero) {
+				case 1:
+					numeroAmenazasPorRiesgo[1]++;
+					
+					break;
+				case 4:
+					numeroAmenazasPorRiesgo[4]++;
+					break;
+				case 5:
+					numeroAmenazasPorRiesgo[5]++;
+					break;
+		
+				default:
+					break;
+	    		}	
+				
+			}
+			Set<OWLNamedIndividual> instances = o.getIndividualsInSignature();
+			for(OWLNamedIndividual k: instances) {
+				int type;
+				type = isRiskType(k, o, dataFactory, reasoner, drm.base);
+				if(type!=-1) {	
+					
+					OWLDataProperty property = dataFactory.getOWLDataProperty(":namenazas",pmO);
+					createDataProperty(o, man, dataFactory, base, k, property, numeroAmenazasPorRiesgo[type]);
+					for(int i=0; i<instances.size();i++) {
+						
+						OWLDataProperty typ = dataFactory.getOWLDataProperty(":type",pmO);
+						String nameofrisk = obtainDataPropertyValue(k, typ, o, reasoner);
+						
+						riskinstances.put(nameofrisk, k);
+					}
+					
+				}
+				
+			}
+			Risks risks = new Risks(riskinstances );
+			man.saveOntology(o);
+			return risks;
+			
+		}
+	 
+	 public static int isRiskType(OWLIndividual individual, OWLOntology o, OWLDataFactory dataFactory, OWLReasoner reasoner, String base_DRM) {
+			PrefixManager pmDRM = new DefaultPrefixManager(base_DRM + "#");
+	        int result=-1;
+	        for(int i = 0; i < DRM.risk_names.length; i++) {
+	        	
+	        	OWLClassExpression pr = dataFactory.getOWLClass(":"+DRM.risk_names[i], pmDRM);
+
+	            Set<OWLClassAssertionAxiom> classes = o.getClassAssertionAxioms(individual);
+	    			for (OWLClassAssertionAxiom ax : classes) {
+	    				if (ax.getClassExpression().equals(pr)) {
+	    			             result = i;
+	    			    }
+	    			}  
+	        }
+			return result;
+		}
 	 
 	 
 	 
@@ -717,7 +734,9 @@ public int loadSTIXInstances (OWLOntology o, OWLOntologyManager man, File filena
 		anomaly = new Anomaly(dataFactory, man, base);
 		drm = new DRM(dataFactory, man, base);
 		stix = new STIX(dataFactory, man, base);
+		tcontrol = new ThreatControl(o, man, dataFactory, base);
 		Configuration.runConfiguration();
+		tcontrol.initialization();
 		
 
 		// CARGAR ACTIVOS
@@ -801,58 +820,19 @@ public int loadSTIXInstances (OWLOntology o, OWLOntologyManager man, File filena
 		}
 		loadedAnomalyInstances=0;
 		
+		Risks riskClassObject = nRiskConfig(dataFactory, o, man, reasoner, base);
+		if(riskClassObject ==null) {
+			break;
 		}
+		RiskExtractor re = new RiskExtractor();
+		RiskTotalData rtd = re.infoExtractor(man, o, base, dataFactory, riskClassObject);
 		
-		/*
-		while(true) {
+		System.out.println("Fecha:  "+rtd.getDate());
+		System.out.println("Riesgo potencial total discreto: "+rtd.getpRiskTotal());
+		System.out.println("Riesgo residual total discreto: "+rtd.getrRiskTotal());
+
 		
-			//Me guardo todo y 
-			while(true) {
-				
-	
-				System.out.println("Checking if there are new anomalies...\n");
-				updated = onto_object.isEmptyAnomaliesFile(ficheroJSONSensores);	
-				if(updated) {
-					loadedAnomalyInstances = onto_object.loadAnomaliesFromBBDD(o, man, ficheroJSONSensores, base, dataFactory);
-					System.out.println("There have been loaded "+loadedAnomalyInstances+ " instances of new anomalies\n");					
-					
-				}
-				System.out.println("Checking if there are new STIX elements...\n");
-				updatedSTIX = onto_object.isEmptyAnomaliesFile(ficheroJSONSTIX);	
-				if(updatedSTIX) {
-					int loadedSTIXInstances=0;
-					loadedSTIXInstances = onto_object.loadSTIXInstances(o, man, ficheroJSONSTIX, base, dataFactory);
-					System.out.println("There have been loaded "+loadedSTIXInstances+ " instances of STIX\n");
-				}
-				
-				if(updated || updatedSTIX){
-					updated=false;
-					updatedSTIX =false;
-					break;
-				}
-				
-				try {
-					Thread.sleep(5000);
-				
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}			
-			}
-			onto_object.loadReasoner(o, man, dataFactory, base, reasoner);
-			System.out.println("Infering from rules...\n");
-			onto_object.inferSWRLEngine(o, man, dataFactory, base);
-			System.out.println("Done.\n");
-			if(loadedAnomalyInstances!=0) {
-				System.out.println("Updated SUSPICIOUS VALUE "+onto_object.updateSuspiciousValue(dataFactory, o, man, reasoner, base));
-			}
-			loadedAnomalyInstances=0;
-		
-		
-		}*/
-		
-		//System.out.println(onto_object.duplicatedThreats(dataFactory, o, man, reasoner, base));
-		
-		//Risk r = new Risk();
+		//RiskCalculation r = new RiskCalculation();
 		//Map<String, Float> dataRRisk = new HashMap<String, Float>();
 		//dataRRisk = r.residualRiskCalculation(o, man, dataFactory, base, reasoner, drm.base);
 		//Map<String, Float> dataPRisk = new HashMap<String, Float>();
@@ -863,6 +843,14 @@ public int loadSTIXInstances (OWLOntology o, OWLOntologyManager man, File filena
 		
 		//chart = new Chart(dataRRisk2,dataPRisk2 );
 		//chart.barchartPaint("Residual Risk", "Potential Risk");
+		
+		
+		}
+		
+		
+		//System.out.println(onto_object.duplicatedThreats(dataFactory, o, man, reasoner, base));
+		
+		
 		
 		
 		//Verificar si es necesario modificar el sv value porque haya anomalias referentes al mismo sitio
