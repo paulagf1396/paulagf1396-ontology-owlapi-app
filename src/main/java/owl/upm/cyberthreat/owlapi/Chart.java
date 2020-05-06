@@ -4,6 +4,7 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -34,16 +35,17 @@ import org.semanticweb.owlapi.model.OWLOntologyManager;
 public class Chart {
 	 
 	
-	public Map<String, Float> dataset1;
-	public Map<String, Float> dataset2;
+	public static  final String fileDatosPath = "/Users/paulagarcia/eclipse-workspace/cyberthreat.owlapi/owl-files/datos.json";	
+	public Chart() {
+		
+		
+	}
 	
-	public Chart(Map<String, Float> dataset1, Map<String, Float> dataset2) {
-		
-		this.dataset1 = dataset1;
-		this.dataset2 = dataset2;
-	
+	public ArrayList<RiskTotalData> extractorReaderFromJSON(){
+		ArrayList<RiskTotalData> totalresults = new  ArrayList<RiskTotalData>();
 		
 		
+		return totalresults;
 	}
 	
 	public void barchartPaint(String rr, String pr) {

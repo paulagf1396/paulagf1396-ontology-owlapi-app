@@ -1,4 +1,4 @@
-package owl.upm.cyberthreat.owlapi;
+/*package owl.upm.cyberthreat.owlapi;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -116,7 +116,7 @@ public class ThreatControl {
 			}
 			
 		}
-		Risks risks = new Risks(riskinstances);
+		Risks risks = new Risks(riskinstances, o, man , dataFactory, this.baseO);
 		man.saveOntology(o);
 		return risks;
 		
@@ -159,4 +159,4 @@ public class ThreatControl {
 	}
 
 	
-}
+}*/

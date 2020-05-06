@@ -113,7 +113,6 @@ public class OntologyApp {
 	private static Anomaly anomaly;
 	private static DRM drm;
 	private static STIX stix;
-	private static ThreatControl tcontrol;
 	public static  Map<String, Float> dataset;
 	private static Chart chart;	
 	private static String pathAnomaliesFile = Configuration.getPath().get("ficheroJSONSensores");
@@ -328,7 +327,7 @@ public int loadSTIXInstances (OWLOntology o, OWLOntologyManager man, File filena
     /*************************************************************/
 	
 	//Load SWRL rules engine
-	public void loadSWRLRuleENgine(OWLOntology o, OWLOntologyManager man, OWLDataFactory dataFactory, String base) throws SWRLParseException, SWRLBuiltInException, OWLOntologyStorageException {
+	public void loadSWRLRulesAnomaliesThreatsAndRisks(OWLOntology o, OWLOntologyManager man, OWLDataFactory dataFactory, String base) throws SWRLParseException, SWRLBuiltInException, OWLOntologyStorageException {
 		
 		
 		 // Create a SWRL rule engine using the SWRLAPI
@@ -341,18 +340,59 @@ public int loadSTIXInstances (OWLOntology o, OWLOntologyManager man, File filena
 		swrlRuleEngine.createSWRLRule("Anomalies#1 Suspicious Value Umbral Wifi","cyberthreat_ONA:WiFi_Sensor_Anomaly(?w) ^ cibersituational-ontology:suspicious_value(?w, ?s) ^ swrlb:greaterThanOrEqual(?s, "+umbral+") ^ swrlx:makeOWLThing(?x, ?w) -> cibersituational-ontology:probability(?x, \"2.0\"^^xsd:float) ^ cyberthreat_DRM:DeliberatedUnauthorizedAccess(?x) ^ cibersituational-ontology:type(?x, \"Threat Deliberated Unauthorized Access\") ^ cibersituational-ontology:impact(?x, \"4.0\"^^xsd:float) ^ cyberthreat_STIXDRM:isGeneratedBy(?x, ?w)");
 		swrlRuleEngine.createSWRLRule("Anomalies#2 Suspicious Value Umbral Bluetooth","cyberthreat_ONA:Bluetooth_Sensor_Anomaly(?b) ^ cibersituational-ontology:suspicious_value(?b, ?s) ^ swrlb:greaterThanOrEqual(?s, "+umbral+") ^ swrlx:makeOWLThing(?x, ?b) -> cibersituational-ontology:probability(?x, \"2.0\"^^xsd:float) ^ cyberthreat_DRM:DeliberatedUnauthorizedAccess(?x) ^ cibersituational-ontology:type(?x, \"Threat Deliberated Unauthorized Access\") ^ cibersituational-ontology:impact(?x, \"4.0\"^^xsd:float) ^ cyberthreat_STIXDRM:isGeneratedBy(?x, ?b)");
 		swrlRuleEngine.createSWRLRule("Anomalies#3 Suspicious Value Umbral RF","cyberthreat_ONA:RF_Sensor_Anomaly(?rf) ^ cibersituational-ontology:suspicious_value(?rf, ?s) ^ swrlb:greaterThanOrEqual(?s, "+umbral+") ^ swrlx:makeOWLThing(?x, ?rf) -> cibersituational-ontology:probability(?x, \"2.0\"^^xsd:float) ^ cyberthreat_DRM:DenialOfService(?x) ^ cibersituational-ontology:type(?x, \"Threat Denial of Service\") ^ cibersituational-ontology:impact(?x, \"4.0\"^^xsd:float) ^ cyberthreat_STIXDRM:isGeneratedBy(?x, ?rf)");
-
+		swrlRuleEngine.createSWRLRule("ThreatInventory#1 Auto Bad Reputation Threat in Classified Data", "swrlx:makeOWLThing(?x, ?classified_data) ^ cyberthreat_DRM:ClassifiedData(?classified_data) ^ cyberthreat_DRM:dependsOn(?rs, ?classified_data) ^ cyberthreat_DRM:Risk_Scope(?rs) ^ cyberthreat_DRM:evaluates(?av, ?rs) ^ cyberthreat_DRM:Asset_Valuation(?av) -> cibersituational-ontology:probability(?x, \"2.0\"^^xsd:float) ^ cyberthreat_DRM:BadReputationThreat(?x) ^ cibersituational-ontology:type(?x, \"Threat Bad Reputation\"^^rdf:PlainLiteral) ^ cibersituational-ontology:impact(?x, \"4.0\"^^xsd:float) ^ cyberthreat_DRM:threatens(?x, ?classified_data) ^ cibersituational-ontology:numType(?x, 1)");
+		swrlRuleEngine.createSWRLRule("RiskInventory#1 Auto Bad Reputation Risk", "cibersituational-ontology:probability(?x, ?p) ^ cibersituational-ontology:impact(?x, ?i) ^ cyberthreat_DRM:threatens(?x, ?a) ^ cyberthreat_DRM:BadReputationThreat(?x) ^ cyberthreat_DRM:Risk_Scope(?rs) ^ swrlx:makeOWLThing(?r, ?x) ^ cyberthreat_DRM:dependsOn(?rs, ?a) -> cyberthreat_DRM:BadReputationRisk(?r) ^ cyberthreat_STIXDRM:isGeneratedBy(?r, ?x) ^ cyberthreat_DRM:threatens(?r, ?rs) ^ cibersituational-ontology:type(?r, \"Bad Reputation Risk\"^^rdf:PlainLiteral) ^ cyberthreat_DRM:damages(?r, ?a)");
 		//Risk Inventory
 		swrlRuleEngine.createSWRLRule("RiskInventory#4 Wifi Anomaly + Threat", "cyberthreat_ONA:WiFi_Sensor_Anomaly(?w) ^ cibersituational-ontology:probability(?x, ?p) ^ cyberthreat_DRM:DeliberatedUnauthorizedAccess(?x) ^ cibersituational-ontology:type(?x, \"Threat Deliberated Unauthorized Access\") ^ cibersituational-ontology:impact(?x, ?i) ^ cyberthreat_DRM:Risk_Scope(?rs) ^ swrlx:makeOWLThing(?r, ?x) -> cyberthreat_DRM:DeliberatedUnauthorizedAccessRisk(?r) ^ cyberthreat_STIXDRM:isGeneratedBy(?r, ?x) ^ cyberthreat_DRM:threatens(?r, ?rs) ^ cibersituational-ontology:type(?r, \"Deliberated Unauthorized Access Risk\")");
 
 		
 		 //Sino guardo la ontologia no se guarda lo generado por las reglas
 		 man.saveOntology(o);
-		 swrlRuleEngine = null;
+		 
 		 
 	}
 	
+	//Load SWRL rules engine
+	public void deleteSWRLRules(OWLOntology o, OWLOntologyManager man, OWLDataFactory dataFactory, String base, int flag) throws SWRLParseException, SWRLBuiltInException, OWLOntologyStorageException {
 		
+		
+		 // Create a SWRL rule engine using the SWRLAPI
+		 SWRLRuleEngine swrlRuleEngine = SWRLAPIFactory.createSWRLRuleEngine(o);
+		 if(flag == 0) {
+			 swrlRuleEngine.deleteSWRLRule("RiskAssessment#1 Auto Potential Risk Assessment");
+		 }
+		 
+		 if(flag == 1) {
+			 swrlRuleEngine.deleteSWRLRule("ThreatInventory#1 Auto Bad Reputation Threat in Classified Data");
+			 swrlRuleEngine.deleteSWRLRule("RiskInventory#1 Auto Bad Reputation Risk");
+		 }
+		 
+		 //Sino guardo la ontologia no se guarda lo generado por las reglas
+		 man.saveOntology(o);
+		 
+		 
+	}
+	
+	//Load SWRL rules engine
+	public void loadSWRLRiskAssessmentRules(OWLOntology o, OWLOntologyManager man, OWLDataFactory dataFactory, String base) throws SWRLParseException, SWRLBuiltInException, OWLOntologyStorageException {
+		
+		
+		 // Create a SWRL rule engine using the SWRLAPI
+		 SWRLRuleEngine swrlRuleEngine = SWRLAPIFactory.createSWRLRuleEngine(o);
+	 
+		 // Run the SWRL rules in the ontology
+		// swrlRuleEngine.infer();
+		float umbral = Configuration.umbral;
+		//Threat Inventory
+		swrlRuleEngine.createSWRLRule("RiskAssessment#1 Auto Potential Risk Assessment", "cyberthreat_STIXDRM:isGeneratedBy(?r, ?th) ^ cyberthreat_DRM:threatens(?r, ?rs) ^ cibersituational-ontology:impact(?th, ?i) ^ cibersituational-ontology:probability(?th, ?p) ^ cyberthreat_DRM:Risk_Scope(?rs) ^ cyberthreat_DRM:Risk(?r) ^ cibersituational-ontology:type(?r, ?ty) ^ swrlb:add(?x, ?p, ?i) ^ cibersituational-ontology:namenazas(?r, ?n) ^ swrlx:makeOWLThing(?y, ?r, ?th) -> cyberthreat_DRM:PotentialRisk(?y) ^ cibersituational-ontology:probability(?y, ?p) ^ cibersituational-ontology:type(?y, ?ty) ^ cyberthreat_DRM:evaluates(?y, ?r) ^ cibersituational-ontology:impact(?y, ?i) ^ cyberthreat_DRM:threatens(?y, ?rs) ^ cibersituational-ontology:potentialRisk(?y, ?x) ^ cyberthreat_STIXDRM:isGeneratedBy(?y, ?th) ^ cibersituational-ontology:namenazas(?y, ?n)");
+		//Risk Inventory
+
+		
+		 //Sino guardo la ontologia no se guarda lo generado por las reglas
+		 man.saveOntology(o);
+		
+		 
+	}	
 	//Infer
 	public void inferSWRLEngine(OWLOntology o, OWLOntologyManager man, OWLDataFactory dataFactory, String base) throws SWRLParseException, SWRLBuiltInException, OWLOntologyStorageException {
 		
@@ -365,6 +405,8 @@ public int loadSTIXInstances (OWLOntology o, OWLOntologyManager man, File filena
 		
 		 //Sino guardo la ontologia no se guarda lo generado por las reglas
 		 man.saveOntology(o);
+		 
+		 
 		 swrlRuleEngine = null;
 		 System.out.println("Ontology saved.");
 	}
@@ -682,7 +724,7 @@ public int loadSTIXInstances (OWLOntology o, OWLOntologyManager man, File filena
 				}
 				
 			}
-			Risks risks = new Risks(riskinstances );
+			Risks risks = new Risks(riskinstances, o, man, dataFactory,drm.base );
 			man.saveOntology(o);
 			return risks;
 			
@@ -734,17 +776,11 @@ public int loadSTIXInstances (OWLOntology o, OWLOntologyManager man, File filena
 		anomaly = new Anomaly(dataFactory, man, base);
 		drm = new DRM(dataFactory, man, base);
 		stix = new STIX(dataFactory, man, base);
-		tcontrol = new ThreatControl(o, man, dataFactory, base);
 		Configuration.runConfiguration();
-		tcontrol.initialization();
+		
 		
 
-		// CARGAR ACTIVOS
 		
-		//Load rules
-		System.out.println("Loading rules...\n");
-		onto_object.loadSWRLRuleENgine(o, man, dataFactory, base);
-		System.out.println("Rules loaded.\n");
 		
 		//Copy in other ontology
 		//File fileAnom = copyFile(fileTmp);
@@ -758,6 +794,14 @@ public int loadSTIXInstances (OWLOntology o, OWLOntologyManager man, File filena
 		
 		
 		while(true) {
+			
+			// CARGAR ACTIVOS
+			
+			//Load rules las de threat inventory y risk inventory
+			System.out.println("Loading rules...\n");
+			onto_object.deleteSWRLRules(o, man, dataFactory, base, 0);
+			onto_object.loadSWRLRulesAnomaliesThreatsAndRisks(o, man, dataFactory, base);
+			System.out.println("Rules Anomalies Threats And Risks loaded.\n");
 			
 			while(true) {
 				//File to load information
@@ -793,6 +837,8 @@ public int loadSTIXInstances (OWLOntology o, OWLOntologyManager man, File filena
 				
 				try {
 					Thread.sleep(5000);
+					
+					//PONER QUE SI PASAN X SEGUNDOS Y NO HA LLEGADO NADA QUE VUELVA A RAZONAR O ALGO AUNQUE LO VEO UN POCO INUTIL PORQUE SINO HA CAMBIADO NADA PARA QUE LO VAS A HACER
 				
 				} catch (InterruptedException e) {
 					e.printStackTrace();
@@ -800,36 +846,41 @@ public int loadSTIXInstances (OWLOntology o, OWLOntologyManager man, File filena
 				
 			}
 		//Razona sobre la nueva ontologia, ejecuto reglas 1 vez
-		
-		
-		//Cargar razonador
-		System.out.println("Starting the reasoner...\n");
-		OWLReasonerFactory reasonerFactory = PelletReasonerFactory.getInstance();
-		PelletReasoner reasoner =  (PelletReasoner) reasonerFactory.createReasoner(o);
-		reasoner.precomputeInferences(InferenceType.DATA_PROPERTY_ASSERTIONS);
-		onto_object.loadReasoner(o, man, dataFactory, base, reasoner);
-		
 		//Execute rules
 		System.out.println("Infering from rules...\n");
 		onto_object.inferSWRLEngine(o, man, dataFactory, base);
 		System.out.println("Done.\n");
 		
-
+		//Cargar razonador
+		System.out.println("Starting the reasoner...\n");
+		OWLReasonerFactory reasonerFactory = PelletReasonerFactory.getInstance();
+		PelletReasoner reasoner =  (PelletReasoner) reasonerFactory.createReasoner(o);
+		reasoner.precomputeInferences();
+		onto_object.loadReasoner(o, man, dataFactory, base, reasoner);
+		
 		if(loadedAnomalyInstances!=0) {
 			System.out.println("Updated SUSPICIOUS VALUE "+onto_object.updateSuspiciousValue(dataFactory, o, man, reasoner, base));
 		}
 		loadedAnomalyInstances=0;
-		
+
 		Risks riskClassObject = nRiskConfig(dataFactory, o, man, reasoner, base);
 		if(riskClassObject ==null) {
 			break;
 		}
+		
+		//borrar reglas de amenazas y riesgos inventory
+		onto_object.deleteSWRLRules(o, man, dataFactory, base,1);
+		onto_object.loadSWRLRiskAssessmentRules(o, man, dataFactory, base);
+		//inferir para risk assessment
+		onto_object.inferSWRLEngine(o, man, dataFactory, base);
+		
+		System.out.println("ACABAS DE INFERIR NUEVOS PR");
+		
 		RiskExtractor re = new RiskExtractor();
 		RiskTotalData rtd = re.infoExtractor(man, o, base, dataFactory, riskClassObject);
 		
-		System.out.println("Fecha:  "+rtd.getDate());
-		System.out.println("Riesgo potencial total discreto: "+rtd.getpRiskTotal());
-		System.out.println("Riesgo residual total discreto: "+rtd.getrRiskTotal());
+		re.jsonWriter(rtd);
+		
 
 		
 		//RiskCalculation r = new RiskCalculation();
