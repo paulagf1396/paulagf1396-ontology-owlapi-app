@@ -493,7 +493,7 @@ public int loadSTIXInstances (OWLOntology o, OWLOntologyManager man, File filena
 	}
 	
 	
-	public boolean isEmptyAnomaliesFile(File filename ) throws IOException, ParseException{
+	public static boolean isEmptyAnomaliesFile(File filename ) throws IOException, ParseException{
 		//if the file is empty, returns 0	
 		
 		boolean updated = false;

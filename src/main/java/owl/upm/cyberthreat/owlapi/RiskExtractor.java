@@ -1,8 +1,11 @@
 package owl.upm.cyberthreat.owlapi;
 
 
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.StringWriter;
 import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
@@ -17,6 +20,8 @@ import java.util.logging.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLDataProperty;
 import org.semanticweb.owlapi.model.OWLDataPropertyAssertionAxiom;
@@ -118,50 +123,92 @@ public class RiskExtractor {
 	
 	
 	@SuppressWarnings("unchecked")
-	public void jsonWriter(RiskTotalData totalresults) throws FileNotFoundException {
-		String[] totaldata = {totalresults.getDate(), ""+totalresults.getpRiskTotal() , ""+totalresults.getrRiskTotal() };
-		Map finalm=new LinkedHashMap();
-		Map objm=new LinkedHashMap();
-		JSONArray jSONfinal = new JSONArray();
-		
-		objm.put("Time", totaldata[0]);
-		objm.put("Potential Total Risk", totaldata[1]);
-		objm.put("Residual Total Risk", totaldata[2]);
-	
-		
-		JSONArray ja = new JSONArray();
-		for(RiskData rd: totalresults.getRiskData()) {
-			Map risksOBJm=new LinkedHashMap();
-			JSONObject risksOBJ = new JSONObject();
-			String[] individualRiskData = {rd.getRiskName(), ""+rd.getpRisk() , ""+rd.getrRisk(), ""+rd.getThreatNum() };
-			risksOBJm.put("Risk Name", individualRiskData[0]);
-			risksOBJm.put("Potential Risk", individualRiskData[1]);
-			risksOBJm.put("Residual Risk", individualRiskData[2]);
-			risksOBJm.put("Threat Number", individualRiskData[3]);
+	public void jsonWriter(RiskTotalData totalresults) throws IOException, ParseException {
+			File filename = new File(fileDatosPath);
+			String[] totaldata = {totalresults.getDate(), ""+totalresults.getpRiskTotal() , ""+totalresults.getrRiskTotal() };
+			Map finalm=new LinkedHashMap();
+			Map objm=new LinkedHashMap();
+			JSONArray jSONfinal = new JSONArray();
 			
-			ja.add(risksOBJm);
-		}
-		objm.put("Risks",ja);
-		jSONfinal.add(objm);
+			objm.put("Time", totaldata[0]);
+			objm.put("Potential Total Risk", totaldata[1]);
+			objm.put("Residual Total Risk", totaldata[2]);
 		
+			
+			JSONArray ja = new JSONArray();
+			for(RiskData rd: totalresults.getRiskData()) {
+				Map risksOBJm=new LinkedHashMap();
+				JSONObject risksOBJ = new JSONObject();
+				String[] individualRiskData = {rd.getRiskName(), ""+rd.getpRisk() , ""+rd.getrRisk(), ""+rd.getThreatNum() };
+				risksOBJm.put("Risk Name", individualRiskData[0]);
+				risksOBJm.put("Potential Risk", individualRiskData[1]);
+				risksOBJm.put("Residual Risk", individualRiskData[2]);
+				risksOBJm.put("Threat Number", individualRiskData[3]);
+				
+				ja.add(risksOBJm);
+			}
+			objm.put("Risks",ja);
+			
+			if((new File(fileDatosPath)).length()==0)jSONfinal.add(objm); 	 
+			else {
+				jSONfinal=updatejsonfile(filename);
+				jSONfinal.add(objm);
+			}
+			
+			filename.delete();
 		
 		try{
-			FileWriter file = new FileWriter(fileDatosPath);
-			StringWriter out = new StringWriter();
-
-			JSONValue.writeJSONString(jSONfinal, out);
-			String jsonText = out.toString();
-			file.write(jsonText);
-			file.flush();
-			file.close();
 			
+			
+			FileWriter fileWriter = new FileWriter(fileDatosPath);
+	        // Si el archivo no existe, se crea!
+	      
+	        
+	        StringWriter out = new StringWriter();
+			JSONValue.writeJSONString(jSONfinal, out);
+			String jsonText = out.toString();	
+			fileWriter.write(jsonText);
+		
+			fileWriter.flush();
+			fileWriter.close();
+	
 			
 		}catch(Exception ex){
 			System.out.println("Error: "+ex.toString());
 		}
 		finally{
+			
 			System.out.print(objm);
 		}
+	}
+	
+	public JSONArray updatejsonfile(File filename) throws IOException, ParseException{
+		//if the file is empty, returns 0	
+	
+		
+
+		JSONParser jsonParser = new JSONParser();
+		System.out.println("loading datos JSON file...\n");
+		FileReader reader = new FileReader(filename);
+		
+    	//loading JSONObject...
+		Object obj = jsonParser.parse(reader);
+		//Loading JSONArray
+		JSONArray dataList = (JSONArray) obj;
+		System.out.println("JSONObject List obtained from file:\n");
+        System.out.println(dataList);
+        Map risksOBJm=new LinkedHashMap();
+        for(int i =0; i< dataList.size(); i++) {
+        	risksOBJm = (Map) dataList.get(i);
+        }
+        dataList.add(risksOBJm);
+        //The instances are loaded to the corresponding class
+        //Se han añadido nuevos
+        
+		
+		reader.close();
+		return dataList;
+		
 	}
 	
 }
