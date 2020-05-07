@@ -1,6 +1,8 @@
 package owl.upm.cyberthreat.owlapi;
 
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -124,7 +126,8 @@ public class RiskExtractor {
 	
 	@SuppressWarnings("unchecked")
 	public void jsonWriter(RiskTotalData totalresults) throws IOException, ParseException {
-			File filename = new File(fileDatosPath);
+			
+	
 			String[] totaldata = {totalresults.getDate(), ""+totalresults.getpRiskTotal() , ""+totalresults.getrRiskTotal() };
 			Map finalm=new LinkedHashMap();
 			Map objm=new LinkedHashMap();
@@ -148,29 +151,52 @@ public class RiskExtractor {
 				ja.add(risksOBJm);
 			}
 			objm.put("Risks",ja);
+			jSONfinal.add(objm);
 			
-			if((new File(fileDatosPath)).length()==0)jSONfinal.add(objm); 	 
-			else {
-				jSONfinal=updatejsonfile(filename);
-				jSONfinal.add(objm);
-			}
-			
-			filename.delete();
+			System.out.println("Vas a crearte el array \n");
 		
 		try{
 			
+			File file = new File(fileDatosPath);
+			BufferedReader br = new BufferedReader(new FileReader(fileDatosPath));
+			String line = br.readLine();
 			
-			FileWriter fileWriter = new FileWriter(fileDatosPath);
-	        // Si el archivo no existe, se crea!
-	      
-	        
-	        StringWriter out = new StringWriter();
-			JSONValue.writeJSONString(jSONfinal, out);
-			String jsonText = out.toString();	
-			fileWriter.write(jsonText);
+			if(line == null || line.isEmpty()) {
+				StringWriter out = new StringWriter();
+				JSONValue.writeJSONString(jSONfinal, out);
+				String jsonText = out.toString();
+				br.close();
+				FileWriter fileWriter = new FileWriter(fileDatosPath);
+
+				fileWriter.write(jsonText);
+				fileWriter.flush();
+				fileWriter.close();
+				return;
+				
+			}
+			
+			if(line.endsWith("}]}]")) {
+				StringWriter out = new StringWriter();
+				JSONValue.writeJSONString(objm, out);
+				String jsonText = out.toString();
+				String borrarCorchete = line.replace("}]}]", "}]},"+jsonText+"]");
+				br.close();
+				FileWriter fileWriter = new FileWriter(fileDatosPath);
+				
+				fileWriter.write(borrarCorchete);
+				fileWriter.flush();
+				fileWriter.close();
+				return;
+			}
+			
+			
+			//FileWriter fileWriter = new FileWriter(fileDatosPath);
+	        //StringWriter out = new StringWriter();
+			//JSONValue.writeJSONString(jSONfinal, out);
+			//String jsonText = out.toString();	
+			
 		
-			fileWriter.flush();
-			fileWriter.close();
+			
 	
 			
 		}catch(Exception ex){
@@ -178,35 +204,27 @@ public class RiskExtractor {
 		}
 		finally{
 			
-			System.out.print(objm);
+			
 		}
 	}
 	
-	public JSONArray updatejsonfile(File filename) throws IOException, ParseException{
-		//if the file is empty, returns 0	
-	
+	@SuppressWarnings("unchecked")
+	public JSONArray updatejsonfile(File filename, RiskTotalData totalresults) throws IOException, ParseException{
+		
 		
 
-		JSONParser jsonParser = new JSONParser();
-		System.out.println("loading datos JSON file...\n");
-		FileReader reader = new FileReader(filename);
 		
-    	//loading JSONObject...
-		Object obj = jsonParser.parse(reader);
-		//Loading JSONArray
-		JSONArray dataList = (JSONArray) obj;
-		System.out.println("JSONObject List obtained from file:\n");
-        System.out.println(dataList);
-        Map risksOBJm=new LinkedHashMap();
-        for(int i =0; i< dataList.size(); i++) {
-        	risksOBJm = (Map) dataList.get(i);
-        }
-        dataList.add(risksOBJm);
-        //The instances are loaded to the corresponding class
-        //Se han añadido nuevos
-        
 		
-		reader.close();
+		JSONArray dataList = new JSONArray();
+
+			System.out.println("Hola estas en coger datos");
+			JSONParser jsonParser = new JSONParser();
+			FileReader reader = new FileReader(filename);
+			Object obj = jsonParser.parse(reader);
+			dataList = (JSONArray) obj;
+	        System.out.println(dataList);	
+	
+		
 		return dataList;
 		
 	}
