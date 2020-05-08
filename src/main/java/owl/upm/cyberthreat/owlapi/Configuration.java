@@ -11,6 +11,7 @@ public class Configuration {
 
 	public static float umbral;
 	public static float intervalo;
+	public static double penalizationValue;
 	
 	public static  final String configFilePath = "./owl-files/config.txt";
 	
@@ -29,6 +30,8 @@ public class Configuration {
 		configValues.put("anomaliesSVConfig", prop.getProperty("ANOMALIES.SV.CONFIG"));
 		configValues.put("ficheroJSONSensores", prop.getProperty("ANOMALIES.BBDD.CONFIG"));
 		configValues.put("ficheroJSONSTIX", prop.getProperty("STIX.ELEMENTS.CONFIG"));
+		configValues.put("riskConfig", prop.getProperty("RISK.CALCULATION"));
+
 		
 		return configValues;
 	}
@@ -62,11 +65,26 @@ public class Configuration {
 			intervalo = Float.parseFloat(prop.getProperty("SUSPICIOUS.VALUE.INTERVALO").replace(" ", ""));
 			
 	}
+	public static void getPenalizationValue() {
+		Properties prop = new Properties();  
+		InputStream is = null;
+		
+		try {
+			is = new FileInputStream(getPath().get("riskConfig"));
+			prop.load(is);
+		} catch(IOException e) {
+			System.out.println(e.toString());
+		}
+
+			penalizationValue = Float.parseFloat(prop.getProperty("RISK.PENALIZATION.VALUE").replace(" ", ""));
+			
+	}
 	
 	public static void runConfiguration() {
 		getPath();
 		getUmbral();
 		getIntervalo();
+		getPenalizationValue();
 	}
 
 	

@@ -1,3 +1,4 @@
 ANOMALIES.SV.CONFIG = /Users/paulagarcia/eclipse-workspace/cyberthreat.owlapi/owl-files/AnomaliesConfigSV.txt
 ANOMALIES.BBDD.CONFIG = /Users/paulagarcia/eclipse-workspace/cyberthreat.owlapi/owl-files/ficheroJSONSensores.json
 STIX.ELEMENTS.CONFIG = /Users/paulagarcia/eclipse-workspace/cyberthreat.owlapi/owl-files/ficheroJSONSTIX.json
+RISK.CALCULATION = /Users/paulagarcia/eclipse-workspace/cyberthreat.owlapi/owl-files/riskConfig.txt

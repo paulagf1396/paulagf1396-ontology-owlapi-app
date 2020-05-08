@@ -750,7 +750,7 @@ public int loadSTIXInstances (OWLOntology o, OWLOntologyManager man, File filena
 	 
 	 
 	
-	public static void main(String[] args) throws OWLOntologyCreationException, IOException, ParseException, SWRLParseException, SWRLBuiltInException, OWLOntologyStorageException {
+	public static void main(String[] args) throws OWLOntologyCreationException, IOException, ParseException, SWRLParseException, SWRLBuiltInException, OWLOntologyStorageException, java.text.ParseException {
 		OntologyApp onto_object =new OntologyApp();
 		
 		OWLOntology o = null;
@@ -877,9 +877,18 @@ public int loadSTIXInstances (OWLOntology o, OWLOntologyManager man, File filena
 		System.out.println("ACABAS DE INFERIR NUEVOS PR");
 		
 		RiskExtractor re = new RiskExtractor();
+		//Datos actuales rtd
 		RiskTotalData rtd = re.infoExtractor(man, o, base, dataFactory, riskClassObject);
+		//re.jsonWriter(rtd);
+		RiskCalculation rc = new RiskCalculation();
+		//datos continuos del pasado
+		Set<RiskTotalData> rtd_from_past = rc.extractDataFromJSON();
+		RiskTotalData rtdfinal = rc.riskCalculation(rtd_from_past, rtd);
+		re.jsonWriter(rtdfinal);
 		
-		re.jsonWriter(rtd);
+		
+		//Calculo del riegso continuo
+		
 		
 
 		

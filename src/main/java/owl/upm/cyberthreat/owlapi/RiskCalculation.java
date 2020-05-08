@@ -1,189 +1,166 @@
 package owl.upm.cyberthreat.owlapi;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Locale;
 import java.util.Set;
 
-import org.semanticweb.owlapi.model.IRI;
-import org.semanticweb.owlapi.model.OWLClass;
-import org.semanticweb.owlapi.model.OWLClassAssertionAxiom;
-import org.semanticweb.owlapi.model.OWLClassExpression;
-import org.semanticweb.owlapi.model.OWLDataFactory;
-import org.semanticweb.owlapi.model.OWLDataProperty;
-import org.semanticweb.owlapi.model.OWLDataPropertyAssertionAxiom;
-import org.semanticweb.owlapi.model.OWLIndividual;
-import org.semanticweb.owlapi.model.OWLLiteral;
-import org.semanticweb.owlapi.model.OWLNamedIndividual;
-import org.semanticweb.owlapi.model.OWLOntology;
-import org.semanticweb.owlapi.model.OWLOntologyManager;
-import org.semanticweb.owlapi.model.PrefixManager;
-import org.semanticweb.owlapi.reasoner.NodeSet;
-import org.semanticweb.owlapi.reasoner.OWLReasoner;
-import org.semanticweb.owlapi.util.DefaultPrefixManager;
+import org.apache.jena.riot.SysRIOT;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
+import com.thoughtworks.xstream.mapper.LocalConversionMapper;
 
 public class RiskCalculation {
 
-	
-	Map<String, Float> rr = new HashMap<String, Float>();
-	Map<String, Float> pr = new HashMap<String, Float>();
-	
-	
-	public String obtainDataPropertyValue(OWLIndividual individual,OWLDataProperty dproperty, OWLOntology o, OWLReasoner reasoner) {
-        //System.out.println("obtenerValorPropiedadData");
-        //System.out.println(" individuoS: "+individuoS+", propiedadS: "+propiedadS);
-        
-		
-        String result = null;
-   
-        Set<OWLDataPropertyAssertionAxiom> properties = o.getDataPropertyAssertionAxioms(individual);
-			for (OWLDataPropertyAssertionAxiom ax : properties) {
-				if (ax.getProperty().equals(dproperty) && ax.getSubject().equals(individual)) {
-			             result = ax.getObject().getLiteral().toString();
-			         }
-			}
-        return(result);
-    }
+	/*EXTRAIGO INFO DEL FICHERO DATOS.JSON
+	 * EXTRAIGO RIESGO POTENCIAL TOTAL, RIESGO RESIDUAL TOTAL, EL TIEMPO Y EL ARRAY 
+	 * calculo riesgo potencial total en tX teniendo en cuenta tx-1, tx-2
+	*/
+	public static  final String fileDatosPath = "/Users/paulagarcia/eclipse-workspace/cyberthreat.owlapi/owl-files/datos.json";
 
-	public boolean isResidualRisk(OWLIndividual individual, OWLOntology o, OWLDataFactory dataFactory, OWLReasoner reasoner, String base_DRM) {
-		PrefixManager pmDRM = new DefaultPrefixManager(base_DRM + "#");
-		
-        boolean result = false;
-        OWLClassExpression rr = dataFactory.getOWLClass(":ResidualRisk", pmDRM);
-
-        Set<OWLClassAssertionAxiom> classes = o.getClassAssertionAxioms(individual);
-			for (OWLClassAssertionAxiom ax : classes) {
-				if (ax.getClassExpression().equals(rr)) {
-			             result = true;
-			         }
-			}
-      
-		return result;
-	}
 	
-	public boolean isPotentialRisk(OWLIndividual individual, OWLOntology o, OWLDataFactory dataFactory, OWLReasoner reasoner, String base_DRM) {
-		PrefixManager pmDRM = new DefaultPrefixManager(base_DRM + "#");
-		
-        boolean result = false;
-        OWLClassExpression pr = dataFactory.getOWLClass(":PotentialRisk", pmDRM);
+	public Set<RiskTotalData> extractDataFromJSON() throws IOException, ParseException {
+		File filename = new File(fileDatosPath);
+		Set<RiskTotalData> riskTotalDataArray = new HashSet<RiskTotalData>();
+		//si eso copiarlo internamente por si derepente hay algo que lo este usando
 
-        Set<OWLClassAssertionAxiom> classes = o.getClassAssertionAxioms(individual);
-			for (OWLClassAssertionAxiom ax : classes) {
-				if (ax.getClassExpression().equals(pr)) {
-			             result = true;
-			         }
-			}
-      
-		return result;
-	}
-	
-	/*************************************************************/
-    /**                                                         **/
-    /**              Dynamic Risk Calculation                   **/
-    /**                                                         **/
-    /*************************************************************/
-	
-	public Map<String, Float> residualRiskCalculation(OWLOntology o, OWLOntologyManager man, OWLDataFactory dataFactory, String base, OWLReasoner reasoner, String base_DRM) {
-		PrefixManager pmDRM = new DefaultPrefixManager(base_DRM + "#");
-		PrefixManager pm = new DefaultPrefixManager(base + "#");
+		JSONParser jsonParser = new JSONParser();
+		FileReader reader = new FileReader(filename);
+		Object obj = jsonParser.parse(reader);
+		System.out.println("Extrayendo los JSON objetos del fichero datos.json " + obj);
+		JSONArray dataList = (JSONArray) obj;
 
-		Map<String, Float> residualRiskValues = new HashMap<String, Float>();
-		float residualRiskTotalValue = 0 ;
-		int n=0;
-		
-		
-		OWLClassExpression rr = dataFactory.getOWLClass(":ResidualRisk", pmDRM);
-		System.out.println("La clase rr es: "+rr);
-	
-		Set<OWLNamedIndividual> setInstances = o.getIndividualsInSignature();
-        for (OWLNamedIndividual i : setInstances) {
-            
-            if(isResidualRisk(i, o, dataFactory, reasoner, base_DRM)) {
-            	 OWLDataProperty aRisk = dataFactory.getOWLDataProperty(":actualRisk", pm);
-            	 OWLDataProperty ptype = dataFactory.getOWLDataProperty(":type", pm);
-                 
-                 //Valor de la propiedad actualRisk (7.0)
-             
-         	    String s = obtainDataPropertyValue(i, aRisk, o, reasoner);
-         	    if(!s.isEmpty()) {
-         		   float d_float = Float.parseFloat(s);
-             	   residualRiskTotalValue = residualRiskTotalValue + d_float;
-             	   System.out.println(residualRiskTotalValue);
-             	   String type = obtainDataPropertyValue(i, ptype, o, reasoner);
-             	   residualRiskValues.put(type, d_float);
-             	   System.out.println(type);
-         	    }
-         	    n++;
-    			
-
-            }     
+        for(int i = 0; i< dataList.size(); i++) {
+        	JSONObject jObject = (JSONObject) dataList.get(i); 
+        	String time = jObject.get("Time").toString();
+        	float pTRisk = Float.parseFloat(jObject.get("Potential Total Risk").toString());
+        	float rTRisk = Float.parseFloat(jObject.get("Residual Total Risk").toString());
+        	double numThreatTotal = Double.parseDouble(jObject.get("Threat Total Number").toString());
+        	JSONArray risksArray = (JSONArray) jObject.get("Risks");
+        	Set<RiskData> riskDataSet = new HashSet<RiskData>();
+        	for(int j = 0; j<risksArray.size() ;j++) {
+        		
+        		JSONObject risksObject = (JSONObject) risksArray.get(j); 
+        		String riskName = risksObject.get("Risk Name").toString();
+        		float pRisk = Float.parseFloat(risksObject.get("Potential Risk").toString());
+        		float rRisk = Float.parseFloat(risksObject.get("Residual Risk").toString());
+        		float threatNum = Float.parseFloat(risksObject.get("Threat Number").toString());
+        		
+        		if(!riskName.isEmpty()) {
+        			
+        			RiskData rd= new RiskData(riskName, threatNum, pRisk, rRisk);
+        			riskDataSet.add(rd);
+        		}
+        		
+        	}
+        	
+        	
+        	if(time!=null && riskDataSet.size()>0) {
+        		RiskTotalData riskTD = new RiskTotalData(time, pTRisk, rTRisk, riskDataSet, numThreatTotal);
+        		riskTotalDataArray.add(riskTD);
+        	}
+        	
+        	System.out.println(riskTotalDataArray.size());
         }
-            
-        
-        System.out.println("The residual risk total value is : "+residualRiskTotalValue/n+"\n");
-        System.out.println("There were "+n+" residual risks \n");
-        System.out.println("\n");
-		return residualRiskValues;
+        reader.close();        
+        return riskTotalDataArray;
+	}
+	
+	
+	public RiskTotalData riskCalculation(Set<RiskTotalData> riskTotalDataArray, RiskTotalData rtd) throws java.text.ParseException {
+		//calculo riesgo continuo
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.ENGLISH);
+		Date date = formatter.parse(rtd.getDate());	
+		long rtdTime = date.getTime();
+		
+		if(riskTotalDataArray == null) {
+			//devuelvo la medicion actual
+			rtd.setpRiskTotalTimeFunction(rtd.getpRiskTotal());
+			rtd.setrRiskTotalTimeFunction(rtd.getrRiskTotal());
+			return rtd;
+		}
+		for (RiskTotalData ri : riskTotalDataArray) {
+			Date datei = formatter.parse(ri.getDate());	
+			long riTime = datei.getTime();
+			double penTimeVariable = function(rtdTime, riTime);
+			ri.setTimePenalizationl(penTimeVariable);
+		}
+		
+		return calculateTimeFunctionRisk(rtd, riskTotalDataArray);
 		
 	}
 	
 	
-	
-	public Map<String, Float> potentialRiskCalculation(OWLOntology o, OWLOntologyManager man, OWLDataFactory dataFactory, String base, OWLReasoner reasoner, String base_DRM) {
+	public RiskTotalData calculateTimeFunctionRisk(RiskTotalData rtd, Set<RiskTotalData> riskTotalDataArray) {
 		
-		PrefixManager pmDRM = new DefaultPrefixManager(base_DRM + "#");
-		PrefixManager pm = new DefaultPrefixManager(base + "#");
+		rtd = riskCalculationPRTimeFunction(rtd, riskTotalDataArray);
+		rtd = riskCalculationRRTimeFunction(rtd, riskTotalDataArray);
+		return rtd;
+	}
+	public RiskTotalData riskCalculationPRTimeFunction(RiskTotalData rtd, Set<RiskTotalData> riskTotalDataArray) {
+		double num = rtd.getNumThreatTotal() * rtd.getpRiskTotal()*1;
+		double den =  rtd.getNumThreatTotal()*1;
+		for(RiskTotalData rtdi : riskTotalDataArray){
+			num += rtdi.getNumThreatTotal()*rtdi.getpRiskTotal()*rtdi.getTimePenalization();
+			den += rtdi.getNumThreatTotal()*rtdi.getTimePenalization();
+		}
+		if(den == 0) {
+			den = 1;
+		}
+		rtd.setpRiskTotalTimeFunction(num/den);
+		return rtd;
+	}
+	public RiskTotalData riskCalculationRRTimeFunction(RiskTotalData rtd, Set<RiskTotalData> riskTotalDataArray) {
+		double num = rtd.getNumThreatTotal() * rtd.getrRiskTotal()*1;
+		double den =  rtd.getNumThreatTotal()*1;
+		for(RiskTotalData rtdi : riskTotalDataArray){
+			num += rtdi.getNumThreatTotal()*rtdi.getrRiskTotal()*rtdi.getTimePenalization();
+			den += rtdi.getNumThreatTotal()*rtdi.getTimePenalization();
+		}
+		if(den == 0) {
+			den = 1;
+		}
+		rtd.setrRiskTotalTimeFunction(num/den);
+		return rtd;
+	}
+	
+	//Funcion de penalizacion
+	private double function(double rtdTime, double rtd_from_pastTime) {
+		
 
-		Map<String, Float> pootentialRiskValues = new HashMap<String, Float>();
-		float potentialRiskTotalValue = 0 ;
-		int n=0;
+		double ejex= Configuration.penalizationValue*60*1000;
+		double limitNoPenalization = 0;
+		double penalizationInterval = ejex;
+		double timeFunction;
 		
-		
-		OWLClassExpression pr = dataFactory.getOWLClass(":PotentialRisk", pmDRM);
-		System.out.println("La clase pr es: "+pr);
-	
-		Set<OWLNamedIndividual> setInstances = o.getIndividualsInSignature();
-        for (OWLNamedIndividual i : setInstances) {
-            
-            if(isPotentialRisk(i, o, dataFactory, reasoner, base_DRM)) {
-            	 OWLDataProperty pRisk = dataFactory.getOWLDataProperty(":potentialRisk", pm); 
-            	 OWLDataProperty ptype = dataFactory.getOWLDataProperty(":type", pm);          
-                 
-                 //Valor de la propiedad actualRisk (7.0)
-             
-         	    String s = obtainDataPropertyValue(i, pRisk, o, reasoner);
-         	    if(!s.isEmpty()) {
-         		   float d_float = Float.parseFloat(s);
-         		   potentialRiskTotalValue = potentialRiskTotalValue + d_float;
-             	   System.out.println(potentialRiskTotalValue);
-             	  String type = obtainDataPropertyValue(i, ptype, o, reasoner);
-             	  pootentialRiskValues.put(type, d_float);
-         	    }
-         	    n++;
-    			
+		double time = rtdTime-rtd_from_pastTime;
 
-            }     
-        }
-            
-        
-        System.out.println("The potential risk total value is : "+potentialRiskTotalValue/n+"\n");
-        System.out.println("There were "+n+" potential risks \n");
-        System.out.println("\n");
-		return pootentialRiskValues;
+		//Si ha pasado poco tiempo no se castiga
+		if(time <limitNoPenalization) {
+			timeFunction=1;
+		}
+		//No se pone porque matematicamente la funcion da casi 0
+		/*else if (tiempoTranscurrido>=limiteDeOlvido) {
+			//si ha pasado mucho tiempo se olvidan las mediciones anteriores, ademas se garantiza que el resultado de la funcion no es negativo
+			resultadoFuncionTiempo = 0;
+		}*/
+		else {
+			timeFunction = Math.pow(Math.E, -(Math.pow(time,3)/(penalizationInterval*Math.pow(penalizationInterval/2,2))));
+			
+		}
+		return timeFunction;
 	}
 	
-	public void riesgoIndividual(OWLOntology o, OWLOntologyManager man, OWLDataFactory dataFactory, String base, OWLReasoner reasoner, String base_DRM, OWLClass riesgo) {
-		PrefixManager pmDRM = new DefaultPrefixManager(base_DRM + "#");
-		
-		
-		
-		
-		
-	}
 	
-	public void riesgoTotal(Map<String, Float> m, OWLOntology o, OWLOntologyManager man, OWLDataFactory dataFactory, String base, OWLReasoner reasoner, String base_DRM) {
-		
-		
-		
-	}
 	
 }

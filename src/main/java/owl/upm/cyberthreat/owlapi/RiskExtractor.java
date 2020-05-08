@@ -35,6 +35,7 @@ import org.semanticweb.owlapi.model.PrefixManager;
 
 import org.semanticweb.owlapi.util.DefaultPrefixManager;
 
+//CLASE QUE SACA LOS RIESGOS POTENCIALES Y RESIDUALES Y LOS METE EN EL JSON PARA LUEGO SACARLOS Y CALCULARNOS LOS RIESGOS CONTINUOS
 
 public class RiskExtractor {
 	
@@ -47,6 +48,7 @@ public class RiskExtractor {
 		rriskinstances = risks.getRriskinstances();
 	}
 	
+	
 	public RiskTotalData infoExtractor(OWLOntologyManager man, OWLOntology o, String base, OWLDataFactory dataFactory, Risks risks) {
 		obtainValues(risks);
 		PrefixManager pm = new DefaultPrefixManager(base + "#");
@@ -54,6 +56,7 @@ public class RiskExtractor {
 		
 		float pRiskTotal=0;
 		float rRiskTotal=0;
+		double numThreatTotal=0;
 		
 		for(Map.Entry<String, OWLNamedIndividual> entry : risks.getRiskinstances().entrySet()) {
 			String riskName = risks.getRiskName(entry.getValue());
@@ -95,18 +98,19 @@ public class RiskExtractor {
 		}
 		
 		for(RiskData r: riskData) {
-			pRiskTotal = pRiskTotal + r.getpRisk();
-			rRiskTotal = rRiskTotal + r.getrRisk();
+			pRiskTotal = (float) (pRiskTotal + r.getpRisk()*r.getThreatNum());
+			rRiskTotal = (float) (rRiskTotal + r.getrRisk()*r.getThreatNum());
+			numThreatTotal = numThreatTotal + r.getThreatNum();
 		}
 		
-		if(priskinstances.size()>0) pRiskTotal = pRiskTotal/priskinstances.size();
+		if(priskinstances.size()>0) pRiskTotal = (float) (pRiskTotal/numThreatTotal);
 		
-		if(rriskinstances.size()>0) rRiskTotal = rRiskTotal/rriskinstances.size();
+		if(rriskinstances.size()>0) rRiskTotal = (float) (rRiskTotal/numThreatTotal);
 		
 		
 		String actualDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").format(new Date(System.currentTimeMillis()));
 
-		RiskTotalData totalresults = new RiskTotalData (actualDate, pRiskTotal, rRiskTotal, riskData);
+		RiskTotalData totalresults = new RiskTotalData (actualDate, pRiskTotal, rRiskTotal, riskData, numThreatTotal);
 		return totalresults;
 
 	}
@@ -128,7 +132,7 @@ public class RiskExtractor {
 	public void jsonWriter(RiskTotalData totalresults) throws IOException, ParseException {
 			
 	
-			String[] totaldata = {totalresults.getDate(), ""+totalresults.getpRiskTotal() , ""+totalresults.getrRiskTotal() };
+			String[] totaldata = {totalresults.getDate(), ""+totalresults.getpRiskTotal() , ""+totalresults.getrRiskTotal(), ""+totalresults.getNumThreatTotal(), ""+totalresults.getpRiskTotalTimeFunction(), ""+totalresults.getrRiskTotalTimeFunction()};
 			Map finalm=new LinkedHashMap();
 			Map objm=new LinkedHashMap();
 			JSONArray jSONfinal = new JSONArray();
@@ -136,6 +140,11 @@ public class RiskExtractor {
 			objm.put("Time", totaldata[0]);
 			objm.put("Potential Total Risk", totaldata[1]);
 			objm.put("Residual Total Risk", totaldata[2]);
+			objm.put("Potential Total Risk Continuous", totaldata[4]);
+			objm.put("Residual Total Risk Continuous", totaldata[5]);
+			objm.put("Threat Total Number", totaldata[3]);
+
+
 		
 			
 			JSONArray ja = new JSONArray();
@@ -188,6 +197,7 @@ public class RiskExtractor {
 				fileWriter.close();
 				return;
 			}
+			//y si existe una con el mismo time SE ACTUALIZA Y SE CAMBIA---------------------------------------------
 			
 			
 			//FileWriter fileWriter = new FileWriter(fileDatosPath);

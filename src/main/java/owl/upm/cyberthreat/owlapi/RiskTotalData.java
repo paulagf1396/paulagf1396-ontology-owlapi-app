@@ -7,13 +7,18 @@ public class RiskTotalData {
 	private String date;
 	private float pRiskTotal;
 	private float rRiskTotal;
+	private double pRiskTotalTimeFunction;
+	private double rRiskTotalTimeFunction;
+	private double numThreatTotal;
 	private Set<RiskData> riskData;
+	private transient double timePenalization;
 	
-	public RiskTotalData( String date, float pRiskTotal, float rRiskTotal, Set<RiskData> riskData) {
+	public RiskTotalData( String date, float pRiskTotal, float rRiskTotal, Set<RiskData> riskData, double numThreatTotal) {
 		this.date = date;
 		this.pRiskTotal = pRiskTotal;
 		this.rRiskTotal= rRiskTotal;
 		this.riskData = riskData;
+		this.numThreatTotal = numThreatTotal;
 	}
 
 	public String getDate() {
@@ -32,12 +37,41 @@ public class RiskTotalData {
 		this.pRiskTotal = pRiskTotal;
 	}
 
+	public double getpRiskTotalTimeFunction() {
+		return pRiskTotalTimeFunction;
+	}
+
+	public void setpRiskTotalTimeFunction(double pRiskTotalTimeFunction) {
+		this.pRiskTotalTimeFunction = pRiskTotalTimeFunction;
+	}
 	public float getrRiskTotal() {
 		return rRiskTotal;
 	}
 
 	public void setrRiskTotal(float rRiskTotal) {
 		this.rRiskTotal = rRiskTotal;
+	}
+	
+	public double getrRiskTotalTimeFunction() {
+		return rRiskTotalTimeFunction;
+	}
+
+	public void setrRiskTotalTimeFunction(double rRiskTotalTimeFunction) {
+		this.rRiskTotalTimeFunction = rRiskTotalTimeFunction;
+	}
+	public double getNumThreatTotal() {
+		return numThreatTotal;
+	}
+
+	public void setNumThreatTotal(double numThreatTotal) {
+		this.numThreatTotal = numThreatTotal;
+	}
+	public double getTimePenalization() {
+		return timePenalization;
+	}
+
+	public void setTimePenalizationl(double penalizationTime) {
+		this.timePenalization = penalizationTime;
 	}
 
 	public Set<RiskData>  getRiskData() {
