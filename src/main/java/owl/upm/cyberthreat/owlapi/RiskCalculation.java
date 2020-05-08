@@ -34,6 +34,12 @@ public class RiskCalculation {
 		Set<RiskTotalData> riskTotalDataArray = new HashSet<RiskTotalData>();
 		//si eso copiarlo internamente por si derepente hay algo que lo este usando
 
+		
+		
+		if(!filename.exists()) {
+			System.out.println("There aren't past data");
+			return riskTotalDataArray;
+		}else {
 		JSONParser jsonParser = new JSONParser();
 		FileReader reader = new FileReader(filename);
 		Object obj = jsonParser.parse(reader);
@@ -74,6 +80,7 @@ public class RiskCalculation {
         }
         reader.close();        
         return riskTotalDataArray;
+		}
 	}
 	
 	

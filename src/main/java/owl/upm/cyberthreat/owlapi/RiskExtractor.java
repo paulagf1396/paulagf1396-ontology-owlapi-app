@@ -166,7 +166,11 @@ public class RiskExtractor {
 		
 		try{
 			
+			
 			File file = new File(fileDatosPath);
+			if(!file.exists()) {
+				file.createNewFile();
+			}
 			BufferedReader br = new BufferedReader(new FileReader(fileDatosPath));
 			String line = br.readLine();
 			
