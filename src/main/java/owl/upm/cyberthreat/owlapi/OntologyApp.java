@@ -337,15 +337,22 @@ public int loadSTIXInstances (OWLOntology o, OWLOntologyManager man, File filena
 		// swrlRuleEngine.infer();
 		float umbral = Configuration.umbral;
 		//Threat Inventory
-		swrlRuleEngine.createSWRLRule("Anomalies#1 Suspicious Value Umbral Wifi","cyberthreat_ONA:WiFi_Sensor_Anomaly(?w) ^ cibersituational-ontology:suspicious_value(?w, ?s) ^ swrlb:greaterThanOrEqual(?s, "+umbral+") ^ swrlx:makeOWLThing(?x, ?w) -> cibersituational-ontology:probability(?x, \"2.0\"^^xsd:float) ^ cyberthreat_DRM:DeliberatedUnauthorizedAccess(?x) ^ cibersituational-ontology:type(?x, \"Threat Deliberated Unauthorized Access\") ^ cibersituational-ontology:impact(?x, \"4.0\"^^xsd:float) ^ cyberthreat_STIXDRM:isGeneratedBy(?x, ?w)");
-		swrlRuleEngine.createSWRLRule("Anomalies#2 Suspicious Value Umbral Bluetooth","cyberthreat_ONA:Bluetooth_Sensor_Anomaly(?b) ^ cibersituational-ontology:suspicious_value(?b, ?s) ^ swrlb:greaterThanOrEqual(?s, "+umbral+") ^ swrlx:makeOWLThing(?x, ?b) -> cibersituational-ontology:probability(?x, \"2.0\"^^xsd:float) ^ cyberthreat_DRM:DeliberatedUnauthorizedAccess(?x) ^ cibersituational-ontology:type(?x, \"Threat Deliberated Unauthorized Access\") ^ cibersituational-ontology:impact(?x, \"4.0\"^^xsd:float) ^ cyberthreat_STIXDRM:isGeneratedBy(?x, ?b)");
-		swrlRuleEngine.createSWRLRule("Anomalies#3 Suspicious Value Umbral RF","cyberthreat_ONA:RF_Sensor_Anomaly(?rf) ^ cibersituational-ontology:suspicious_value(?rf, ?s) ^ swrlb:greaterThanOrEqual(?s, "+umbral+") ^ swrlx:makeOWLThing(?x, ?rf) -> cibersituational-ontology:probability(?x, \"2.0\"^^xsd:float) ^ cyberthreat_DRM:DenialOfService(?x) ^ cibersituational-ontology:type(?x, \"Threat Denial of Service\") ^ cibersituational-ontology:impact(?x, \"4.0\"^^xsd:float) ^ cyberthreat_STIXDRM:isGeneratedBy(?x, ?rf)");
+		//swrlRuleEngine.createSWRLRule("Anomalies#1 Suspicious Value Umbral Wifi","cyberthreat_ONA:WiFi_Sensor_Anomaly(?w) ^ cibersituational-ontology:suspicious_value(?w, ?s) ^ swrlb:greaterThanOrEqual(?s, "+umbral+") ^ swrlx:makeOWLThing(?x, ?w) -> cibersituational-ontology:probability(?x, \"2.0\"^^xsd:float) ^ cyberthreat_DRM:DeliberatedUnauthorizedAccess(?x) ^ cibersituational-ontology:type(?x, \"Threat Deliberated Unauthorized Access\") ^ cibersituational-ontology:impact(?x, \"4.0\"^^xsd:float) ^ cyberthreat_STIXDRM:isGeneratedBy(?x, ?w)^ cibersituational-ontology:numType(?x, 14)");
+		//swrlRuleEngine.createSWRLRule("Anomalies#2 Suspicious Value Umbral Bluetooth","cyberthreat_ONA:Bluetooth_Sensor_Anomaly(?b) ^ cibersituational-ontology:suspicious_value(?b, ?s) ^ swrlb:greaterThanOrEqual(?s, "+umbral+") ^ swrlx:makeOWLThing(?x, ?b) -> cibersituational-ontology:probability(?x, \"2.0\"^^xsd:float) ^ cyberthreat_DRM:DeliberatedUnauthorizedAccess(?x) ^ cibersituational-ontology:type(?x, \"Threat Deliberated Unauthorized Access\") ^ cibersituational-ontology:impact(?x, \"4.0\"^^xsd:float) ^ cyberthreat_STIXDRM:isGeneratedBy(?x, ?b) ^ cibersituational-ontology:numType(?x, 14)");
+		//swrlRuleEngine.createSWRLRule("Anomalies#3 Suspicious Value Umbral RF","cyberthreat_ONA:RF_Sensor_Anomaly(?rf) ^ cibersituational-ontology:suspicious_value(?rf, ?s) ^ swrlb:greaterThanOrEqual(?s, "+umbral+") ^ swrlx:makeOWLThing(?x, ?rf) -> cibersituational-ontology:probability(?x, \"2.0\"^^xsd:float) ^ cyberthreat_DRM:DenialOfService(?x) ^ cibersituational-ontology:type(?x, \"Threat Denial of Service\") ^ cibersituational-ontology:impact(?x, \"4.0\"^^xsd:float) ^ cyberthreat_STIXDRM:isGeneratedBy(?x, ?rf)^ cibersituational-ontology:numType(?x, 15)");
+		swrlRuleEngine.createSWRLRule("Anomalies1", "cyberthreat_ONA:WiFi_Sensor_Anomaly(?w) ^ cibersituational-ontology:suspicious_value(?w, ?s) ^ swrlb:greaterThanOrEqual(?s, 4) ^ swrlx:makeOWLThing(?x, ?w) -> cibersituational-ontology:probability(?x, \"2.0\"^^xsd:float) ^ cyberthreat_DRM:DeliberatedUnauthorizedAccess(?x) ^ cibersituational-ontology:type(?x, \"Threat Deliberated Unauthorized Access\") ^ cibersituational-ontology:impact(?x, \"4.0\"^^xsd:float) ^ cyberthreat_STIXDRM:isGeneratedBy(?x, ?w) ^ cibersituational-ontology:numType(?x, 14)");
 		swrlRuleEngine.createSWRLRule("ThreatInventory#1 Auto Bad Reputation Threat in Classified Data", "swrlx:makeOWLThing(?x, ?classified_data) ^ cyberthreat_DRM:ClassifiedData(?classified_data) ^ cyberthreat_DRM:dependsOn(?rs, ?classified_data) ^ cyberthreat_DRM:Risk_Scope(?rs) ^ cyberthreat_DRM:evaluates(?av, ?rs) ^ cyberthreat_DRM:Asset_Valuation(?av) -> cibersituational-ontology:probability(?x, \"2.0\"^^xsd:float) ^ cyberthreat_DRM:BadReputationThreat(?x) ^ cibersituational-ontology:type(?x, \"Threat Bad Reputation\"^^rdf:PlainLiteral) ^ cibersituational-ontology:impact(?x, \"4.0\"^^xsd:float) ^ cyberthreat_DRM:threatens(?x, ?classified_data) ^ cibersituational-ontology:numType(?x, 1)");
-		swrlRuleEngine.createSWRLRule("RiskInventory#1 Auto Bad Reputation Risk", "cibersituational-ontology:probability(?x, ?p) ^ cibersituational-ontology:impact(?x, ?i) ^ cyberthreat_DRM:threatens(?x, ?a) ^ cyberthreat_DRM:BadReputationThreat(?x) ^ cyberthreat_DRM:Risk_Scope(?rs) ^ swrlx:makeOWLThing(?r, ?x) ^ cyberthreat_DRM:dependsOn(?rs, ?a) -> cyberthreat_DRM:BadReputationRisk(?r) ^ cyberthreat_STIXDRM:isGeneratedBy(?r, ?x) ^ cyberthreat_DRM:threatens(?r, ?rs) ^ cibersituational-ontology:type(?r, \"Bad Reputation Risk\"^^rdf:PlainLiteral) ^ cyberthreat_DRM:damages(?r, ?a)");
+		swrlRuleEngine.createSWRLRule("ThreatInventory#2 Auto Data Protection Threat", "cyberthreat_DRM:Asset_Valuation(?av) ^ cyberthreat_DRM:dependsOn(?rs, ?classified_data) ^ cyberthreat_DRM:evaluates(?av, ?rs) ^ cyberthreat_DRM:Risk_Scope(?rs) ^ cyberthreat_DRM:ClassifiedData(?classified_data) ^ swrlx:makeOWLThing(?x, ?classified_data) -> cyberthreat_DRM:threatens(?x, ?classified_data) ^ cibersituational-ontology:impact(?x, \"7.0\"^^xsd:float) ^ cyberthreat_DRM:DataProtectionRisks(?x) ^ cibersituational-ontology:probability(?x, \"3.0\"^^xsd:float) ^ cibersituational-ontology:type(?x, \"Threat against Data Protection\"^^rdf:PlainLiteral) ^ cibersituational-ontology:numType(?x, 5)");
+		swrlRuleEngine.createSWRLRule("ThreatInventory#3 Auto Unintentional User Error Threat", "cyberthreat_DRM:Users(?u) ^ swrlb:lessThanOrEqual(?e, 3) ^ swrlx:makeOWLThing(?x, ?u) ^ cyberthreat_DRM:dependsOn(?rs, ?new_data) ^ cyberthreat_DRM:dependsOn(?new_data, ?hw) ^ cibersituational-ontology:has_cybersecurity_experience(?u, ?e) ^ cyberthreat_DRM:dependsOn(?hw, ?u) ^ cyberthreat_DRM:Risk_Scope(?rs) ^ cyberthreat_DRM:evaluates(?av, ?rs) ^ cyberthreat_DRM:Hardware(?hw) ^ cyberthreat_DRM:Asset_Valuation(?av) ^ cyberthreat_DRM:Data(?new_data) -> cibersituational-ontology:probability(?x, \"3.0\"^^xsd:float) ^ cibersituational-ontology:impact(?x, \"3.0\"^^xsd:float) ^ cibersituational-ontology:type(?x, \"Threat Unintentional User Error\"^^rdf:PlainLiteral) ^ cyberthreat_DRM:threatens(?x, ?u) ^ cyberthreat_DRM:NonIntentionalUserError(?x)^ cibersituational-ontology:numType(?x, 31)");
+		swrlRuleEngine.createSWRLRule("ThreatInventory#4 Auto SW Vulnerabilities Threat", "swrlx:makeOWLThing(?x, ?sw) ^ cyberthreat_DRM:Data(?new_data) ^ cyberthreat_DRM:dependsOn(?rs, ?new_data) ^ cyberthreat_DRM:Software(?sw) ^ cyberthreat_DRM:evaluates(?av, ?rs) ^ cyberthreat_DRM:Risk_Scope(?rs) ^ cyberthreat_DRM:dependsOn(?new_data, ?sw) ^ cyberthreat_DRM:Asset_Valuation(?av) -> cyberthreat_DRM:SWVulnerabilities(?x) ^ cibersituational-ontology:probability(?x, \"4.0\"^^xsd:float) ^ cibersituational-ontology:type(?x, \"Threat SW Vulnerabilities\"^^rdf:PlainLiteral) ^ cibersituational-ontology:impact(?x, \"2.0\"^^xsd:float) ^ cyberthreat_DRM:threatens(?x, ?sw)^ cibersituational-ontology:numType(?x, 39)");
+		swrlRuleEngine.createSWRLRule("ThreatInventory#5 Auto Deliberated Malicious SW Distribution Threat", "cyberthreat_DRM:Users(?u) ^ swrlb:lessThanOrEqual(?e, 3) ^ cyberthreat_DRM:dependsOn(?rs, ?new_data) ^ cibersituational-ontology:has_cybersecurity_experience(?u, ?e) ^ cyberthreat_DRM:dependsOn(?new_data, ?sw) ^ cyberthreat_DRM:dependsOn(?new_data, ?u) ^ cyberthreat_DRM:Risk_Scope(?rs) ^ cyberthreat_DRM:evaluates(?av, ?rs) ^ cyberthreat_DRM:Asset_Valuation(?av) ^ cyberthreat_DRM:Software(?sw) ^ swrlx:makeOWLThing(?x, ?sw) ^ cyberthreat_DRM:Data(?new_data) -> cibersituational-ontology:type(?x, \"Threat Deliberated Malicious SW Distribution\"^^rdf:PlainLiteral) ^ cibersituational-ontology:probability(?x, \"4.0\"^^xsd:float) ^ cyberthreat_DRM:DeliberatedMaliciousSWDistribution(?x) ^ cibersituational-ontology:impact(?x, \"3.0\"^^xsd:float) ^ cyberthreat_DRM:threatens(?x, ?sw)^ cibersituational-ontology:numType(?x, 11)");
+		swrlRuleEngine.createSWRLRule("ThreatInventory#6 Auto Social Engineering Threat", "swrlx:makeOWLThing(?x, ?u) ^ swrlb:lessThanOrEqual(?e, 3) ^ cyberthreat_DRM:Users(?u) ^ cyberthreat_DRM:evaluates(?av, ?rs) ^ cyberthreat_DRM:ClassifiedData(?classified_data) ^ cibersituational-ontology:has_cybersecurity_experience(?u, ?e) ^ cyberthreat_DRM:Risk_Scope(?rs) ^ cyberthreat_DRM:dependsOn(?rs, ?classified_data) ^ cyberthreat_DRM:Asset_Valuation(?av) ^ cyberthreat_DRM:dependsOn(?classified_data, ?u) -> cyberthreat_DRM:SocialEngineering(?x) ^ cibersituational-ontology:type(?x, \"Threat Social Engineering\"^^rdf:PlainLiteral) ^ cibersituational-ontology:impact(?x, \"4.0\"^^xsd:float) ^ cyberthreat_DRM:threatens(?x, ?u) ^ cibersituational-ontology:probability(?x, \"3.0\"^^xsd:float)^ cibersituational-ontology:numType(?x, 40)");
+		swrlRuleEngine.createSWRLRule("ThreatInventory#7 Auto Corporate Brand Image Damage Threat", "swrlx:makeOWLThing(?x, ?classified_data) ^ cyberthreat_DRM:evaluates(?av, ?rs) ^ cyberthreat_DRM:ClassifiedData(?classified_data) ^ cyberthreat_DRM:Risk_Scope(?rs) ^ cyberthreat_DRM:dependsOn(?rs, ?classified_data) ^ cyberthreat_DRM:Asset_Valuation(?av) -> cyberthreat_DRM:threatens(?x, ?classified_data) ^ cibersituational-ontology:impact(?x, \"4.0\"^^xsd:float) ^ cibersituational-ontology:probability(?x, \"1.0\"^^xsd:float) ^ cibersituational-ontology:type(?x, \"Threat for Corporate Brand Image\"^^rdf:PlainLiteral) ^ cyberthreat_DRM:CorporateBrandImageDamages(?x) ^ cibersituational-ontology:numType(?x, 4)");
 		//Risk Inventory
+		swrlRuleEngine.createSWRLRule("RiskInventory#1 Auto Bad Reputation Risk", "cibersituational-ontology:probability(?x, ?p) ^ cibersituational-ontology:impact(?x, ?i) ^ cyberthreat_DRM:threatens(?x, ?a) ^ cyberthreat_DRM:BadReputationThreat(?x) ^ cyberthreat_DRM:Risk_Scope(?rs) ^ swrlx:makeOWLThing(?r, ?x) ^ cyberthreat_DRM:dependsOn(?rs, ?a) -> cyberthreat_DRM:BadReputationRisk(?r) ^ cyberthreat_STIXDRM:isGeneratedBy(?r, ?x) ^ cyberthreat_DRM:threatens(?r, ?rs) ^ cibersituational-ontology:type(?r, \"Bad Reputation Risk\"^^rdf:PlainLiteral) ^ cyberthreat_DRM:damages(?r, ?a)");
 		swrlRuleEngine.createSWRLRule("RiskInventory#4 Wifi Anomaly + Threat", "cyberthreat_ONA:WiFi_Sensor_Anomaly(?w) ^ cibersituational-ontology:probability(?x, ?p) ^ cyberthreat_DRM:DeliberatedUnauthorizedAccess(?x) ^ cibersituational-ontology:type(?x, \"Threat Deliberated Unauthorized Access\") ^ cibersituational-ontology:impact(?x, ?i) ^ cyberthreat_DRM:Risk_Scope(?rs) ^ swrlx:makeOWLThing(?r, ?x) -> cyberthreat_DRM:DeliberatedUnauthorizedAccessRisk(?r) ^ cyberthreat_STIXDRM:isGeneratedBy(?r, ?x) ^ cyberthreat_DRM:threatens(?r, ?rs) ^ cibersituational-ontology:type(?r, \"Deliberated Unauthorized Access Risk\")");
-
-		
+		swrlRuleEngine.createSWRLRule("RiskInventory#2 Auto Deliberated Malicious SW Distribution Risk", "cibersituational-ontology:probability(?x, ?p) ^ cyberthreat_DRM:DeliberatedMaliciousSWDistribution(?x) ^ cibersituational-ontology:impact(?x, ?i) ^ cyberthreat_DRM:threatens(?x, ?a) ^ swrlx:makeOWLThing(?r, ?x) ^ cyberthreat_DRM:Risk_Scope(?rs) ^ cyberthreat_DRM:dependsOn(?rs, ?a) -> cyberthreat_STIXDRM:isGeneratedBy(?r, ?x) ^ cyberthreat_DRM:threatens(?r, ?rs) ^ cibersituational-ontology:type(?r, \"Deliberated Malicious SW Distribution Risk\"^^rdf:PlainLiteral) ^ cyberthreat_DRM:DeliberatedMaliciousSWDistributionRisk(?r) ^ cyberthreat_DRM:damages(?r, ?a)");
+		swrlRuleEngine.createSWRLRule("RiskInventory#3 Auto Data Protection Risks Risk", "cyberthreat_DRM:DataProtectionRisks(?x) ^ cibersituational-ontology:probability(?x, ?p) ^ cyberthreat_DRM:dependsOn(?rs, ?a) ^ cibersituational-ontology:impact(?x, ?i) ^ swrlx:makeOWLThing(?r, ?x) ^ cyberthreat_DRM:threatens(?x, ?a) ^ cyberthreat_DRM:Risk_Scope(?rs) -> cyberthreat_DRM:threatens(?r, ?rs) ^ cyberthreat_DRM:DataProtectionComplianceRisk(?r) ^ cibersituational-ontology:type(?r, \"Data Protection Compliance Risk\"^^rdf:PlainLiteral) ^ cyberthreat_STIXDRM:isGeneratedBy(?r, ?x) ^ cyberthreat_DRM:damages(?r, ?a)");
 		 //Sino guardo la ontologia no se guarda lo generado por las reglas
 		 man.saveOntology(o);
 		 
@@ -360,11 +367,26 @@ public int loadSTIXInstances (OWLOntology o, OWLOntologyManager man, File filena
 		 SWRLRuleEngine swrlRuleEngine = SWRLAPIFactory.createSWRLRuleEngine(o);
 		 if(flag == 0) {
 			 swrlRuleEngine.deleteSWRLRule("RiskAssessment#1 Auto Potential Risk Assessment");
+			 swrlRuleEngine.deleteSWRLRule("RiskAssessment#2 Auto Residual Risk Calculation for Bad Reputation Risk");
+			 swrlRuleEngine.deleteSWRLRule("RiskAssessment#3 Auto Residual Risk for Deliberated Malicious SW Distribution");
+			 swrlRuleEngine.deleteSWRLRule("RiskAssessment#4 Auto Residual Risk for Data Protection Compliance Risk");
+
 		 }
 		 
 		 if(flag == 1) {
 			 swrlRuleEngine.deleteSWRLRule("ThreatInventory#1 Auto Bad Reputation Threat in Classified Data");
+			 swrlRuleEngine.deleteSWRLRule("ThreatInventory#2 Auto Data Protection Threat");
+			 swrlRuleEngine.deleteSWRLRule("ThreatInventory#3 Auto Unintentional User Error Threat");
+			 swrlRuleEngine.deleteSWRLRule("ThreatInventory#4 Auto SW Vulnerabilities Threat");
+			 swrlRuleEngine.deleteSWRLRule("ThreatInventory#5 Auto Deliberated Malicious SW Distribution Threat");
+			 swrlRuleEngine.deleteSWRLRule("ThreatInventory#6 Auto Social Engineering Threat");
+			 swrlRuleEngine.deleteSWRLRule("ThreatInventory#7 Auto Corporate Brand Image Damage Threat");
+			 
 			 swrlRuleEngine.deleteSWRLRule("RiskInventory#1 Auto Bad Reputation Risk");
+			 swrlRuleEngine.deleteSWRLRule("RiskInventory#4 Wifi Anomaly + Threat");
+			 swrlRuleEngine.deleteSWRLRule("RiskInventory#2 Auto Deliberated Malicious SW Distribution Risk");
+			 swrlRuleEngine.deleteSWRLRule("RiskInventory#3 Auto Data Protection Risks Risk");
+
 		 }
 		 
 		 //Sino guardo la ontologia no se guarda lo generado por las reglas
@@ -383,9 +405,11 @@ public int loadSTIXInstances (OWLOntology o, OWLOntologyManager man, File filena
 		 // Run the SWRL rules in the ontology
 		// swrlRuleEngine.infer();
 		float umbral = Configuration.umbral;
-		//Threat Inventory
+		//Assessment
 		swrlRuleEngine.createSWRLRule("RiskAssessment#1 Auto Potential Risk Assessment", "cyberthreat_STIXDRM:isGeneratedBy(?r, ?th) ^ cyberthreat_DRM:threatens(?r, ?rs) ^ cibersituational-ontology:impact(?th, ?i) ^ cibersituational-ontology:probability(?th, ?p) ^ cyberthreat_DRM:Risk_Scope(?rs) ^ cyberthreat_DRM:Risk(?r) ^ cibersituational-ontology:type(?r, ?ty) ^ swrlb:add(?x, ?p, ?i) ^ cibersituational-ontology:namenazas(?r, ?n) ^ swrlx:makeOWLThing(?y, ?r, ?th) -> cyberthreat_DRM:PotentialRisk(?y) ^ cibersituational-ontology:probability(?y, ?p) ^ cibersituational-ontology:type(?y, ?ty) ^ cyberthreat_DRM:evaluates(?y, ?r) ^ cibersituational-ontology:impact(?y, ?i) ^ cyberthreat_DRM:threatens(?y, ?rs) ^ cibersituational-ontology:potentialRisk(?y, ?x) ^ cyberthreat_STIXDRM:isGeneratedBy(?y, ?th) ^ cibersituational-ontology:namenazas(?y, ?n)");
-		//Risk Inventory
+		swrlRuleEngine.createSWRLRule("RiskAssessment#2 Auto Residual Risk Calculation for Bad Reputation Risk", "cibersituational-ontology:type(?s, \"privilege-management-control\"^^rdfs:Literal) ^ cyberthreat_DRM:dependsOn(?rs, ?new_data) ^ cyberthreat_DRM:PotentialRisk(?x) ^ cibersituational-ontology:type(?x, \"Bad Reputation Risk\"^^rdf:PlainLiteral) ^ cyberthreat_DRM:threatens(?x, ?rs) ^ cyberthreat_DRM:Safeguards(?s) ^ cibersituational-ontology:drm_value(?s, ?v) ^ swrlb:subtract(?ar, ?prisk, ?v) ^ cibersituational-ontology:potentialRisk(?x, ?prisk) ^ cyberthreat_DRM:Data(?new_data) -> cibersituational-ontology:actualRisk(?x, ?ar) ^ cyberthreat_DRM:ResidualRisk(?x) ^ cyberthreat_DRM:isMitigatedBy(?x, ?s)");
+		swrlRuleEngine.createSWRLRule("RiskAssessment#3 Auto Residual Risk for Deliberated Malicious SW Distribution", "cyberthreat_DRM:PotentialRisk(?x) ^ cibersituational-ontology:type(?x, \"Deliberated Malicious SW Distribution Risk\"^^rdf:PlainLiteral) ^ cibersituational-ontology:type(?s, \"control-against-malicious-sw\"^^rdfs:Literal) ^ cyberthreat_DRM:Safeguards(?s) ^ cibersituational-ontology:drm_value(?s, ?v) ^ swrlb:subtract(?ar, ?prisk, ?v) ^ cibersituational-ontology:potentialRisk(?x, ?prisk) -> cibersituational-ontology:actualRisk(?x, ?ar) ^ cyberthreat_DRM:ResidualRisk(?x) ^ cyberthreat_DRM:isMitigatedBy(?x, ?s)");
+		swrlRuleEngine.createSWRLRule("RiskAssessment#4 Auto Residual Risk for Data Protection Compliance Risk", "cyberthreat_DRM:threatens(?x, ?rs) ^ cibersituational-ontology:type(?s, \"privacy-and-data-protection-control\") ^ cibersituational-ontology:drm_value(?s, ?v) ^ cibersituational-ontology:potentialRisk(?x, ?prisk) ^ cibersituational-ontology:type(?x, \"Data Protection Compliance Risk\"^^rdf:PlainLiteral) ^ swrlb:subtract(?ar, ?prisk, ?v) ^ cyberthreat_DRM:PotentialRisk(?x) ^ cyberthreat_DRM:Data(?new_data) ^ cyberthreat_DRM:dependsOn(?rs, ?new_data) ^ cyberthreat_DRM:PrivacyandDataProtectionControl(?s) -> cyberthreat_DRM:isMitigatedBy(?x, ?s) ^ cyberthreat_DRM:ResidualRisk(?x) ^ cibersituational-ontology:actualRisk(?x, ?ar)");
 
 		
 		 //Sino guardo la ontologia no se guarda lo generado por las reglas
@@ -683,6 +707,7 @@ public int loadSTIXInstances (OWLOntology o, OWLOntologyManager man, File filena
 			for(OWLNamedIndividual t: amenazasExistentes) {
 				OWLDataProperty numType = dataFactory.getOWLDataProperty(":numType", pmO);
 				String num = obtainDataPropertyValue(t, numType, o, reasoner);
+				System.out.println(num);
 				int numero=-1;
 				if(StringUtils.isNumeric(num)) {
 					numero = Integer.parseInt(num);
@@ -699,7 +724,25 @@ public int loadSTIXInstances (OWLOntology o, OWLOntologyManager man, File filena
 				case 5:
 					numeroAmenazasPorRiesgo[5]++;
 					break;
-		
+				case 11:
+					numeroAmenazasPorRiesgo[11]++;
+					System.out.println("DEBERIAS ENTRAR AQUI");
+					break;
+				case 14:
+					numeroAmenazasPorRiesgo[14]++;
+					break;
+				case 15:
+					numeroAmenazasPorRiesgo[15]++;
+					break;
+				case 31:
+					numeroAmenazasPorRiesgo[31]++;
+					break;
+				case 39:
+					numeroAmenazasPorRiesgo[39]++;
+					break;
+				case 40:
+					numeroAmenazasPorRiesgo[40]++;
+					break;
 				default:
 					break;
 	    		}	
@@ -707,14 +750,16 @@ public int loadSTIXInstances (OWLOntology o, OWLOntologyManager man, File filena
 			}
 			Set<OWLNamedIndividual> instances = o.getIndividualsInSignature();
 			for(OWLNamedIndividual k: instances) {
+				System.out.println(k);
 				int type;
 				type = isRiskType(k, o, dataFactory, reasoner, drm.base);
 				if(type!=-1) {	
-					
+					System.out.println("Entra para meter amenazas");
 					OWLDataProperty property = dataFactory.getOWLDataProperty(":namenazas",pmO);
 					createDataProperty(o, man, dataFactory, base, k, property, numeroAmenazasPorRiesgo[type]);
+					System.out.println(numeroAmenazasPorRiesgo[type]);
 					for(int i=0; i<instances.size();i++) {
-						
+						System.out.println("Metes el riesgo en riskinstances");
 						OWLDataProperty typ = dataFactory.getOWLDataProperty(":type",pmO);
 						String nameofrisk = obtainDataPropertyValue(k, typ, o, reasoner);
 						
