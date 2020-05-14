@@ -407,10 +407,113 @@ public class Anomaly {
 			OWLClassAssertionAxiom axioma = dataFactory.getOWLClassAssertionAxiom(ids_sensor_anomaly, anomaly_instance);
 			man.addAxiom(o, axioma);
 			
-			OWLDataProperty dproperty = dataFactory.getOWLDataProperty(":suspicious_value", pmO);	
+			String time  = anomaly.get("time").toString();
+    		if(time!=null) {
+    			OWLDataProperty dproperty = dataFactory.getOWLDataProperty(":start_time", pmO);	
+    			createDataPropertyDate(o, man, dataFactory, base, anomaly_instance, dproperty, time);
+    			
+    		}
+    		
 			
+			//DATA
 			
-			initializationOfSuspiciousValue(dataFactory, anomaly_instance, dproperty,o);
+	    	JSONArray data = (JSONArray) anomaly.get("data");
+	    	JSONObject jObject = (JSONObject) data.get(0); 
+	    	
+	    	if(data.size()>0) {
+	    		String field = null;
+	    		
+	    		field = jObject.get("prediction").toString();
+	    		if(field!=null) {
+	    			
+	    			OWLDataProperty dproperty = dataFactory.getOWLDataProperty(":prediction", pmO);	
+	    			createDataProperty(o, man, dataFactory, base, anomaly_instance, dproperty, field);
+
+	    		}
+	    		
+	    		field = jObject.get("attack_cat").toString();
+	    		if(field!=null) {
+	    			OWLDataProperty dproperty = dataFactory.getOWLDataProperty(":attack_cat", pmO);	
+	    			createDataProperty(o, man, dataFactory, base, anomaly_instance, dproperty, field);
+	    			
+	    		}
+	    		field = jObject.get("srcip").toString();
+	    		if(field!=null) {
+	    			OWLDataProperty dproperty = dataFactory.getOWLDataProperty(":srcip", pmO);	
+	    			createDataProperty(o, man, dataFactory, base, anomaly_instance, dproperty, field);
+	    			
+	    		}
+	    	
+	    		field = jObject.get("sport").toString();
+	    		if(field!=null) {
+	    			OWLDataProperty dproperty = dataFactory.getOWLDataProperty(":sport", pmO);	
+	    			createDataProperty(o, man, dataFactory, base, anomaly_instance, dproperty, field);
+	    			
+	    		}
+	    		
+	    		field = jObject.get("dstip").toString();
+	    		if(field!=null) {
+	    			OWLDataProperty dproperty = dataFactory.getOWLDataProperty(":dstip", pmO);	
+	    			createDataProperty(o, man, dataFactory, base, anomaly_instance, dproperty, field);
+	    			
+	    		}
+	    		
+	    		field = jObject.get("dsport").toString();
+	    		if(field!=null) {
+	    			OWLDataProperty dproperty = dataFactory.getOWLDataProperty(":dsport", pmO);	
+	    			createDataProperty(o, man, dataFactory, base, anomaly_instance, dproperty, field);
+	    			
+	    		}
+	    		
+	    		field = jObject.get("proto").toString();
+	    		if(field!=null) {
+	    			OWLDataProperty dproperty = dataFactory.getOWLDataProperty(":proto", pmO);	
+	    			createDataProperty(o, man, dataFactory, base, anomaly_instance, dproperty, field);
+	    			
+	    		}
+	    		
+	    		field = jObject.get("ct_flw_http_mthd").toString();
+	    		if(field!=null) {
+	    			OWLDataProperty dproperty = dataFactory.getOWLDataProperty(":ct_flw_http_mthd", pmO);	
+	    			createDataProperty(o, man, dataFactory, base, anomaly_instance, dproperty, field);
+	    			
+	    		}
+	    		
+	    		field = jObject.get("_id").toString();
+	    		if(field!=null) {
+	    			OWLDataProperty dproperty = dataFactory.getOWLDataProperty(":id", pmO);	
+	    			createDataProperty(o, man, dataFactory, base, anomaly_instance, dproperty, field);
+	    			
+	    		}
+	    		
+	    		field = jObject.get("_type").toString();
+	    		if(field!=null) {
+	    			OWLDataProperty dproperty = dataFactory.getOWLDataProperty("type", pmO);	
+	    			createDataProperty(o, man, dataFactory, base, anomaly_instance, dproperty, field);
+	    			
+	    		}
+	    		
+	    		field = jObject.get("_index").toString();
+	    		if(field!=null) {
+	    			OWLDataProperty dproperty = dataFactory.getOWLDataProperty(":_index", pmO);	
+	    			createDataProperty(o, man, dataFactory, base, anomaly_instance, dproperty, field);
+	    			
+	    		}
+	    		
+	    		field = jObject.get("_score").toString();
+	    		if(field!=null) {
+	    			OWLDataProperty dproperty = dataFactory.getOWLDataProperty(":_score", pmO);	
+	    			createDataProperty(o, man, dataFactory, base, anomaly_instance, dproperty, field);
+	    			
+	    		}
+	    		OWLDataProperty dproperty = dataFactory.getOWLDataProperty(":suspicious_value", pmO);		
+	    		initializationOfSuspiciousValue(dataFactory, anomaly_instance, dproperty,o);
+
+    			
+	    		
+	    	}
+	    	
+	    	
 			
 		}
 		

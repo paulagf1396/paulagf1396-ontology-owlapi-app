@@ -61,5 +61,29 @@
       "mod": "OOK"
     }
   ]
+},
+{   
+  "version": "2.0",
+  "time": "20200126092709",
+  "id": "005",
+  "type": "IDS",
+  "event": "DATA",
+  "anomaly": 1,
+  "data": [
+   {
+      "prediction": "No",
+      "attack_cat": "No ataque",
+      "srcip": "59.166.0.7",
+      "sport" : "46430",
+      "dstip" : "149.171.126.1",
+      "dsport" : "47200",
+      "proto" : "tcp",
+      "ct_flw_http_mthd" : "0",
+      "_id" : "AXjqjw0193k",
+      "_type" : "doc-type",
+      "_index" : "index-name-1",
+      "_score" : "0"
+    }
+  ]
 }
 ]

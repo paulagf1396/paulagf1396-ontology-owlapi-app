@@ -3,9 +3,16 @@ package owl.upm.cyberthreat.owlapi;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.Map.Entry;
 
 import javax.swing.BorderFactory;
@@ -25,9 +32,16 @@ import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.general.DefaultPieDataset;
 import org.jfree.data.statistics.HistogramDataset;
 import org.jfree.data.statistics.HistogramType;
+
+import org.jfree.data.time.RegularTimePeriod;
+import org.jfree.data.time.TimeSeries;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
@@ -36,38 +50,85 @@ public class Chart {
 	 
 	
 	public static  final String fileDatosPath = "/Users/paulagarcia/eclipse-workspace/cyberthreat.owlapi/owl-files/datos.json";	
+	private static Set<RiskTotalData> riskTotalDataArray= new HashSet<RiskTotalData>();
+	
 	public Chart() {
 		
 		
 	}
 	
-	public ArrayList<RiskTotalData> extractorReaderFromJSON(){
-		ArrayList<RiskTotalData> totalresults = new  ArrayList<RiskTotalData>();
-		
-		
-		return totalresults;
+	public static Set<RiskTotalData> extractorReaderFromJSON() throws IOException, ParseException{
+		File filename = new File(fileDatosPath);
+		Set<RiskTotalData> riskTotalDataArray= new HashSet<RiskTotalData>();
+		if(!filename.exists()) {
+			System.out.println("There is no data");
+		}
+		else {
+		JSONParser jsonParser = new JSONParser();
+		FileReader reader = new FileReader(filename);
+		Object obj = jsonParser.parse(reader);
+		System.out.println("Extrayendo los JSON objetos del fichero datos.json " + obj);
+		JSONArray dataList = (JSONArray) obj;
+
+        for(int i = 0; i< dataList.size(); i++) {
+        	JSONObject jObject = (JSONObject) dataList.get(i); 
+        	String time = jObject.get("Time").toString();
+        	float pTRisk = Float.parseFloat(jObject.get("Potential Total Risk").toString());
+        	float rTRisk = Float.parseFloat(jObject.get("Residual Total Risk").toString());
+        	double pTRiskC = Float.parseFloat(jObject.get("Potential Total Risk Continuous").toString());
+        	double rTRiskC = Float.parseFloat(jObject.get("Residual Total Risk Continuous").toString());
+        	double numThreatTotal = Double.parseDouble(jObject.get("Threat Total Number").toString());
+        	JSONArray risksArray = (JSONArray) jObject.get("Risks");
+        	Set<RiskData> riskDataSet = new HashSet<RiskData>();
+        	for(int j = 0; j<risksArray.size() ;j++) {
+        		
+        		JSONObject risksObject = (JSONObject) risksArray.get(j); 
+        		String riskName = risksObject.get("Risk Name").toString();
+        		float pRisk = Float.parseFloat(risksObject.get("Potential Risk").toString());
+        		float rRisk = Float.parseFloat(risksObject.get("Residual Risk").toString());
+        		float threatNum = Float.parseFloat(risksObject.get("Threat Number").toString());
+        		
+        		if(!riskName.isEmpty()) {
+        			
+        			RiskData rd= new RiskData(riskName, threatNum, pRisk, rRisk);
+        			riskDataSet.add(rd);
+        		}
+        		
+        	}
+        	
+        	
+        	if(time!=null && riskDataSet.size()>0) {
+        		RiskTotalData riskTD = new RiskTotalData(time, pTRisk, rTRisk, riskDataSet, numThreatTotal);
+        		riskTD.setpRiskTotalTimeFunction(pTRiskC);
+        		riskTD.setrRiskTotalTimeFunction(rTRiskC);
+        		
+        		riskTotalDataArray.add(riskTD);
+        	}
+        	
+        	System.out.println(riskTotalDataArray.size());
+        }
+		}
+        return riskTotalDataArray;
+
 	}
 	
-	public void barchartPaint(String rr, String pr) {
-
+	public static void barchartPaint() throws IOException, ParseException {
+		riskTotalDataArray = extractorReaderFromJSON();
+		String pr = "Potential Risk";
+		String rr = "Residual Risk";
 		DefaultCategoryDataset data = new DefaultCategoryDataset();
-		for (Entry<String, Float> entry : dataset1.entrySet()) {
-			String name= null;
-			float valor = 0;
-			name = entry.getKey();
-			//name = name.substring(name.indexOf("#") + 1, name.length() -1);
-			valor = entry.getValue();
-			data.setValue(valor, rr, name);	
+		for (RiskTotalData entry : riskTotalDataArray) {
+			Set<RiskData> rds = new HashSet<RiskData>();
+			rds = entry.getRiskData();
+			for(RiskData rd : rds) {
+				String name = rd.getRiskName();
+				float prisk = rd.getpRisk();
+				float rrisk = rd.getrRisk();
 			
-		}
-		for (Entry<String, Float> entry : dataset2.entrySet()) {
-			String name= null;
-			float valor = 0;
-			name = entry.getKey();
-			//name = name.substring(name.indexOf("#") + 1, name.length() -1);
-			valor = entry.getValue();
-			data.setValue(valor, pr, name);	
-			
+				data.setValue(prisk, pr, name);	
+				data.setValue(rrisk, rr, name);	
+			}
+				
 		}
 		String plotTitle = "Historgram"; 
 		String xaxis = "number";
@@ -78,102 +139,102 @@ public class Chart {
                 "Risk Value",
                 data,
                 PlotOrientation.VERTICAL,
-                false, true, false);
+                true, true, false);
         ChartFrame frame = new ChartFrame("First", barChart);
 		frame.pack();
 		frame.setVisible(true);
 		
 	}
 	
-	
-    private void initUI() {
+	public static void seriesGraph() throws IOException, ParseException {
+		riskTotalDataArray = extractorReaderFromJSON();
+		String pr = "Potential Risk Continuous";
+		String rr = "Residual Risk Continuous";
+		DefaultCategoryDataset data = new DefaultCategoryDataset( );
+		for (RiskTotalData entry : riskTotalDataArray) {
+			
+			double prisk = entry.getpRiskTotalTimeFunction();
+			System.out.println(prisk);
+			double rrisk = entry.getrRiskTotalTimeFunction();
+			String date = entry.getDate();
+			data.addValue(prisk, pr, date);	
+			data.addValue(rrisk, rr, date);			
+		}
 
-        XYDataset dataset = createDataset();
-        JFreeChart chart = createChart(dataset);
-        ChartPanel chartPanel = new ChartPanel(chart);
-        chartPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
-        chartPanel.setBackground(Color.white);
-        
-       
-    }
-
-    private static XYDataset createDataset() {
-
-        XYSeries series1 = new XYSeries("2014");
-        series1.add(18, 530);
-        series1.add(20, 580);
-        series1.add(25, 740);
-        series1.add(30, 901);
-        series1.add(40, 1300);
-        series1.add(50, 2219);
-
-        XYSeries series2 = new XYSeries("2016");
-        series2.add(18, 567);
-        series2.add(20, 612);
-        series2.add(25, 800);
-        series2.add(30, 980);
-        series2.add(40, 1210);
-        series2.add(50, 2350);
-
-        XYSeriesCollection dataset = new XYSeriesCollection();
-        dataset.addSeries(series1);
-        dataset.addSeries(series2);
-
-        return dataset;
-    }
-
-    private static JFreeChart createChart(final XYDataset dataset) {
-
-        JFreeChart chart = ChartFactory.createXYLineChart(
-                "Average salary per age",
-                "Age",
-                "Salary (€)",
-                dataset,
+		JFreeChart lineChart = ChartFactory.createLineChart(
+                "Evolución del riesgo",
+                "Date",
+                "Risk Value",
+                data,
                 PlotOrientation.VERTICAL,
-                true,
-                true,
-                false
-        );
-
-        XYPlot plot = chart.getXYPlot();
-
-        XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
-
-        renderer.setSeriesPaint(0, Color.RED);
-        renderer.setSeriesStroke(0, new BasicStroke(2.0f));
-        renderer.setSeriesPaint(1, Color.BLUE);
-        renderer.setSeriesStroke(1, new BasicStroke(2.0f));
-
-        plot.setRenderer(renderer);
-        plot.setBackgroundPaint(Color.white);
-        plot.setRangeGridlinesVisible(false);
-        plot.setDomainGridlinesVisible(false);
-
-        chart.getLegend().setFrame(BlockBorder.NONE);
-
-        chart.setTitle(new TextTitle("Average Salary per Age",
-                        new Font("Serif", Font.BOLD, 18)
-                )
-        );
-
-        return chart;
-    }
-    public static void main(String[] args) {
-   	 XYDataset dataset = createDataset();
-        JFreeChart chart = createChart(dataset);
-        ChartPanel chartPanel = new ChartPanel(chart);
-        chartPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
-         
-        chartPanel.setBackground(Color.white);
-        ChartFrame frame = new ChartFrame("First", chart);
-        frame.add(chartPanel);
-
-       
-        frame.setTitle("Line chart");
-        frame. setLocationRelativeTo(null);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                true, true, false);
+        ChartFrame frame = new ChartFrame("First", lineChart);       
+        
 		frame.pack();
 		frame.setVisible(true);
+		
+	}
+	
+	public static void seriesXYGraph() throws IOException, ParseException {
+		riskTotalDataArray = extractorReaderFromJSON();
+		String pr = "Potential Risk Continuous";
+		String rr = "Residual Risk Continuous";
+		TimeSeries series1 = new TimeSeries(pr);		
+		for (RiskTotalData entry : riskTotalDataArray) {
+			
+			double prisk = entry.getpRiskTotalTimeFunction();
+			double rrisk = entry.getrRiskTotalTimeFunction();
+			String date = entry.getDate();
+			SimpleDateFormat standardDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+			// (Define your formatter only once, then reuse)
+
+			Date myDate = standardDateFormat.parse(date);
+			// (you may want to catch a ParseException)
+			
+			
+			series1.add( new Day(date), prisk);
+					
+		}
+
+		JFreeChart lineChart = ChartFactory.createLineChart(
+                "Evolución del riesgo",
+                "Date",
+                "Risk Value",
+                data,
+                PlotOrientation.VERTICAL,
+                true, true, false);
+        ChartFrame frame = new ChartFrame("First", lineChart);
+        
+        
+        final XYPlot plot = lineChart.getXYPlot( );
+        XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer( );
+        renderer.setSeriesPaint( 0 , Color.RED );
+        renderer.setSeriesPaint( 1 , Color.GREEN );
+        renderer.setSeriesStroke( 0 , new BasicStroke( 4.0f ) );
+        renderer.setSeriesStroke( 1 , new BasicStroke( 3.0f ) );
+        plot.setRenderer( renderer ); 
+        
+        
+        
+        
+		frame.pack();
+		frame.setVisible(true);
+		
+	}
+	
+
+    public static void main(String[] args) {
+    	try {
+			seriesGraph();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			System.out.println("Error "+e);
+			e.printStackTrace();
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			System.out.println("Error "+e);
+		}
     }
 
 }
