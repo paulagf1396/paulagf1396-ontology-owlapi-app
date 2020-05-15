@@ -13,15 +13,20 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.TimeZone;
 import java.util.Map.Entry;
 
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
+import javax.swing.text.DateFormatter;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartFrame;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.DateAxis;
+import org.jfree.chart.axis.DateTickUnit;
+import org.jfree.chart.axis.TickUnits;
 import org.jfree.chart.block.BlockBorder;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
@@ -32,9 +37,12 @@ import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.general.DefaultPieDataset;
 import org.jfree.data.statistics.HistogramDataset;
 import org.jfree.data.statistics.HistogramType;
-
+import org.jfree.data.time.Day;
+import org.jfree.data.time.Millisecond;
+import org.jfree.data.time.Minute;
 import org.jfree.data.time.RegularTimePeriod;
 import org.jfree.data.time.TimeSeries;
+import org.jfree.data.time.TimeSeriesCollection;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
@@ -175,46 +183,59 @@ public class Chart {
 		
 	}
 	
-	public static void seriesXYGraph() throws IOException, ParseException {
+	public static void seriesXYGraph() throws IOException, ParseException, java.text.ParseException {
 		riskTotalDataArray = extractorReaderFromJSON();
 		String pr = "Potential Risk Continuous";
 		String rr = "Residual Risk Continuous";
-		TimeSeries series1 = new TimeSeries(pr);		
+		TimeSeriesCollection dataset = new TimeSeriesCollection();
+		final TimeSeries series1 = new TimeSeries(pr);
+		final TimeSeries series2 = new TimeSeries(rr);
 		for (RiskTotalData entry : riskTotalDataArray) {
 			
 			double prisk = entry.getpRiskTotalTimeFunction();
 			double rrisk = entry.getrRiskTotalTimeFunction();
 			String date = entry.getDate();
-			SimpleDateFormat standardDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
-			// (Define your formatter only once, then reuse)
+			
+			String defaultTimezone = TimeZone.getDefault().getID();
+			Date myDate = (new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ")).parse(date.replaceAll("Z$", "+0000"));
 
-			Date myDate = standardDateFormat.parse(date);
-			// (you may want to catch a ParseException)
+			System.out.println("string: " + date);
+			System.out.println("defaultTimezone: " + defaultTimezone);
+			System.out.println("date: " + (new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ")).format(myDate.getTime()));
 			
 			
-			series1.add( new Day(date), prisk);
+			
+			series1.add( new Minute(myDate), prisk);
+			series2.add( new Minute(myDate), rrisk);
 					
 		}
-
-		JFreeChart lineChart = ChartFactory.createLineChart(
+		dataset.addSeries(series1);
+		dataset.addSeries(series2);
+		JFreeChart chart = ChartFactory.createTimeSeriesChart(
                 "Evolución del riesgo",
                 "Date",
                 "Risk Value",
-                data,
-                PlotOrientation.VERTICAL,
+                dataset,
                 true, true, false);
-        ChartFrame frame = new ChartFrame("First", lineChart);
+		final XYPlot plot = chart.getXYPlot();
+		plot.setBackgroundPaint(Color.white);
+		plot.setDomainGridlinePaint(Color.gray);
+        plot.setRangeGridlinePaint(Color.gray);
+        ChartFrame frame = new ChartFrame("First", chart);
         
         
-        final XYPlot plot = lineChart.getXYPlot( );
+        
         XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer( );
-        renderer.setSeriesPaint( 0 , Color.RED );
-        renderer.setSeriesPaint( 1 , Color.GREEN );
-        renderer.setSeriesStroke( 0 , new BasicStroke( 4.0f ) );
+        renderer.setSeriesPaint( 0 , Color.PINK );
+        renderer.setSeriesPaint( 1 , Color.blue );
+        renderer.setSeriesStroke( 0 , new BasicStroke( 2.0f ) );
         renderer.setSeriesStroke( 1 , new BasicStroke( 3.0f ) );
         plot.setRenderer( renderer ); 
         
-        
+        final DateAxis axis = (DateAxis) plot.getDomainAxis();
+        axis.setDateFormatOverride(new SimpleDateFormat("hh:mm:ss a"));
+        axis.setVerticalTickLabels(true);
+		
         
         
 		frame.pack();
@@ -223,9 +244,9 @@ public class Chart {
 	}
 	
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws java.text.ParseException {
     	try {
-			seriesGraph();
+    		seriesXYGraph();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			System.out.println("Error "+e);
