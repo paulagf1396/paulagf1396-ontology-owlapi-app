@@ -678,7 +678,48 @@ public class STIX {
 				OWLClassAssertionAxiom axioma0 = dataFactory.getOWLClassAssertionAxiom(vulnerability, stix_instance);
 				man.addAxiom(o, axioma0);
 				System.out.println(axioma0);
-				System.out.println("The STIX instance was created");
+				
+				//DATA
+				
+				String field = null;
+				field = stix_element.get("id").toString();
+				if(field !=null) {
+					OWLDataProperty dproperty = dataFactory.getOWLDataProperty(":id", pmO);	
+	    			createDataProperty(o, man, dataFactory, base, stix_instance, dproperty, field);
+				}
+    			
+				field = stix_element.get("created_by_ref").toString();
+				if(field !=null) {
+					OWLIndividual identityI = dataFactory.getOWLNamedIndividual(IRI.create(base +"#"+field));
+					OWLClassAssertionAxiom axiomaIdentity = dataFactory.getOWLClassAssertionAxiom(identity, identityI);
+					OWLDataProperty dproperty = dataFactory.getOWLDataProperty(":name", pmO);	
+	    			createDataProperty(o, man, dataFactory, base, identityI, dproperty, field);
+					man.addAxiom(o, axiomaIdentity);
+					createObjectProperty(o, man, dataFactory, base, stix_instance, identityI, "created_by_ref");
+				}
+				
+				
+				field = stix_element.get("created").toString();
+				if(field !=null) {
+					OWLDataProperty dproperty = dataFactory.getOWLDataProperty(":created", pmO);	
+	    			createDataProperty(o, man, dataFactory, base, stix_instance, dproperty, field);
+				}
+				
+				field = stix_element.get("modified").toString();
+				if(field !=null) {
+					OWLDataProperty dproperty = dataFactory.getOWLDataProperty(":modified", pmO);	
+	    			createDataProperty(o, man, dataFactory, base, stix_instance, dproperty, field);
+				}
+				
+				field = stix_element.get("type").toString();
+				if(field !=null) {
+					OWLDataProperty dproperty = dataFactory.getOWLDataProperty(":type", pmO);	
+	    			createDataProperty(o, man, dataFactory, base, stix_instance, dproperty, field);
+				}
+				
+				
+    			System.out.println("The STIX instance was created");
+				
 			}
 			else if(stixType.equals("grouping")){
 				String name = stix_element.get("name").toString();

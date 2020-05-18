@@ -24,5 +24,20 @@
 "sophistication": "advanced",
 "resource_level": "team",
 "primary_motivation": "organizational-gain"
+},
+{
+  "type": "vulnerability",
+  "spec_version": "2.1",
+  "id": "vulnerability--0c7b5b88-8ff7-4a4d-aa9d-feb398cd0061",
+  "created": "2016-05-12T08:17:27.000Z",
+  "modified": "2016-05-12T08:17:27.000Z",
+  "created_by_ref": "identity--f431f809-377b-45e0-aa1c-6a4751cae5ff",
+  "name": "CVE-2020-0609",
+  "external_references": [
+    {
+      "source_name": "cve",
+      "external_id": "CVE-2020-0609"
+    }
+  ]
 }
 ]
