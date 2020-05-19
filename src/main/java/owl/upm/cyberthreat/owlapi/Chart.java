@@ -41,6 +41,7 @@ import org.jfree.data.time.Day;
 import org.jfree.data.time.Millisecond;
 import org.jfree.data.time.Minute;
 import org.jfree.data.time.RegularTimePeriod;
+import org.jfree.data.time.Second;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
 import org.jfree.data.xy.XYDataset;
@@ -81,6 +82,7 @@ public class Chart {
         for(int i = 0; i< dataList.size(); i++) {
         	JSONObject jObject = (JSONObject) dataList.get(i); 
         	String time = jObject.get("Time").toString();
+        	System.out.println("La fecha es : "+time);
         	float pTRisk = Float.parseFloat(jObject.get("Potential Total Risk").toString());
         	float rTRisk = Float.parseFloat(jObject.get("Residual Total Risk").toString());
         	double pTRiskC = Float.parseFloat(jObject.get("Potential Total Risk Continuous").toString());
@@ -196,17 +198,23 @@ public class Chart {
 			double rrisk = entry.getrRiskTotalTimeFunction();
 			String date = entry.getDate();
 			
-			String defaultTimezone = TimeZone.getDefault().getID();
-			Date myDate = (new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ")).parse(date.replaceAll("Z$", "+0000"));
+		/*	String defaultTimezone = TimeZone.getDefault().getID();
+			Date myDate = (new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ")).parse(date);
 
 			System.out.println("string: " + date);
 			System.out.println("defaultTimezone: " + defaultTimezone);
-			System.out.println("date: " + (new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ")).format(myDate.getTime()));
+			System.out.println("date: " + (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS")).format(myDate.getTime()));
+			
+			*/
+
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+			SimpleDateFormat output = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			Date d = sdf.parse(date);
+			String formattedTime = output.format(d);
 			
 			
-			
-			series1.add( new Minute(myDate), prisk);
-			series2.add( new Minute(myDate), rrisk);
+			series1.add( new Second(d), prisk);
+			series2.add( new Second(d), rrisk);
 					
 		}
 		dataset.addSeries(series1);
@@ -218,16 +226,17 @@ public class Chart {
                 dataset,
                 true, true, false);
 		final XYPlot plot = chart.getXYPlot();
-		plot.setBackgroundPaint(Color.white);
-		plot.setDomainGridlinePaint(Color.gray);
-        plot.setRangeGridlinePaint(Color.gray);
+		plot.setBackgroundPaint(new Color(0xF7F7F7));
+		plot.setDomainGridlinesVisible(true);
+		plot.setDomainGridlinePaint(Color.LIGHT_GRAY);
+        plot.setRangeGridlinePaint(Color.LIGHT_GRAY);
         ChartFrame frame = new ChartFrame("First", chart);
         
         
         
         XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer( );
-        renderer.setSeriesPaint( 0 , Color.PINK );
-        renderer.setSeriesPaint( 1 , Color.blue );
+        renderer.setSeriesPaint( 0 , new Color(0xE9A5FF) );
+        renderer.setSeriesPaint( 1 , new Color(0xA5BCFF));
         renderer.setSeriesStroke( 0 , new BasicStroke( 2.0f ) );
         renderer.setSeriesStroke( 1 , new BasicStroke( 3.0f ) );
         plot.setRenderer( renderer ); 
