@@ -31,6 +31,9 @@ public class Configuration {
 		configValues.put("ficheroJSONSensores", prop.getProperty("ANOMALIES.BBDD.CONFIG"));
 		configValues.put("ficheroJSONSTIX", prop.getProperty("STIX.ELEMENTS.CONFIG"));
 		configValues.put("riskConfig", prop.getProperty("RISK.CALCULATION"));
+		configValues.put("ficheroAssets", prop.getProperty("ASSETS.CONFIG"));
+		configValues.put("ficheroAssetValuation", prop.getProperty("ASSET.VALUATION"));
+
 
 		
 		return configValues;

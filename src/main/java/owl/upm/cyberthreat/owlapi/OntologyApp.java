@@ -103,6 +103,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.opencsv.CSVReader;
+import com.opencsv.CSVReaderBuilder;
 
 
 
@@ -117,6 +119,9 @@ public class OntologyApp {
 	private static Chart chart;	
 	private static String pathAnomaliesFile = Configuration.getPath().get("ficheroJSONSensores");
 	private static String pathSTIXFile = Configuration.getPath().get("ficheroJSONSTIX");
+    private static String pathAssetFile = Configuration.getPath().get("ficheroAssets");
+    private static String pathAssetValuationFile = Configuration.getPath().get("ficheroAssetValuation");
+
 	
 	Map<String, Float> amenazasReales = new HashMap<String, Float>();
 	
@@ -223,6 +228,65 @@ public int loadSTIXInstances (OWLOntology o, OWLOntologyManager man, File filena
 		
 	}
 
+	public int loadAssets (OWLOntology o, OWLOntologyManager man, File filename, String base, OWLDataFactory dataFactory) throws IOException, ParseException, OWLOntologyStorageException {
+		System.out.println("ENTRASTE");
+		int numInstances = 0;	
+		
+		filename  = copyFile(filename);
+	
+	    CSVReader reader = null;
+	    try {
+	    	//CSVParser parser = new CSVParserBuilder().withSeparator(' ').build();
+	        //reader = new CSVReaderBuilder(new FileReader(filename)).withSkipLines(1).withCSVParser(parser).build();
+	    	reader = new CSVReaderBuilder(new FileReader(filename)).withSkipLines(1).build();
+	        // Read all data at once 
+	    	// Read all data at once 
+	        List<String[]> allData = reader.readAll(); 
+	        String todo= "";
+	        // Print Data. 
+	        for (String[] row : allData) { 
+	      
+	            for (String cell : row) { 
+	            
+	            	if(cell.startsWith("[")) {
+	            		cell = "Activo"+cell;
+	            	}
+	            	todo = todo + cell;
+	            }
+	        }
+	        
+	        String[] assets = todo.split("Activo");
+	        for(String a : assets) {
+	        	System.out.println(a);
+	        	System.out.println("\n");
+	        	if(!a.equals("")) {
+	        		drm.createAssets(man, o, dataFactory, "Asset", a);
+	        		numInstances++;
+	        	}
+	        	
+	        }
+	        for(String a : assets) {
+	        	System.out.println(a);
+	        	System.out.println("\n");
+	        	if(!a.equals("")) {
+	        		drm.createDependencias(man, o, dataFactory, "Asset", a);
+	        	
+	        	}
+	        	
+	        }
+	        
+	        
+	  
+	    } catch (IOException e) {
+	        e.printStackTrace();
+	    }
+	    
+		reader.close();
+	    man.saveOntology(o);
+	    deleteFile(filename);
+	    return numInstances;
+		
+	}
 	/*************************************************************/
     /**                                                         **/
     /**        Methods to manipulate the ontology               **/
@@ -861,6 +925,7 @@ public int loadSTIXInstances (OWLOntology o, OWLOntologyManager man, File filena
 		//File copytmp2 = copyFileOWL(fileTmp, fileTmp2);
 
 		
+		
 		OWLOntologyManager man = OWLManager.createOWLOntologyManager();
 		o =  man.loadOntologyFromOntologyDocument(fileTmp);
 		OWLDataFactory dataFactory = man.getOWLDataFactory();
@@ -873,7 +938,11 @@ public int loadSTIXInstances (OWLOntology o, OWLOntologyManager man, File filena
 		drm = new DRM(dataFactory, man, base);
 		stix = new STIX(dataFactory, man, base);
 		Configuration.runConfiguration();
-		
+		File assetFile = new File(pathAssetFile);
+	    if(assetFile.exists()) {
+	        int assets = onto_object.loadAssets(o, man, assetFile, base, dataFactory);
+	        System.out.println("There are "+assets+" assets");
+	    }
 		
 
 		
@@ -888,6 +957,7 @@ public int loadSTIXInstances (OWLOntology o, OWLOntologyManager man, File filena
 		//iri = o2.getOntologyID().getOntologyIRI().get();
 		//String base2 = iri.toString();
 		
+	    
 		
 		while(true) {
 			
@@ -975,7 +1045,6 @@ public int loadSTIXInstances (OWLOntology o, OWLOntologyManager man, File filena
 		RiskExtractor re = new RiskExtractor();
 		//Datos actuales rtd
 		RiskTotalData rtd = re.infoExtractor(man, o, base, dataFactory, riskClassObject);
-		//re.jsonWriter(rtd);
 		RiskCalculation rc = new RiskCalculation();
 		//datos continuos del pasado
 		Set<RiskTotalData> rtd_from_past = rc.extractDataFromJSON();
@@ -983,45 +1052,19 @@ public int loadSTIXInstances (OWLOntology o, OWLOntologyManager man, File filena
 		re.jsonWriter(rtdfinal);
 		
 		
-		//Calculo del riegso continuo
 		
-		
-
-		
-		//RiskCalculation r = new RiskCalculation();
-		//Map<String, Float> dataRRisk = new HashMap<String, Float>();
-		//dataRRisk = r.residualRiskCalculation(o, man, dataFactory, base, reasoner, drm.base);
-		//Map<String, Float> dataPRisk = new HashMap<String, Float>();
-		//dataPRisk = r.potentialRiskCalculation(o, man, dataFactory, base, reasoner, drm.base);
-		
-		//System.out.println("El riesgo residual discreto es: "+dataRRisk);
-		//System.out.println("El riesgo potential discreto es: "+dataPRisk);
-		
-		//chart = new Chart(dataRRisk2,dataPRisk2 );
-		//chart.barchartPaint("Residual Risk", "Potential Risk");
 		
 		
 		}
 		
 		
-		//System.out.println(onto_object.duplicatedThreats(dataFactory, o, man, reasoner, base));
-		
-		
-		
-		
-		//Verificar si es necesario modificar el sv value porque haya anomalias referentes al mismo sitio
-		//razonar
-		//caluclar riesgo
-		//Esperar mas anomalias
-		
-		//Cargar razonador
-		//System.out.println("Starting the reasoner...\n");
-		//onto_object.loadReasoner(o, man, dataFactory, base);
 		
 		
 
 		
 		
 	}
+	
+	
 
 }

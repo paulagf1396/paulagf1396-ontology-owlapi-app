@@ -27,5 +27,11 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="lib" path="/Users/paulagarcia/Jcharts/jcommon-1.0.23/jcommon-1.0.23.jar"/>
 	<classpathentry kind="lib" path="/Users/paulagarcia/Jcharts/jfreechart-1.5.0.jar"/>
+	<classpathentry kind="lib" path="/Users/paulagarcia/OpenCSV/jar_files/commons-beanutils-1.9.3.jar"/>
+	<classpathentry kind="lib" path="/Users/paulagarcia/OpenCSV/jar_files/commons-collections-3.2.2.jar"/>
+	<classpathentry kind="lib" path="/Users/paulagarcia/OpenCSV/jar_files/commons-lang3-3.6.jar"/>
+	<classpathentry kind="lib" path="/Users/paulagarcia/OpenCSV/jar_files/commons-logging-1.2.jar"/>
+	<classpathentry kind="lib" path="/Users/paulagarcia/OpenCSV/jar_files/commons-text-1.1.jar"/>
+	<classpathentry kind="lib" path="/Users/paulagarcia/OpenCSV/jar_files/opencsv-4.1.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
