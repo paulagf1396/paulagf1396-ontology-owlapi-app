@@ -21,6 +21,7 @@ import org.semanticweb.owlapi.model.OWLDataRange;
 import org.semanticweb.owlapi.model.OWLDatatype;
 import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLLiteral;
+import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLObjectPropertyAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLOntology;
@@ -328,60 +329,74 @@ public class DRM {
 		
 		public void  createAssets (OWLOntologyManager man, OWLOntology o, OWLDataFactory dataFactory, String drmType,  String element) {
 			if(element.length()>0) {
-				element = element.replace("\"", "").replace("[", "").replace("]", "");   
-				//split1[0] es tipo+assetname y split1[1]dependencias
-				String[] split1 = element.split(";;;");
-				
-				//split2[0] tipo y split2[1] assetname
-				String[] split2 = split1[0].split(";;");
-				
-				//Saco ID y TYPE
-				int ind = split2[0].indexOf(" ");
-				String id = split2[0].substring(0, ind+1);
-				String type = split2[0].substring(ind+1);
-				
-				//Saco assetName
-				String assetName = split2[1].replace(" ", "");
-				if(split1.length==1) {
-					assetName= assetName.replace(";", "");
-				}
-				
-				//Saco dependencias
-				List dependencias = new ArrayList<String>();
-				if(split1.length>1) {
-					for(int j = 1; j<split1.length; j++) {
-						
-						//Divide el numero y el valor de la dependencia
-						String[] split3= split1[j].split(";");
-						String valor = split3[1].replace(" ", "");
-						
-						dependencias.add(valor);
-						System.out.println(valor);
+				element = element.replace("\"", "").replace("[", "_").replace("]", "");
+				String[] activosDentro = element.split(";;_");
+				for(int i = 1; i<activosDentro.length; i++){
+					String activo = activosDentro[i]; 
+					System.out.println(activo);
+
+					//split1[0] es assetname y split1[1]dependencias
+					String[] split1 = activo.split(";;;");
+					
+					//split2[0] tipo y split2[1] assetname
+					String split2 = split1[0];
+					
+					//Saco  TYPE
+					int ind = activosDentro[0].indexOf(" ");
+					//String code = split2[0].substring(0, ind+1);
+					String type = activosDentro[0].substring(ind+1);
+					System.out.println(type);
+					
+					
+					//Saco code + assetName
+					int space = split1[0].indexOf(" ");
+					String code = split2.substring(0, space);
+					System.out.println(code);
+					String assetName = split1[0].replace(" ", "");
+					System.out.println(assetName);
+					if(split1.length==1) {
+						assetName= assetName.replace(";", "");
 					}
+					
+					//Saco dependencias
+					List dependencias = new ArrayList<String>();
+					if(split1.length>1) {
+						for(int j = 1; j<split1.length; j++) {
+							
+							//Divide el numero y el valor de la dependencia
+							String[] split3= split1[j].split(";");
+							String valor = split3[1].replace(" ", "");
+							
+							dependencias.add(valor);
+							
+						}
+					}
+					
+					
+					
+					PrefixManager pm = new DefaultPrefixManager(base + "#");
+					PrefixManager pmO = new DefaultPrefixManager(baseO + "#");
+					
+					//Creo la instancia del activo
+					OWLIndividual asset_instance = dataFactory.getOWLNamedIndividual(IRI.create(base +"#"+assetName));
+					System.out.println(asset_instance);
+					OWLClass aType = getAssetByType(type);
+					OWLClassAssertionAxiom axioma0 = dataFactory.getOWLClassAssertionAxiom(aType, asset_instance);
+					man.addAxiom(o, axioma0);
+					System.out.println(axioma0);
+					
+					
+					//meto ID
+					OWLDataProperty dproperty_Code = dataFactory.getOWLDataProperty(":code", pmO);	
+					createDataProperty(o, man, dataFactory, base, asset_instance, dproperty_Code, code);
+					
+					//meto Type
+					OWLDataProperty dproperty_Type = dataFactory.getOWLDataProperty(":type", pmO);	
+					createDataProperty(o, man, dataFactory, base, asset_instance, dproperty_Type, type);
+					
+					//meto dependsOn
+						
 				}
-				
-				
-				
-				PrefixManager pm = new DefaultPrefixManager(base + "#");
-				PrefixManager pmO = new DefaultPrefixManager(baseO + "#");
-				
-				//Creo la instancia del activo
-				OWLIndividual asset_instance = dataFactory.getOWLNamedIndividual(IRI.create(base +"#"+assetName));
-				OWLClass aType = getAssetByType(type);
-				OWLClassAssertionAxiom axioma0 = dataFactory.getOWLClassAssertionAxiom(aType, asset_instance);
-				man.addAxiom(o, axioma0);
-				System.out.println(axioma0);
-				
-				
-				//meto ID
-				OWLDataProperty dproperty_ID = dataFactory.getOWLDataProperty(":id", pmO);	
-				createDataProperty(o, man, dataFactory, base, asset_instance, dproperty_ID, id);
-				
-				//meto Type
-				OWLDataProperty dproperty_Type = dataFactory.getOWLDataProperty(":type", pmO);	
-				createDataProperty(o, man, dataFactory, base, asset_instance, dproperty_Type, type);
-				
-				//meto dependsOn
 				
 
 			}
@@ -416,7 +431,6 @@ public class DRM {
 						String valor = split3[1].replace(" ", "");
 						
 						dependencias.add(valor);
-						System.out.println(valor);
 					}
 				}
 				
@@ -439,6 +453,89 @@ public class DRM {
 			
 		}
 		
+		public void createAssetValuation(OWLOntologyManager man, OWLOntology o, OWLDataFactory dataFactory, List<String[]> valoraciones) throws OWLOntologyStorageException {
+			PrefixManager pm = new DefaultPrefixManager(base + "#");
+			PrefixManager pmO = new DefaultPrefixManager(baseO + "#");
+			
+			System.out.println("Estas creandote el asset valuation de tus activos");
+			if(valoraciones.isEmpty()) {
+				System.out.println("No hay valoraciones");
+			}
+			else {
+				
+				String code = "";
+				for(String[] v: valoraciones) {
+					if(!v[0].equals(code)) {
+						
+						code = v[0];
+						OWLIndividual av_instance = dataFactory.getOWLNamedIndividual(IRI.create(base +"#AV"+code));
+						OWLClassAssertionAxiom axioma1 = dataFactory.getOWLClassAssertionAxiom(getAsset_valuation(), av_instance);
+						man.addAxiom(o, axioma1);
+						
+						OWLIndividual riskScope_instance = dataFactory.getOWLNamedIndividual(IRI.create(base +"#RS"+code));
+						OWLClassAssertionAxiom axioma2 = dataFactory.getOWLClassAssertionAxiom(risk_scope, riskScope_instance);
+						man.addAxiom(o, axioma2);
+						
+						createObjectProperty(o, man, dataFactory, baseO, av_instance, riskScope_instance, "evaluates");
+
+						OWLIndividual asset_instance = searchAsset(o, code);
+						createObjectProperty(o, man, dataFactory, base, riskScope_instance, asset_instance, "dependsOn");
+					}
+					
+					String dcode = v[1];
+					String value = v[2];
+					OWLIndividual av = dataFactory.getOWLNamedIndividual(":AV"+code, pm);
+					
+					if(dcode.equals("D")) {
+						OWLDataProperty dproperty_Dcode = dataFactory.getOWLDataProperty(":availability", pmO);	
+						createDataProperty(o, man, dataFactory, base, av, dproperty_Dcode, value);
+					}else if(dcode.equals("I")) {
+						OWLDataProperty dproperty_Dcode = dataFactory.getOWLDataProperty(":integrity", pmO);	
+						createDataProperty(o, man, dataFactory, base, av, dproperty_Dcode, value);
+					}else if(dcode.equals("C")) {
+						OWLDataProperty dproperty_Dcode = dataFactory.getOWLDataProperty(":confidentiality", pmO);	
+						createDataProperty(o, man, dataFactory, base, av, dproperty_Dcode, value);
+					}else if(dcode.equals("A")) {
+						OWLDataProperty dproperty_Dcode = dataFactory.getOWLDataProperty(":authenticity", pmO);	
+						createDataProperty(o, man, dataFactory, base, av, dproperty_Dcode, value);
+					}else if(dcode.equals("T")) {
+						OWLDataProperty dproperty_Dcode = dataFactory.getOWLDataProperty(":accounting", pmO);	
+						createDataProperty(o, man, dataFactory, base, av, dproperty_Dcode, value);
+					}	
+					
+				}
+ 
+
+			}
+		}
+		
+		private OWLIndividual searchAsset(OWLOntology o, String code) {
+			PrefixManager pmDRM = new DefaultPrefixManager(base + "#");
+			PrefixManager pm = new DefaultPrefixManager(baseO + "#");
+			
+			OWLDataProperty pcode = dataFactory.getOWLDataProperty(":code", pm);
+			OWLIndividual i = null ;
+			Set<OWLNamedIndividual> instances = o.getIndividualsInSignature();
+			for(OWLNamedIndividual ins: instances) {
+				String codeValue = obtainDataPropertyValue(ins, pcode, o);
+				if(codeValue != null && codeValue.equals(code) ) {
+					i = ins;
+				}	
+			}
+			
+			return i;
+		}
+		public String obtainDataPropertyValue(OWLIndividual individual,OWLDataProperty dproperty, OWLOntology o) {
+	        String result = null;
+	   
+	        Set<OWLDataPropertyAssertionAxiom> properties = o.getDataPropertyAssertionAxioms(individual);
+				for (OWLDataPropertyAssertionAxiom ax : properties) {
+					if (ax.getProperty().equals(dproperty) && ax.getSubject().equals(individual)) {
+				             result = ax.getObject().getLiteral().toString();
+				         }
+				}
+	        return(result);
+	    }
 		
 		public void  createDRMInstances (OWLOntologyManager man, OWLOntology o, OWLDataFactory dataFactory, String drmType,  String individualName) {
 		   
