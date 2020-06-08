@@ -97,10 +97,12 @@ public class Chart {
         		float pRisk = Float.parseFloat(risksObject.get("Potential Risk").toString());
         		float rRisk = Float.parseFloat(risksObject.get("Residual Risk").toString());
         		float threatNum = Float.parseFloat(risksObject.get("Threat Number").toString());
+        		float impact = Float.parseFloat(risksObject.get("Impact Value").toString());
+        		float probability = Float.parseFloat(risksObject.get("Probability Value").toString());
         		
         		if(!riskName.isEmpty()) {
         			
-        			RiskData rd= new RiskData(riskName, threatNum, pRisk, rRisk);
+        			RiskData rd= new RiskData(riskName, threatNum, pRisk, rRisk, impact, probability);
         			riskDataSet.add(rd);
         		}
         		

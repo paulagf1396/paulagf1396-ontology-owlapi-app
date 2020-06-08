@@ -6,12 +6,16 @@ public class RiskData {
 	private double threatNum;
 	private float pRisk;
 	private float rRisk;
+	private float impact;
+	private float probability;
 	
-	public RiskData(String riskName, double threatNum, float pRisk, float rRisk) {
+	public RiskData(String riskName, double threatNum, float pRisk, float rRisk, float impact, float probability) {
 		this.riskName = riskName;
 		this.threatNum = threatNum;
 		this.pRisk = pRisk;
 		this.rRisk = rRisk;
+		this.impact = impact;
+		this.probability = probability;
 		
 	}
 
@@ -45,6 +49,22 @@ public class RiskData {
 
 	public void setrRisk(float rRisk) {
 		this.rRisk = rRisk;
+	}
+	
+	public float getImpact() {
+		return impact;
+	}
+
+	public void setImpact(float impact) {
+		this.impact = impact;
+	}
+	
+	public float getProbability() {
+		return probability;
+	}
+
+	public void setProbability(float probability) {
+		this.probability = probability;
 	}
 	
 	

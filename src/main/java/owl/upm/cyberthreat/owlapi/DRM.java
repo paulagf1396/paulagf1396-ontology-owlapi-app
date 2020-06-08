@@ -249,7 +249,7 @@ public class DRM {
 			DRM.threat = threat;
 		}
 
-		public OWLClass getThreatByType(String name) {
+		public static OWLClass getThreatByType(String name) {
 			
 			return threat_types.get(name);
 		}
@@ -288,7 +288,7 @@ public class DRM {
 			DRM.risk = risk;
 		}
 
-		public OWLClass getRiskByType(String name) {
+		public static OWLClass getRiskByType(String name) {
 			
 			return risk_types.get(name);
 		}

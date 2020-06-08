@@ -67,7 +67,7 @@ public class STIX {
 		public static OWLClass relationship;
 		
 		public static HashMap<String, OWLClass> ciberobservable_types = new HashMap<String, OWLClass>();
-		String [] ciberobservables_names = {"Artifact", "Autonomous_System", "Directory", "Domain_Name", "Email_Address", "Email_Message", "File", "IPV4Addr" , "IPV6Addr", "Mutex", "MAC-Addr", "Network_Traffic", "Process", "Software", "URL", "User_Account", "Windows_Registry_Key", "X509_Certificate"};
+		private String [] ciberobservables_names = {"Artifact", "Autonomous_System", "Directory", "Domain_Name", "Email_Address", "Email_Message", "File", "IPV4Addr" , "IPV6Addr", "Mutex", "MAC-Addr", "Network_Traffic", "Process", "Software", "URL", "User_Account", "Windows_Registry_Key", "X509_Certificate"};
 
 		String baseO;
 
@@ -169,7 +169,7 @@ public class STIX {
 			return cyberobservable;
 		}
 
-		public OWLClass getCyberobservableType(String name) {
+		public static OWLClass getCyberobservableType(String name) {
 			
 			return ciberobservable_types.get(name);
 		}

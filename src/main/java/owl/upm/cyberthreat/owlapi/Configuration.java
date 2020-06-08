@@ -13,7 +13,7 @@ public class Configuration {
 	public static float intervalo;
 	public static double penalizationValue;
 	
-	public static  final String configFilePath = "./owl-files/config.txt";
+	public static  final String configFilePath = "/Users/paulagarcia/eclipse-workspace/cyberthreat.owlapi/owl-files/config.txt";
 	
 	public static HashMap<String, String> getPath() {
 		Properties prop = new Properties();  

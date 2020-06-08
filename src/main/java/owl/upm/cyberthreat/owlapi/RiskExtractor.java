@@ -84,15 +84,33 @@ public class RiskExtractor {
 				}
 			}
 			
+			float impact = 0;
+			for(Map.Entry<String, OWLNamedIndividual> entryPR : priskinstances.entrySet()) {
+				if(riskName.equals(entryPR.getKey())) {
+					OWLDataProperty im = dataFactory.getOWLDataProperty(":impact",pm);
+					String a= obtainDataPropertyValue(entryPR.getValue(), im, o);
+					if(a!=null) impact=Float.parseFloat(a);
+				}
+			}
 			
+			float probability = 0;
+			for(Map.Entry<String, OWLNamedIndividual> entryPR : priskinstances.entrySet()) {
+				if(riskName.equals(entryPR.getKey())) {
+					OWLDataProperty pro = dataFactory.getOWLDataProperty(":probability",pm);
+					String a= obtainDataPropertyValue(entryPR.getValue(), pro, o);
+					if(a!=null) probability=Float.parseFloat(a);
+				}
+			}
 			
-			RiskData riskX = new RiskData(riskName, num, pRisk, rRisk);
+			RiskData riskX = new RiskData(riskName, num, pRisk, rRisk, impact, probability);
 			riskData.add(riskX);
 			
 			System.out.println("Risk Name: "+ riskX.getRiskName());
 			System.out.println("Risk Amenazas: "+ riskX.getThreatNum());
 			System.out.println("Risk Residual: "+ riskX.getrRisk());
 			System.out.println("Risk Potential: "+ riskX.getpRisk());
+			System.out.println("Risk Impact: "+ riskX.getImpact());
+			System.out.println("Risk Probability: "+ riskX.getProbability());
 			
 				
 		}
@@ -151,11 +169,13 @@ public class RiskExtractor {
 			for(RiskData rd: totalresults.getRiskData()) {
 				Map risksOBJm=new LinkedHashMap();
 				JSONObject risksOBJ = new JSONObject();
-				String[] individualRiskData = {rd.getRiskName(), ""+rd.getpRisk() , ""+rd.getrRisk(), ""+rd.getThreatNum() };
+				String[] individualRiskData = {rd.getRiskName(), ""+rd.getpRisk() , ""+rd.getrRisk(), ""+rd.getThreatNum(), ""+rd.getImpact(), ""+rd.getProbability() };
 				risksOBJm.put("Risk Name", individualRiskData[0]);
 				risksOBJm.put("Potential Risk", individualRiskData[1]);
 				risksOBJm.put("Residual Risk", individualRiskData[2]);
 				risksOBJm.put("Threat Number", individualRiskData[3]);
+				risksOBJm.put("Impact Value", individualRiskData[4]);
+				risksOBJm.put("Probability Value", individualRiskData[5]);
 				
 				ja.add(risksOBJm);
 			}
