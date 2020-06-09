@@ -68,11 +68,15 @@ public class Chart {
 	
 	public static Set<RiskTotalData> extractorReaderFromJSON() throws IOException, ParseException{
 		File filename = new File(fileDatosPath);
-		Set<RiskTotalData> riskTotalDataArray= new HashSet<RiskTotalData>();
+		Set<RiskTotalData> riskTotalDataArray = new HashSet<RiskTotalData>();
+		//si eso copiarlo internamente por si derepente hay algo que lo este usando
+
+		
+		
 		if(!filename.exists()) {
-			System.out.println("There is no data");
-		}
-		else {
+			System.out.println("There aren't past data");
+			return riskTotalDataArray;
+		}else {
 		JSONParser jsonParser = new JSONParser();
 		FileReader reader = new FileReader(filename);
 		Object obj = jsonParser.parse(reader);
@@ -82,11 +86,8 @@ public class Chart {
         for(int i = 0; i< dataList.size(); i++) {
         	JSONObject jObject = (JSONObject) dataList.get(i); 
         	String time = jObject.get("Time").toString();
-        	System.out.println("La fecha es : "+time);
         	float pTRisk = Float.parseFloat(jObject.get("Potential Total Risk").toString());
         	float rTRisk = Float.parseFloat(jObject.get("Residual Total Risk").toString());
-        	double pTRiskC = Float.parseFloat(jObject.get("Potential Total Risk Continuous").toString());
-        	double rTRiskC = Float.parseFloat(jObject.get("Residual Total Risk Continuous").toString());
         	double numThreatTotal = Double.parseDouble(jObject.get("Threat Total Number").toString());
         	JSONArray risksArray = (JSONArray) jObject.get("Risks");
         	Set<RiskData> riskDataSet = new HashSet<RiskData>();
@@ -108,19 +109,36 @@ public class Chart {
         		
         	}
         	
+        	JSONArray risksMArray = (JSONArray) jObject.get("Strategies");
+        	Set<RiskManagementData> riskMDataSet = new HashSet<RiskManagementData>();
+        	for(int j = 0; j<risksArray.size() ;j++) {
+        		
+        		JSONObject risksMObject = (JSONObject) risksArray.get(j); 
+        		String riskName = risksMObject.get("Risk").toString();
+        		float value = Float.parseFloat(risksMObject.get("Risk Value").toString());
+        		String recommendation = risksMObject.get("Recommendation Strategy").toString();
+        		
+
+        		
+        		if(!riskName.isEmpty()) {
+        			
+        			RiskManagementData rd= new RiskManagementData( value, recommendation, riskName);
+        			riskMDataSet.add(rd);
+        		}
+        		
+        	}
+        	
         	
         	if(time!=null && riskDataSet.size()>0) {
-        		RiskTotalData riskTD = new RiskTotalData(time, pTRisk, rTRisk, riskDataSet, numThreatTotal);
-        		riskTD.setpRiskTotalTimeFunction(pTRiskC);
-        		riskTD.setrRiskTotalTimeFunction(rTRiskC);
-        		
+        		RiskTotalData riskTD = new RiskTotalData(time, pTRisk, rTRisk, riskDataSet, numThreatTotal, riskMDataSet);
         		riskTotalDataArray.add(riskTD);
         	}
         	
         	System.out.println(riskTotalDataArray.size());
         }
-		}
+        reader.close();        
         return riskTotalDataArray;
+		}
 
 	}
 	

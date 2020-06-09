@@ -11,13 +11,15 @@ public class RiskTotalData {
 	private double rRiskTotalTimeFunction;
 	private double numThreatTotal;
 	private Set<RiskData> riskData;
+	private Set<RiskManagementData> riskM;
 	private transient double timePenalization;
 	
-	public RiskTotalData( String date, float pRiskTotal, float rRiskTotal, Set<RiskData> riskData, double numThreatTotal) {
+	public RiskTotalData( String date, float pRiskTotal, float rRiskTotal, Set<RiskData> riskData, double numThreatTotal, Set<RiskManagementData> riskM) {
 		this.date = date;
 		this.pRiskTotal = pRiskTotal;
 		this.rRiskTotal= rRiskTotal;
 		this.riskData = riskData;
+		this.riskM = riskM;
 		this.numThreatTotal = numThreatTotal;
 	}
 
@@ -80,6 +82,14 @@ public class RiskTotalData {
 
 	public void setRiskData(Set<RiskData>  riskData) {
 		this.riskData = riskData;
+	}
+	
+	public Set<RiskManagementData>  getRiskM() {
+		return riskM;
+	}
+
+	public void setRiskM(Set<RiskManagementData>  riskM) {
+		this.riskM = riskM;
 	}
 	
 	

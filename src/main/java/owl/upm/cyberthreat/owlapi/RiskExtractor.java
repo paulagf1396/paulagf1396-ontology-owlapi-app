@@ -40,12 +40,16 @@ import org.semanticweb.owlapi.util.DefaultPrefixManager;
 public class RiskExtractor {
 	
 	public static  final String fileDatosPath = "/Users/paulagarcia/eclipse-workspace/cyberthreat.owlapi/owl-files/datos.json";
+	public static  final String fileRecommendationsPath = "/Users/paulagarcia/eclipse-workspace/cyberthreat.owlapi/owl-files/recommendations.json";
 	private Map<String, OWLNamedIndividual> priskinstances = new HashMap<String, OWLNamedIndividual>() ;
 	private Map<String, OWLNamedIndividual> rriskinstances = new HashMap<String, OWLNamedIndividual>();
+	private Map<String, OWLNamedIndividual> mriskinstances = new HashMap<String, OWLNamedIndividual>();
 	
 	public void obtainValues(Risks risks) {
 		priskinstances = risks.getPriskinstances();
 		rriskinstances = risks.getRriskinstances();
+		mriskinstances = risks.getMriskinstances();
+		
 	}
 	
 	
@@ -53,6 +57,7 @@ public class RiskExtractor {
 		obtainValues(risks);
 		PrefixManager pm = new DefaultPrefixManager(base + "#");
 		Set<RiskData> riskData = new HashSet<RiskData>();
+		Set<RiskManagementData> riskM = new HashSet<RiskManagementData>();
 		
 		float pRiskTotal=0;
 		float rRiskTotal=0;
@@ -102,6 +107,31 @@ public class RiskExtractor {
 				}
 			}
 			
+			String riesgoaRecomendar="";
+			float value = 0;
+			String recommendationType="";
+			
+			for(Map.Entry<String, OWLNamedIndividual> entryMR : mriskinstances.entrySet()) {
+				if(riskName.equals(entryMR.getKey())) {
+					riesgoaRecomendar = entryMR.getKey();
+					OWLDataProperty mvalue = dataFactory.getOWLDataProperty(":drm_value",pm);
+					String p= obtainDataPropertyValue(entryMR.getValue(), mvalue, o);
+					if(p!=null) value=Float.parseFloat(p);
+					OWLDataProperty reco = dataFactory.getOWLDataProperty(":type",pm);
+					String t= obtainDataPropertyValue(entryMR.getValue(), reco, o);
+					if(t!=null) recommendationType = t;
+				}
+				
+				
+				
+			}
+			RiskManagementData riskMI = new RiskManagementData(value, recommendationType ,riesgoaRecomendar);
+			System.out.println("ActualRisk: "+ riskMI.getActualRisk());
+			System.out.println("Risk Recommendation: "+ riskMI.getRecommendationType());
+			System.out.println("Risk Type: "+ riskMI.getRiesgoARecomendar());
+			
+			riskM.add(riskMI);
+			
 			RiskData riskX = new RiskData(riskName, num, pRisk, rRisk, impact, probability);
 			riskData.add(riskX);
 			
@@ -128,10 +158,13 @@ public class RiskExtractor {
 		
 		String actualDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").format(new Date(System.currentTimeMillis()));
 
-		RiskTotalData totalresults = new RiskTotalData (actualDate, pRiskTotal, rRiskTotal, riskData, numThreatTotal);
+		RiskTotalData totalresults = new RiskTotalData (actualDate, pRiskTotal, rRiskTotal, riskData, numThreatTotal,riskM );
 		return totalresults;
 
 	}
+	
+
+	
 	
 	public static String obtainDataPropertyValue(OWLIndividual individual,OWLDataProperty dproperty, OWLOntology o) {
         String result = null;
@@ -180,6 +213,21 @@ public class RiskExtractor {
 				ja.add(risksOBJm);
 			}
 			objm.put("Risks",ja);
+			
+			
+			JSONArray ja2 = new JSONArray();
+			for(RiskManagementData rm: totalresults.getRiskM()) {
+				Map risksOBJm=new LinkedHashMap();
+				JSONObject risksOBJ = new JSONObject();
+				String[] individualRiskData = {rm.getRiesgoARecomendar(), rm.getRecommendationType() , ""+rm.getActualRisk() };
+				risksOBJm.put("Risk", individualRiskData[0]);
+				risksOBJm.put("Recommendation Strategy", individualRiskData[1]);
+				risksOBJm.put("Risk Value", individualRiskData[2]);
+
+				
+				ja2.add(risksOBJm);
+			}
+			objm.put("Strategies",ja2);
 			jSONfinal.add(objm);
 			
 			System.out.println("Vas a crearte el array \n");
@@ -241,6 +289,91 @@ public class RiskExtractor {
 			
 		}
 	}
+	
+	
+	public void jsonWriterRecommendations(RiskTotalData riskM) throws IOException, ParseException {
+		
+		
+		String[] totaldata = {riskM.getDate(), ""+riskM.getpRiskTotal() , ""+riskM.getrRiskTotal(), ""+riskM.getNumThreatTotal(), ""+riskM.getpRiskTotalTimeFunction(), ""+riskM.getrRiskTotalTimeFunction()};
+		Map finalm=new LinkedHashMap();
+		Map objm=new LinkedHashMap();
+		JSONArray jSONfinal = new JSONArray();
+		
+		objm.put("Time", totaldata[0]);
+		JSONArray ja = new JSONArray();
+		for(RiskManagementData rm: riskM.getRiskM()) {
+			Map risksOBJm=new LinkedHashMap();
+			JSONObject risksOBJ = new JSONObject();
+			String[] individualRiskData = {rm.getRiesgoARecomendar(), rm.getRecommendationType() , ""+rm.getActualRisk() };
+			risksOBJm.put("Risk", individualRiskData[0]);
+			risksOBJm.put("Recommendation Strategy", individualRiskData[1]);
+			risksOBJm.put("Risk Value", individualRiskData[2]);
+
+			
+			ja.add(risksOBJm);
+		}
+		objm.put("Risks",ja);
+		jSONfinal.add(objm);
+		
+		System.out.println("Vas a crearte el array \n");
+	
+	try{
+		
+		
+		File file = new File(fileRecommendationsPath);
+		if(!file.exists()) {
+			file.createNewFile();
+		}
+		BufferedReader br = new BufferedReader(new FileReader(fileRecommendationsPath));
+		String line = br.readLine();
+		
+		if(line == null || line.isEmpty()) {
+			StringWriter out = new StringWriter();
+			JSONValue.writeJSONString(jSONfinal, out);
+			String jsonText = out.toString();
+			br.close();
+			FileWriter fileWriter = new FileWriter(fileRecommendationsPath);
+
+			fileWriter.write(jsonText);
+			fileWriter.flush();
+			fileWriter.close();
+			return;
+			
+		}
+		
+		if(line.endsWith("}]}]")) {
+			StringWriter out = new StringWriter();
+			JSONValue.writeJSONString(objm, out);
+			String jsonText = out.toString();
+			String borrarCorchete = line.replace("}]}]", "}]},"+jsonText+"]");
+			br.close();
+			FileWriter fileWriter = new FileWriter(fileRecommendationsPath);
+			
+			fileWriter.write(borrarCorchete);
+			fileWriter.flush();
+			fileWriter.close();
+			return;
+		}
+		//y si existe una con el mismo time SE ACTUALIZA Y SE CAMBIA---------------------------------------------
+		
+		
+		//FileWriter fileWriter = new FileWriter(fileDatosPath);
+        //StringWriter out = new StringWriter();
+		//JSONValue.writeJSONString(jSONfinal, out);
+		//String jsonText = out.toString();	
+		
+	
+		
+
+		
+	}catch(Exception ex){
+		System.out.println("Error: "+ex.toString());
+	}
+	finally{
+		
+		
+	}
+}
 	
 	@SuppressWarnings("unchecked")
 	public JSONArray updatejsonfile(File filename, RiskTotalData totalresults) throws IOException, ParseException{

@@ -11,6 +11,8 @@ import org.semanticweb.owlapi.model.OWLDataProperty;
 import org.semanticweb.owlapi.model.OWLDataPropertyAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
+import org.semanticweb.owlapi.model.OWLObjectProperty;
+import org.semanticweb.owlapi.model.OWLObjectPropertyAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
 import org.semanticweb.owlapi.model.PrefixManager;
@@ -20,6 +22,7 @@ import org.semanticweb.owlapi.util.DefaultPrefixManager;
 public class Risks {
 
 	private Map<String, OWLNamedIndividual> riskinstances = new HashMap<String, OWLNamedIndividual>();
+	private Map<String, OWLNamedIndividual> mriskinstances = new HashMap<String, OWLNamedIndividual>();
 	private Map<String, OWLNamedIndividual> priskinstances = new HashMap<String, OWLNamedIndividual>();
 	private Map<String, OWLNamedIndividual> rriskinstances = new HashMap<String, OWLNamedIndividual>();
 	private double numAmenazas;
@@ -107,6 +110,35 @@ public class Risks {
 		}
 		return rriskinstances;
 	}
+	
+	public Map<String, OWLNamedIndividual> getMriskinstances(){
+		PrefixManager pmDRM = new DefaultPrefixManager(base + "#");
+		PrefixManager pm = new DefaultPrefixManager(baseO + "#");
+		
+		for(Map.Entry<String, OWLNamedIndividual> entry : getRiskinstances().entrySet()) {
+			OWLObjectProperty manages = dataFactory.getOWLObjectProperty(":manages", pmDRM);
+			
+			Set<OWLNamedIndividual> mr = o.getIndividualsInSignature();
+			for(OWLNamedIndividual r: mr) {
+				
+				if(isMRisk(r, o, dataFactory, base) ) {
+					Set<OWLObjectPropertyAssertionAxiom> properties = o.getObjectPropertyAssertionAxioms(r);
+					for (OWLObjectPropertyAssertionAxiom ax : properties) {
+						if (ax.getProperty().equals(manages) && ax.getSubject().equals(r) && ax.getObject().equals(entry.getValue())) {
+							OWLDataProperty type = dataFactory.getOWLDataProperty(":type", pm); 
+							String result = obtainDataPropertyValue(r, type, o);
+							String riesgoARecomendar = obtainDataPropertyValue(ax.getObject(), type, o);
+							System.out.println("COSA NUEVA "+result);
+							mriskinstances.put(riesgoARecomendar, r);
+					     }
+					}
+					
+				}	
+			}
+
+		}
+		return mriskinstances;
+	}
  
 	public boolean isPotentialRisk(OWLIndividual individual, OWLOntology o, OWLDataFactory dataFactory, String base_DRM) {
 		PrefixManager pmDRM = new DefaultPrefixManager(base_DRM + "#");
@@ -136,6 +168,18 @@ public class Risks {
         return(result);
     }
 	
+	public String obtainDataPropertyValueM(OWLIndividual individual,OWLDataProperty dproperty, OWLOntology o) {
+        String result = null;
+   
+        Set<OWLDataPropertyAssertionAxiom> properties = o.getDataPropertyAssertionAxioms(individual);
+			for (OWLDataPropertyAssertionAxiom ax : properties) {
+				if (ax.getProperty().equals(dproperty) && ax.getSubject().equals(individual)) {
+			             result = ax.getObject().getLiteral().toString();
+			         }
+			}
+        return(result);
+    }
+	
 	public boolean isResidualRisk(OWLIndividual individual, OWLOntology o, OWLDataFactory dataFactory, String base_DRM) {
 		PrefixManager pmDRM = new DefaultPrefixManager(base_DRM + "#");
 		
@@ -145,6 +189,22 @@ public class Risks {
         Set<OWLClassAssertionAxiom> classes = o.getClassAssertionAxioms(individual);
 			for (OWLClassAssertionAxiom ax : classes) {
 				if (ax.getClassExpression().equals(rr)) {
+			             result = true;
+			         }
+			}
+      
+		return result;
+	}
+	
+	public boolean isMRisk(OWLIndividual individual, OWLOntology o, OWLDataFactory dataFactory, String base_DRM) {
+		PrefixManager pmDRM = new DefaultPrefixManager(base_DRM + "#");
+		
+        boolean result = false;
+        OWLClassExpression mr = dataFactory.getOWLClass(":Risk_Management", pmDRM);
+
+        Set<OWLClassAssertionAxiom> classes = o.getClassAssertionAxioms(individual);
+			for (OWLClassAssertionAxiom ax : classes) {
+				if (ax.getClassExpression().equals(mr)) {
 			             result = true;
 			         }
 			}

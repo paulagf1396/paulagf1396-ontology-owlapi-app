@@ -1109,6 +1109,10 @@ public int loadSTIXInstances (OWLOntology o, OWLOntologyManager man, File filena
 		RiskTotalData rtdfinal = rc.riskCalculation(rtd_from_past, rtd);
 		re.jsonWriter(rtdfinal);
 	
+		System.out.println("Vas a hacer recomendaciones");
+		re.jsonWriterRecommendations(rtd);
+		
+		
 		
 		}
 	

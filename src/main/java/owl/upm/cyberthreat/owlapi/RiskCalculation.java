@@ -72,9 +72,28 @@ public class RiskCalculation {
         		
         	}
         	
+        	JSONArray risksMArray = (JSONArray) jObject.get("Strategies");
+        	Set<RiskManagementData> riskMDataSet = new HashSet<RiskManagementData>();
+        	for(int k = 0; k<risksArray.size() ;k++) {
+        		
+        		JSONObject risksMObject = (JSONObject) risksMArray.get(k); 
+        		String riskName = risksMObject.get("Risk").toString();
+        		float value = Float.parseFloat(risksMObject.get("Risk Value").toString());
+        		String recommendation = risksMObject.get("Recommendation Strategy").toString();
+        		
+
+        		
+        		if(!riskName.isEmpty()) {
+        			
+        			RiskManagementData rd= new RiskManagementData( value, recommendation, riskName);
+        			riskMDataSet.add(rd);
+        		}
+        		
+        	}
+        	
         	
         	if(time!=null && riskDataSet.size()>0) {
-        		RiskTotalData riskTD = new RiskTotalData(time, pTRisk, rTRisk, riskDataSet, numThreatTotal);
+        		RiskTotalData riskTD = new RiskTotalData(time, pTRisk, rTRisk, riskDataSet, numThreatTotal, riskMDataSet);
         		riskTotalDataArray.add(riskTD);
         	}
         	
