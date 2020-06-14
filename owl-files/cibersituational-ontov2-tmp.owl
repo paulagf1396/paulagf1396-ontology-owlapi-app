@@ -61365,6 +61365,102 @@ isInitiatedBy only ThreatActor</rdfs:comment>
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#AccessControlSafeguard">
         <rdf:type rdf:resource="http://www.semanticweb.org/upm/ontologies/2019/11/cyberthreat_DRM#AccessControl"/>
+        <rdf:type rdf:resource="http://www.semanticweb.org/upm/ontologies/2019/11/cyberthreat_DRM#ISO2700XControl"/>
+        <rdf:type rdf:resource="http://www.semanticweb.org/upm/ontologies/2019/11/cyberthreat_DRM#Safeguards"/>
+        <rdf:type rdf:resource="http://www.semanticweb.org/upm/ontologies/2019/11/cyberthreat_DRM#StandardControl"/>
+        <rdf:type>
+            <owl:Class>
+                <owl:unionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Thing"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://www.semanticweb.org/upm/ontologies/2019/11/cyberthreat_STIX#objectRefs"/>
+                        <owl:someValuesFrom rdf:resource="http://www.semanticweb.org/upm/ontologies/2019/11/cyberthreat_STIX#Marking_Definition"/>
+                    </owl:Restriction>
+                </owl:unionOf>
+            </owl:Class>
+        </rdf:type>
+        <rdf:type>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#related-to"/>
+                <owl:someValuesFrom rdf:resource="http://www.semanticweb.org/upm/ontologies/2019/11/cyberthreat_STIX#Course_of_Action"/>
+            </owl:Restriction>
+        </rdf:type>
+        <rdf:type>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/upm/ontologies/2019/11/cyberthreat_DRM#mitigates"/>
+                <owl:someValuesFrom rdf:resource="http://www.semanticweb.org/upm/ontologies/2019/11/cyberthreat_DRM#Risk_Impact"/>
+            </owl:Restriction>
+        </rdf:type>
+        <rdf:type>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/upm/ontologies/2019/11/cyberthreat_DRM#mitigates"/>
+                <owl:someValuesFrom rdf:resource="http://www.semanticweb.org/upm/ontologies/2019/11/cyberthreat_DRM#Risk_Probability"/>
+            </owl:Restriction>
+        </rdf:type>
+        <rdf:type>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/upm/ontologies/2019/11/cyberthreat_DRM#mitigates"/>
+                <owl:someValuesFrom rdf:resource="http://www.semanticweb.org/upm/ontologies/2019/11/cyberthreat_STIX#Vulnerability"/>
+            </owl:Restriction>
+        </rdf:type>
+        <rdf:type>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/upm/ontologies/2019/11/cyberthreat_DRM#protects"/>
+                <owl:someValuesFrom rdf:resource="http://www.semanticweb.org/upm/ontologies/2019/11/cyberthreat_DRM#Asset"/>
+            </owl:Restriction>
+        </rdf:type>
+        <rdf:type>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#description"/>
+                <owl:someValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+            </owl:Restriction>
+        </rdf:type>
+        <rdf:type>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#type"/>
+                <owl:someValuesFrom>
+                    <rdfs:Datatype>
+                        <owl:oneOf>
+                            <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
+                                <rdf:first>safeguards</rdf:first>
+                                <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+                            </rdf:Description>
+                        </owl:oneOf>
+                    </rdfs:Datatype>
+                </owl:someValuesFrom>
+            </owl:Restriction>
+        </rdf:type>
+        <rdf:type>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#actualControl"/>
+                <owl:allValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+            </owl:Restriction>
+        </rdf:type>
+        <rdf:type>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#drm_value"/>
+                <owl:allValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#float"/>
+            </owl:Restriction>
+        </rdf:type>
+        <rdf:type>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#name"/>
+                <owl:allValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+            </owl:Restriction>
+        </rdf:type>
+        <rdf:type>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#number"/>
+                <owl:allValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+            </owl:Restriction>
+        </rdf:type>
+        <rdf:type>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#type"/>
+                <owl:allValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+            </owl:Restriction>
+        </rdf:type>
         <drm_value rdf:datatype="http://www.w3.org/2001/XMLSchema#float">4.0</drm_value>
         <type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">access-control</type>
     </owl:NamedIndividual>
@@ -61529,6 +61625,16 @@ isInitiatedBy only ThreatActor</rdfs:comment>
                 <owl:allValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
             </owl:Restriction>
         </rdf:type>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#KeyControl-Safeguard -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#KeyControl-Safeguard">
+        <rdf:type rdf:resource="http://www.semanticweb.org/upm/ontologies/2019/11/cyberthreat_DRM#KeysManagementControl"/>
+        <drm_value rdf:datatype="http://www.w3.org/2001/XMLSchema#float">3.0</drm_value>
+        <type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">key-management-control</type>
     </owl:NamedIndividual>
     
 
@@ -62581,22 +62687,22 @@ isInitiatedBy only ThreatActor</rdfs:comment>
     <rdf:Description rdf:about="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#w">
         <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
     </rdf:Description>
-    <rdf:Description rdf:about="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#s">
+    <rdf:Description rdf:about="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#mac">
         <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
     </rdf:Description>
-    <rdf:Description rdf:about="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#x">
+    <rdf:Description rdf:about="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#hw">
         <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
     </rdf:Description>
     <rdf:Description rdf:about="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#u">
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#x">
         <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
     </rdf:Description>
     <rdf:Description rdf:about="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#av">
         <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
     </rdf:Description>
     <rdf:Description rdf:about="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#avHW">
-        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
-    </rdf:Description>
-    <rdf:Description rdf:about="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#hw">
         <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
     </rdf:Description>
     <rdf:Description rdf:about="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#rs">
@@ -62677,6 +62783,9 @@ isInitiatedBy only ThreatActor</rdfs:comment>
     <rdf:Description rdf:about="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_STIXDRM#pc">
         <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
     </rdf:Description>
+    <rdf:Description rdf:about="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#s">
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
+    </rdf:Description>
     <rdf:Description rdf:about="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#v">
         <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
     </rdf:Description>
@@ -62702,6 +62811,9 @@ isInitiatedBy only ThreatActor</rdfs:comment>
         <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
     </rdf:Description>
     <rdf:Description rdf:about="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#ris">
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#cdata">
         <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
     </rdf:Description>
     <rdf:Description rdf:about="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_STIXDRM#pl">
@@ -62734,603 +62846,7 @@ isInitiatedBy only ThreatActor</rdfs:comment>
     <rdf:Description>
         <swrla:isRuleEnabled rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</swrla:isRuleEnabled>
         <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"></rdfs:comment>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Anomalies2</rdfs:label>
-        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Imp"/>
-        <swrl:body>
-            <rdf:Description>
-                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
-                <rdf:first>
-                    <rdf:Description>
-                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#ClassAtom"/>
-                        <swrl:classPredicate rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#Bluetooth_Sensor_Anomaly"/>
-                        <swrl:argument1 rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#w"/>
-                    </rdf:Description>
-                </rdf:first>
-                <rdf:rest>
-                    <rdf:Description>
-                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
-                        <rdf:first>
-                            <rdf:Description>
-                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#DatavaluedPropertyAtom"/>
-                                <swrl:propertyPredicate rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#suspicious_value"/>
-                                <swrl:argument1 rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#w"/>
-                                <swrl:argument2 rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#s"/>
-                            </rdf:Description>
-                        </rdf:first>
-                        <rdf:rest>
-                            <rdf:Description>
-                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
-                                <rdf:first>
-                                    <rdf:Description>
-                                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#BuiltinAtom"/>
-                                        <swrl:builtin rdf:resource="http://www.w3.org/2003/11/swrlb#greaterThanOrEqual"/>
-                                        <swrl:arguments>
-                                            <rdf:Description>
-                                                <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
-                                                <rdf:first rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#s"/>
-                                                <rdf:rest>
-                                                    <rdf:Description>
-                                                        <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
-                                                        <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">4.0</rdf:first>
-                                                        <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
-                                                    </rdf:Description>
-                                                </rdf:rest>
-                                            </rdf:Description>
-                                        </swrl:arguments>
-                                    </rdf:Description>
-                                </rdf:first>
-                                <rdf:rest>
-                                    <rdf:Description>
-                                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
-                                        <rdf:first>
-                                            <rdf:Description>
-                                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#BuiltinAtom"/>
-                                                <swrl:builtin rdf:resource="http://swrl.stanford.edu/ontologies/built-ins/3.3/swrlx.owl#makeOWLThing"/>
-                                                <swrl:arguments rdf:parseType="Collection">
-                                                    <rdf:Description rdf:about="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#x"/>
-                                                    <rdf:Description rdf:about="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#w"/>
-                                                </swrl:arguments>
-                                            </rdf:Description>
-                                        </rdf:first>
-                                        <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
-                                    </rdf:Description>
-                                </rdf:rest>
-                            </rdf:Description>
-                        </rdf:rest>
-                    </rdf:Description>
-                </rdf:rest>
-            </rdf:Description>
-        </swrl:body>
-        <swrl:head>
-            <rdf:Description>
-                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
-                <rdf:first>
-                    <rdf:Description>
-                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#DatavaluedPropertyAtom"/>
-                        <swrl:propertyPredicate rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#probability"/>
-                        <swrl:argument1 rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#x"/>
-                        <swrl:argument2 rdf:datatype="http://www.w3.org/2001/XMLSchema#float">2.0</swrl:argument2>
-                    </rdf:Description>
-                </rdf:first>
-                <rdf:rest>
-                    <rdf:Description>
-                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
-                        <rdf:first>
-                            <rdf:Description>
-                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#ClassAtom"/>
-                                <swrl:classPredicate rdf:resource="http://www.semanticweb.org/upm/ontologies/2019/11/cyberthreat_DRM#DeliberatedUnauthorizedAccess"/>
-                                <swrl:argument1 rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#x"/>
-                            </rdf:Description>
-                        </rdf:first>
-                        <rdf:rest>
-                            <rdf:Description>
-                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
-                                <rdf:first>
-                                    <rdf:Description>
-                                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#DatavaluedPropertyAtom"/>
-                                        <swrl:propertyPredicate rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#type"/>
-                                        <swrl:argument1 rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#x"/>
-                                        <swrl:argument2 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Threat Deliberated Unauthorized Access</swrl:argument2>
-                                    </rdf:Description>
-                                </rdf:first>
-                                <rdf:rest>
-                                    <rdf:Description>
-                                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
-                                        <rdf:first>
-                                            <rdf:Description>
-                                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#DatavaluedPropertyAtom"/>
-                                                <swrl:propertyPredicate rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#impact"/>
-                                                <swrl:argument1 rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#x"/>
-                                                <swrl:argument2 rdf:datatype="http://www.w3.org/2001/XMLSchema#float">4.0</swrl:argument2>
-                                            </rdf:Description>
-                                        </rdf:first>
-                                        <rdf:rest>
-                                            <rdf:Description>
-                                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
-                                                <rdf:first>
-                                                    <rdf:Description>
-                                                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
-                                                        <swrl:propertyPredicate rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_STIXDRM#isGeneratedBy"/>
-                                                        <swrl:argument1 rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#x"/>
-                                                        <swrl:argument2 rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#w"/>
-                                                    </rdf:Description>
-                                                </rdf:first>
-                                                <rdf:rest>
-                                                    <rdf:Description>
-                                                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
-                                                        <rdf:first>
-                                                            <rdf:Description>
-                                                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#DatavaluedPropertyAtom"/>
-                                                                <swrl:propertyPredicate rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#numType"/>
-                                                                <swrl:argument1 rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#x"/>
-                                                                <swrl:argument2 rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">14</swrl:argument2>
-                                                            </rdf:Description>
-                                                        </rdf:first>
-                                                        <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
-                                                    </rdf:Description>
-                                                </rdf:rest>
-                                            </rdf:Description>
-                                        </rdf:rest>
-                                    </rdf:Description>
-                                </rdf:rest>
-                            </rdf:Description>
-                        </rdf:rest>
-                    </rdf:Description>
-                </rdf:rest>
-            </rdf:Description>
-        </swrl:head>
-    </rdf:Description>
-    <rdf:Description>
-        <swrla:isRuleEnabled rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</swrla:isRuleEnabled>
-        <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"></rdfs:comment>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Anomalies5</rdfs:label>
-        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Imp"/>
-        <swrl:body>
-            <rdf:Description>
-                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
-                <rdf:first>
-                    <rdf:Description>
-                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#ClassAtom"/>
-                        <swrl:classPredicate rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#Cybersecurity_Sensor_Anomaly"/>
-                        <swrl:argument1 rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#w"/>
-                    </rdf:Description>
-                </rdf:first>
-                <rdf:rest>
-                    <rdf:Description>
-                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
-                        <rdf:first>
-                            <rdf:Description>
-                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#DatavaluedPropertyAtom"/>
-                                <swrl:propertyPredicate rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#suspicious_value"/>
-                                <swrl:argument1 rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#w"/>
-                                <swrl:argument2 rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#s"/>
-                            </rdf:Description>
-                        </rdf:first>
-                        <rdf:rest>
-                            <rdf:Description>
-                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
-                                <rdf:first>
-                                    <rdf:Description>
-                                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#BuiltinAtom"/>
-                                        <swrl:builtin rdf:resource="http://www.w3.org/2003/11/swrlb#greaterThanOrEqual"/>
-                                        <swrl:arguments>
-                                            <rdf:Description>
-                                                <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
-                                                <rdf:first rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#s"/>
-                                                <rdf:rest>
-                                                    <rdf:Description>
-                                                        <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
-                                                        <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">4.0</rdf:first>
-                                                        <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
-                                                    </rdf:Description>
-                                                </rdf:rest>
-                                            </rdf:Description>
-                                        </swrl:arguments>
-                                    </rdf:Description>
-                                </rdf:first>
-                                <rdf:rest>
-                                    <rdf:Description>
-                                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
-                                        <rdf:first>
-                                            <rdf:Description>
-                                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#BuiltinAtom"/>
-                                                <swrl:builtin rdf:resource="http://swrl.stanford.edu/ontologies/built-ins/3.3/swrlx.owl#makeOWLThing"/>
-                                                <swrl:arguments rdf:parseType="Collection">
-                                                    <rdf:Description rdf:about="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#x"/>
-                                                    <rdf:Description rdf:about="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#w"/>
-                                                </swrl:arguments>
-                                            </rdf:Description>
-                                        </rdf:first>
-                                        <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
-                                    </rdf:Description>
-                                </rdf:rest>
-                            </rdf:Description>
-                        </rdf:rest>
-                    </rdf:Description>
-                </rdf:rest>
-            </rdf:Description>
-        </swrl:body>
-        <swrl:head>
-            <rdf:Description>
-                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
-                <rdf:first>
-                    <rdf:Description>
-                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#DatavaluedPropertyAtom"/>
-                        <swrl:propertyPredicate rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#probability"/>
-                        <swrl:argument1 rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#x"/>
-                        <swrl:argument2 rdf:datatype="http://www.w3.org/2001/XMLSchema#float">2.0</swrl:argument2>
-                    </rdf:Description>
-                </rdf:first>
-                <rdf:rest>
-                    <rdf:Description>
-                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
-                        <rdf:first>
-                            <rdf:Description>
-                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#ClassAtom"/>
-                                <swrl:classPredicate rdf:resource="http://www.semanticweb.org/upm/ontologies/2019/11/cyberthreat_DRM#DenialOfService"/>
-                                <swrl:argument1 rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#x"/>
-                            </rdf:Description>
-                        </rdf:first>
-                        <rdf:rest>
-                            <rdf:Description>
-                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
-                                <rdf:first>
-                                    <rdf:Description>
-                                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#DatavaluedPropertyAtom"/>
-                                        <swrl:propertyPredicate rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#type"/>
-                                        <swrl:argument1 rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#x"/>
-                                        <swrl:argument2 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Threat Denial Of Service</swrl:argument2>
-                                    </rdf:Description>
-                                </rdf:first>
-                                <rdf:rest>
-                                    <rdf:Description>
-                                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
-                                        <rdf:first>
-                                            <rdf:Description>
-                                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#DatavaluedPropertyAtom"/>
-                                                <swrl:propertyPredicate rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#impact"/>
-                                                <swrl:argument1 rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#x"/>
-                                                <swrl:argument2 rdf:datatype="http://www.w3.org/2001/XMLSchema#float">4.0</swrl:argument2>
-                                            </rdf:Description>
-                                        </rdf:first>
-                                        <rdf:rest>
-                                            <rdf:Description>
-                                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
-                                                <rdf:first>
-                                                    <rdf:Description>
-                                                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
-                                                        <swrl:propertyPredicate rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_STIXDRM#isGeneratedBy"/>
-                                                        <swrl:argument1 rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#x"/>
-                                                        <swrl:argument2 rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#w"/>
-                                                    </rdf:Description>
-                                                </rdf:first>
-                                                <rdf:rest>
-                                                    <rdf:Description>
-                                                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
-                                                        <rdf:first>
-                                                            <rdf:Description>
-                                                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#DatavaluedPropertyAtom"/>
-                                                                <swrl:propertyPredicate rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#numType"/>
-                                                                <swrl:argument1 rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#x"/>
-                                                                <swrl:argument2 rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">15</swrl:argument2>
-                                                            </rdf:Description>
-                                                        </rdf:first>
-                                                        <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
-                                                    </rdf:Description>
-                                                </rdf:rest>
-                                            </rdf:Description>
-                                        </rdf:rest>
-                                    </rdf:Description>
-                                </rdf:rest>
-                            </rdf:Description>
-                        </rdf:rest>
-                    </rdf:Description>
-                </rdf:rest>
-            </rdf:Description>
-        </swrl:head>
-    </rdf:Description>
-    <rdf:Description>
-        <swrla:isRuleEnabled rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</swrla:isRuleEnabled>
-        <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"></rdfs:comment>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Anomalies3</rdfs:label>
-        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Imp"/>
-        <swrl:body>
-            <rdf:Description>
-                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
-                <rdf:first>
-                    <rdf:Description>
-                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#ClassAtom"/>
-                        <swrl:classPredicate rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#RF_Sensor_Anomaly"/>
-                        <swrl:argument1 rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#w"/>
-                    </rdf:Description>
-                </rdf:first>
-                <rdf:rest>
-                    <rdf:Description>
-                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
-                        <rdf:first>
-                            <rdf:Description>
-                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#DatavaluedPropertyAtom"/>
-                                <swrl:propertyPredicate rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#suspicious_value"/>
-                                <swrl:argument1 rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#w"/>
-                                <swrl:argument2 rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#s"/>
-                            </rdf:Description>
-                        </rdf:first>
-                        <rdf:rest>
-                            <rdf:Description>
-                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
-                                <rdf:first>
-                                    <rdf:Description>
-                                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#BuiltinAtom"/>
-                                        <swrl:builtin rdf:resource="http://www.w3.org/2003/11/swrlb#greaterThanOrEqual"/>
-                                        <swrl:arguments>
-                                            <rdf:Description>
-                                                <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
-                                                <rdf:first rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#s"/>
-                                                <rdf:rest>
-                                                    <rdf:Description>
-                                                        <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
-                                                        <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">4.0</rdf:first>
-                                                        <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
-                                                    </rdf:Description>
-                                                </rdf:rest>
-                                            </rdf:Description>
-                                        </swrl:arguments>
-                                    </rdf:Description>
-                                </rdf:first>
-                                <rdf:rest>
-                                    <rdf:Description>
-                                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
-                                        <rdf:first>
-                                            <rdf:Description>
-                                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#BuiltinAtom"/>
-                                                <swrl:builtin rdf:resource="http://swrl.stanford.edu/ontologies/built-ins/3.3/swrlx.owl#makeOWLThing"/>
-                                                <swrl:arguments rdf:parseType="Collection">
-                                                    <rdf:Description rdf:about="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#x"/>
-                                                    <rdf:Description rdf:about="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#w"/>
-                                                </swrl:arguments>
-                                            </rdf:Description>
-                                        </rdf:first>
-                                        <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
-                                    </rdf:Description>
-                                </rdf:rest>
-                            </rdf:Description>
-                        </rdf:rest>
-                    </rdf:Description>
-                </rdf:rest>
-            </rdf:Description>
-        </swrl:body>
-        <swrl:head>
-            <rdf:Description>
-                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
-                <rdf:first>
-                    <rdf:Description>
-                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#DatavaluedPropertyAtom"/>
-                        <swrl:propertyPredicate rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#probability"/>
-                        <swrl:argument1 rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#x"/>
-                        <swrl:argument2 rdf:datatype="http://www.w3.org/2001/XMLSchema#float">2.0</swrl:argument2>
-                    </rdf:Description>
-                </rdf:first>
-                <rdf:rest>
-                    <rdf:Description>
-                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
-                        <rdf:first>
-                            <rdf:Description>
-                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#ClassAtom"/>
-                                <swrl:classPredicate rdf:resource="http://www.semanticweb.org/upm/ontologies/2019/11/cyberthreat_DRM#DenialOfService"/>
-                                <swrl:argument1 rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#x"/>
-                            </rdf:Description>
-                        </rdf:first>
-                        <rdf:rest>
-                            <rdf:Description>
-                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
-                                <rdf:first>
-                                    <rdf:Description>
-                                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#DatavaluedPropertyAtom"/>
-                                        <swrl:propertyPredicate rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#type"/>
-                                        <swrl:argument1 rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#x"/>
-                                        <swrl:argument2 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Threat Denial Of Service</swrl:argument2>
-                                    </rdf:Description>
-                                </rdf:first>
-                                <rdf:rest>
-                                    <rdf:Description>
-                                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
-                                        <rdf:first>
-                                            <rdf:Description>
-                                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#DatavaluedPropertyAtom"/>
-                                                <swrl:propertyPredicate rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#impact"/>
-                                                <swrl:argument1 rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#x"/>
-                                                <swrl:argument2 rdf:datatype="http://www.w3.org/2001/XMLSchema#float">4.0</swrl:argument2>
-                                            </rdf:Description>
-                                        </rdf:first>
-                                        <rdf:rest>
-                                            <rdf:Description>
-                                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
-                                                <rdf:first>
-                                                    <rdf:Description>
-                                                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
-                                                        <swrl:propertyPredicate rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_STIXDRM#isGeneratedBy"/>
-                                                        <swrl:argument1 rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#x"/>
-                                                        <swrl:argument2 rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#w"/>
-                                                    </rdf:Description>
-                                                </rdf:first>
-                                                <rdf:rest>
-                                                    <rdf:Description>
-                                                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
-                                                        <rdf:first>
-                                                            <rdf:Description>
-                                                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#DatavaluedPropertyAtom"/>
-                                                                <swrl:propertyPredicate rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#numType"/>
-                                                                <swrl:argument1 rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#x"/>
-                                                                <swrl:argument2 rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">15</swrl:argument2>
-                                                            </rdf:Description>
-                                                        </rdf:first>
-                                                        <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
-                                                    </rdf:Description>
-                                                </rdf:rest>
-                                            </rdf:Description>
-                                        </rdf:rest>
-                                    </rdf:Description>
-                                </rdf:rest>
-                            </rdf:Description>
-                        </rdf:rest>
-                    </rdf:Description>
-                </rdf:rest>
-            </rdf:Description>
-        </swrl:head>
-    </rdf:Description>
-    <rdf:Description>
-        <swrla:isRuleEnabled rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</swrla:isRuleEnabled>
-        <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"></rdfs:comment>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Anomalies4</rdfs:label>
-        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Imp"/>
-        <swrl:body>
-            <rdf:Description>
-                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
-                <rdf:first>
-                    <rdf:Description>
-                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#ClassAtom"/>
-                        <swrl:classPredicate rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#RM_Sensor_Anomaly"/>
-                        <swrl:argument1 rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#w"/>
-                    </rdf:Description>
-                </rdf:first>
-                <rdf:rest>
-                    <rdf:Description>
-                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
-                        <rdf:first>
-                            <rdf:Description>
-                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#DatavaluedPropertyAtom"/>
-                                <swrl:propertyPredicate rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#suspicious_value"/>
-                                <swrl:argument1 rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#w"/>
-                                <swrl:argument2 rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#s"/>
-                            </rdf:Description>
-                        </rdf:first>
-                        <rdf:rest>
-                            <rdf:Description>
-                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
-                                <rdf:first>
-                                    <rdf:Description>
-                                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#BuiltinAtom"/>
-                                        <swrl:builtin rdf:resource="http://www.w3.org/2003/11/swrlb#greaterThanOrEqual"/>
-                                        <swrl:arguments>
-                                            <rdf:Description>
-                                                <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
-                                                <rdf:first rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#s"/>
-                                                <rdf:rest>
-                                                    <rdf:Description>
-                                                        <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
-                                                        <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">4.0</rdf:first>
-                                                        <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
-                                                    </rdf:Description>
-                                                </rdf:rest>
-                                            </rdf:Description>
-                                        </swrl:arguments>
-                                    </rdf:Description>
-                                </rdf:first>
-                                <rdf:rest>
-                                    <rdf:Description>
-                                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
-                                        <rdf:first>
-                                            <rdf:Description>
-                                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#BuiltinAtom"/>
-                                                <swrl:builtin rdf:resource="http://swrl.stanford.edu/ontologies/built-ins/3.3/swrlx.owl#makeOWLThing"/>
-                                                <swrl:arguments rdf:parseType="Collection">
-                                                    <rdf:Description rdf:about="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#x"/>
-                                                    <rdf:Description rdf:about="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#w"/>
-                                                </swrl:arguments>
-                                            </rdf:Description>
-                                        </rdf:first>
-                                        <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
-                                    </rdf:Description>
-                                </rdf:rest>
-                            </rdf:Description>
-                        </rdf:rest>
-                    </rdf:Description>
-                </rdf:rest>
-            </rdf:Description>
-        </swrl:body>
-        <swrl:head>
-            <rdf:Description>
-                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
-                <rdf:first>
-                    <rdf:Description>
-                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#DatavaluedPropertyAtom"/>
-                        <swrl:propertyPredicate rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#probability"/>
-                        <swrl:argument1 rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#x"/>
-                        <swrl:argument2 rdf:datatype="http://www.w3.org/2001/XMLSchema#float">2.0</swrl:argument2>
-                    </rdf:Description>
-                </rdf:first>
-                <rdf:rest>
-                    <rdf:Description>
-                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
-                        <rdf:first>
-                            <rdf:Description>
-                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#ClassAtom"/>
-                                <swrl:classPredicate rdf:resource="http://www.semanticweb.org/upm/ontologies/2019/11/cyberthreat_DRM#DeliberatedUnauthorizedAccess"/>
-                                <swrl:argument1 rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#x"/>
-                            </rdf:Description>
-                        </rdf:first>
-                        <rdf:rest>
-                            <rdf:Description>
-                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
-                                <rdf:first>
-                                    <rdf:Description>
-                                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#DatavaluedPropertyAtom"/>
-                                        <swrl:propertyPredicate rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#type"/>
-                                        <swrl:argument1 rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#x"/>
-                                        <swrl:argument2 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Threat Deliberated Unauthorized Access</swrl:argument2>
-                                    </rdf:Description>
-                                </rdf:first>
-                                <rdf:rest>
-                                    <rdf:Description>
-                                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
-                                        <rdf:first>
-                                            <rdf:Description>
-                                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#DatavaluedPropertyAtom"/>
-                                                <swrl:propertyPredicate rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#impact"/>
-                                                <swrl:argument1 rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#x"/>
-                                                <swrl:argument2 rdf:datatype="http://www.w3.org/2001/XMLSchema#float">4.0</swrl:argument2>
-                                            </rdf:Description>
-                                        </rdf:first>
-                                        <rdf:rest>
-                                            <rdf:Description>
-                                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
-                                                <rdf:first>
-                                                    <rdf:Description>
-                                                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
-                                                        <swrl:propertyPredicate rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_STIXDRM#isGeneratedBy"/>
-                                                        <swrl:argument1 rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#x"/>
-                                                        <swrl:argument2 rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#w"/>
-                                                    </rdf:Description>
-                                                </rdf:first>
-                                                <rdf:rest>
-                                                    <rdf:Description>
-                                                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
-                                                        <rdf:first>
-                                                            <rdf:Description>
-                                                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#DatavaluedPropertyAtom"/>
-                                                                <swrl:propertyPredicate rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#numType"/>
-                                                                <swrl:argument1 rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#x"/>
-                                                                <swrl:argument2 rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">14</swrl:argument2>
-                                                            </rdf:Description>
-                                                        </rdf:first>
-                                                        <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
-                                                    </rdf:Description>
-                                                </rdf:rest>
-                                            </rdf:Description>
-                                        </rdf:rest>
-                                    </rdf:Description>
-                                </rdf:rest>
-                            </rdf:Description>
-                        </rdf:rest>
-                    </rdf:Description>
-                </rdf:rest>
-            </rdf:Description>
-        </swrl:head>
-    </rdf:Description>
-    <rdf:Description>
-        <swrla:isRuleEnabled rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</swrla:isRuleEnabled>
-        <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"></rdfs:comment>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Anomalies1</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Router+ mac</rdfs:label>
         <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Imp"/>
         <swrl:body>
             <rdf:Description>
@@ -63347,10 +62863,10 @@ isInitiatedBy only ThreatActor</rdfs:comment>
                         <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
                         <rdf:first>
                             <rdf:Description>
-                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#DatavaluedPropertyAtom"/>
-                                <swrl:propertyPredicate rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#suspicious_value"/>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                                <swrl:propertyPredicate rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#related-to"/>
                                 <swrl:argument1 rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#w"/>
-                                <swrl:argument2 rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#s"/>
+                                <swrl:argument2 rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#mac"/>
                             </rdf:Description>
                         </rdf:first>
                         <rdf:rest>
@@ -63358,21 +62874,9 @@ isInitiatedBy only ThreatActor</rdfs:comment>
                                 <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
                                 <rdf:first>
                                     <rdf:Description>
-                                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#BuiltinAtom"/>
-                                        <swrl:builtin rdf:resource="http://www.w3.org/2003/11/swrlb#greaterThanOrEqual"/>
-                                        <swrl:arguments>
-                                            <rdf:Description>
-                                                <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
-                                                <rdf:first rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#s"/>
-                                                <rdf:rest>
-                                                    <rdf:Description>
-                                                        <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
-                                                        <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">4.0</rdf:first>
-                                                        <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
-                                                    </rdf:Description>
-                                                </rdf:rest>
-                                            </rdf:Description>
-                                        </swrl:arguments>
+                                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#ClassAtom"/>
+                                        <swrl:classPredicate rdf:resource="http://www.semanticweb.org/upm/ontologies/2019/11/cyberthreat_DRM#Hardware"/>
+                                        <swrl:argument1 rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#hw"/>
                                     </rdf:Description>
                                 </rdf:first>
                                 <rdf:rest>
@@ -63380,12 +62884,10 @@ isInitiatedBy only ThreatActor</rdfs:comment>
                                         <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
                                         <rdf:first>
                                             <rdf:Description>
-                                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#BuiltinAtom"/>
-                                                <swrl:builtin rdf:resource="http://swrl.stanford.edu/ontologies/built-ins/3.3/swrlx.owl#makeOWLThing"/>
-                                                <swrl:arguments rdf:parseType="Collection">
-                                                    <rdf:Description rdf:about="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#x"/>
-                                                    <rdf:Description rdf:about="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#w"/>
-                                                </swrl:arguments>
+                                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#DatavaluedPropertyAtom"/>
+                                                <swrl:propertyPredicate rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#code"/>
+                                                <swrl:argument1 rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#hw"/>
+                                                <swrl:argument2 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">R</swrl:argument2>
                                             </rdf:Description>
                                         </rdf:first>
                                         <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
@@ -63402,77 +62904,13 @@ isInitiatedBy only ThreatActor</rdfs:comment>
                 <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
                 <rdf:first>
                     <rdf:Description>
-                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#DatavaluedPropertyAtom"/>
-                        <swrl:propertyPredicate rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#probability"/>
-                        <swrl:argument1 rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#x"/>
-                        <swrl:argument2 rdf:datatype="http://www.w3.org/2001/XMLSchema#float">2.0</swrl:argument2>
+                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                        <swrl:propertyPredicate rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_STIXDRM#has_cyberobservable"/>
+                        <swrl:argument1 rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#hw"/>
+                        <swrl:argument2 rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#mac"/>
                     </rdf:Description>
                 </rdf:first>
-                <rdf:rest>
-                    <rdf:Description>
-                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
-                        <rdf:first>
-                            <rdf:Description>
-                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#ClassAtom"/>
-                                <swrl:classPredicate rdf:resource="http://www.semanticweb.org/upm/ontologies/2019/11/cyberthreat_DRM#DeliberatedUnauthorizedAccess"/>
-                                <swrl:argument1 rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#x"/>
-                            </rdf:Description>
-                        </rdf:first>
-                        <rdf:rest>
-                            <rdf:Description>
-                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
-                                <rdf:first>
-                                    <rdf:Description>
-                                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#DatavaluedPropertyAtom"/>
-                                        <swrl:propertyPredicate rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#type"/>
-                                        <swrl:argument1 rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#x"/>
-                                        <swrl:argument2 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Threat Deliberated Unauthorized Access</swrl:argument2>
-                                    </rdf:Description>
-                                </rdf:first>
-                                <rdf:rest>
-                                    <rdf:Description>
-                                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
-                                        <rdf:first>
-                                            <rdf:Description>
-                                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#DatavaluedPropertyAtom"/>
-                                                <swrl:propertyPredicate rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#impact"/>
-                                                <swrl:argument1 rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#x"/>
-                                                <swrl:argument2 rdf:datatype="http://www.w3.org/2001/XMLSchema#float">4.0</swrl:argument2>
-                                            </rdf:Description>
-                                        </rdf:first>
-                                        <rdf:rest>
-                                            <rdf:Description>
-                                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
-                                                <rdf:first>
-                                                    <rdf:Description>
-                                                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
-                                                        <swrl:propertyPredicate rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_STIXDRM#isGeneratedBy"/>
-                                                        <swrl:argument1 rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#x"/>
-                                                        <swrl:argument2 rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#w"/>
-                                                    </rdf:Description>
-                                                </rdf:first>
-                                                <rdf:rest>
-                                                    <rdf:Description>
-                                                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
-                                                        <rdf:first>
-                                                            <rdf:Description>
-                                                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#DatavaluedPropertyAtom"/>
-                                                                <swrl:propertyPredicate rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#numType"/>
-                                                                <swrl:argument1 rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#x"/>
-                                                                <swrl:argument2 rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">14</swrl:argument2>
-                                                            </rdf:Description>
-                                                        </rdf:first>
-                                                        <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
-                                                    </rdf:Description>
-                                                </rdf:rest>
-                                            </rdf:Description>
-                                        </rdf:rest>
-                                    </rdf:Description>
-                                </rdf:rest>
-                            </rdf:Description>
-                        </rdf:rest>
-                    </rdf:Description>
-                </rdf:rest>
+                <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
             </rdf:Description>
         </swrl:head>
     </rdf:Description>
@@ -65799,6 +65237,77 @@ isInitiatedBy only ThreatActor</rdfs:comment>
     <rdf:Description>
         <swrla:isRuleEnabled rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</swrla:isRuleEnabled>
         <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"></rdfs:comment>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Router + Vulnerability</rdfs:label>
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Imp"/>
+        <swrl:body>
+            <rdf:Description>
+                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+                <rdf:first>
+                    <rdf:Description>
+                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#ClassAtom"/>
+                        <swrl:classPredicate rdf:resource="http://www.semanticweb.org/upm/ontologies/2019/11/cyberthreat_STIX#Vulnerability"/>
+                        <swrl:argument1 rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#v"/>
+                    </rdf:Description>
+                </rdf:first>
+                <rdf:rest>
+                    <rdf:Description>
+                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+                        <rdf:first>
+                            <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#DatavaluedPropertyAtom"/>
+                                <swrl:propertyPredicate rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#name"/>
+                                <swrl:argument1 rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#v"/>
+                                <swrl:argument2 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">CVE-2019-15126</swrl:argument2>
+                            </rdf:Description>
+                        </rdf:first>
+                        <rdf:rest>
+                            <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+                                <rdf:first>
+                                    <rdf:Description>
+                                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#ClassAtom"/>
+                                        <swrl:classPredicate rdf:resource="http://www.semanticweb.org/upm/ontologies/2019/11/cyberthreat_DRM#Hardware"/>
+                                        <swrl:argument1 rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#hw"/>
+                                    </rdf:Description>
+                                </rdf:first>
+                                <rdf:rest>
+                                    <rdf:Description>
+                                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+                                        <rdf:first>
+                                            <rdf:Description>
+                                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#DatavaluedPropertyAtom"/>
+                                                <swrl:propertyPredicate rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#code"/>
+                                                <swrl:argument1 rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#hw"/>
+                                                <swrl:argument2 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">R</swrl:argument2>
+                                            </rdf:Description>
+                                        </rdf:first>
+                                        <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+                                    </rdf:Description>
+                                </rdf:rest>
+                            </rdf:Description>
+                        </rdf:rest>
+                    </rdf:Description>
+                </rdf:rest>
+            </rdf:Description>
+        </swrl:body>
+        <swrl:head>
+            <rdf:Description>
+                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+                <rdf:first>
+                    <rdf:Description>
+                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                        <swrl:propertyPredicate rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_STIXDRM#has_vulnerability"/>
+                        <swrl:argument1 rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#hw"/>
+                        <swrl:argument2 rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#v"/>
+                    </rdf:Description>
+                </rdf:first>
+                <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+            </rdf:Description>
+        </swrl:head>
+    </rdf:Description>
+    <rdf:Description>
+        <swrla:isRuleEnabled rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</swrla:isRuleEnabled>
+        <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"></rdfs:comment>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">RiskManagement#2 Mitigation Strategy for High Risk Severity</rdfs:label>
         <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Imp"/>
         <swrl:body>
@@ -66745,6 +66254,91 @@ isInitiatedBy only ThreatActor</rdfs:comment>
                         </rdf:rest>
                     </rdf:Description>
                 </rdf:rest>
+            </rdf:Description>
+        </swrl:head>
+    </rdf:Description>
+    <rdf:Description>
+        <swrla:isRuleEnabled rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</swrla:isRuleEnabled>
+        <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"></rdfs:comment>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">User access</rdfs:label>
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Imp"/>
+        <swrl:body>
+            <rdf:Description>
+                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+                <rdf:first>
+                    <rdf:Description>
+                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#ClassAtom"/>
+                        <swrl:classPredicate rdf:resource="http://www.semanticweb.org/upm/ontologies/2019/11/cyberthreat_DRM#Users"/>
+                        <swrl:argument1 rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#u"/>
+                    </rdf:Description>
+                </rdf:first>
+                <rdf:rest>
+                    <rdf:Description>
+                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+                        <rdf:first>
+                            <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                                <swrl:propertyPredicate rdf:resource="http://www.semanticweb.org/upm/ontologies/2019/11/cyberthreat_DRM#dependsOn"/>
+                                <swrl:argument1 rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#hw"/>
+                                <swrl:argument2 rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#u"/>
+                            </rdf:Description>
+                        </rdf:first>
+                        <rdf:rest>
+                            <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+                                <rdf:first>
+                                    <rdf:Description>
+                                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                                        <swrl:propertyPredicate rdf:resource="http://www.semanticweb.org/upm/ontologies/2019/11/cyberthreat_DRM#dependsOn"/>
+                                        <swrl:argument1 rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#sw"/>
+                                        <swrl:argument2 rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#hw"/>
+                                    </rdf:Description>
+                                </rdf:first>
+                                <rdf:rest>
+                                    <rdf:Description>
+                                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+                                        <rdf:first>
+                                            <rdf:Description>
+                                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                                                <swrl:propertyPredicate rdf:resource="http://www.semanticweb.org/upm/ontologies/2019/11/cyberthreat_DRM#dependsOn"/>
+                                                <swrl:argument1 rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#cdata"/>
+                                                <swrl:argument2 rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#sw"/>
+                                            </rdf:Description>
+                                        </rdf:first>
+                                        <rdf:rest>
+                                            <rdf:Description>
+                                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+                                                <rdf:first>
+                                                    <rdf:Description>
+                                                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                                                        <swrl:propertyPredicate rdf:resource="http://www.semanticweb.org/upm/ontologies/2019/11/cyberthreat_DRM#dependsOn"/>
+                                                        <swrl:argument1 rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#rs"/>
+                                                        <swrl:argument2 rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#cdata"/>
+                                                    </rdf:Description>
+                                                </rdf:first>
+                                                <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+                                            </rdf:Description>
+                                        </rdf:rest>
+                                    </rdf:Description>
+                                </rdf:rest>
+                            </rdf:Description>
+                        </rdf:rest>
+                    </rdf:Description>
+                </rdf:rest>
+            </rdf:Description>
+        </swrl:body>
+        <swrl:head>
+            <rdf:Description>
+                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+                <rdf:first>
+                    <rdf:Description>
+                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                        <swrl:propertyPredicate rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_STIXDRM#has_access_to"/>
+                        <swrl:argument1 rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#u"/>
+                        <swrl:argument2 rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology#cdata"/>
+                    </rdf:Description>
+                </rdf:first>
+                <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
             </rdf:Description>
         </swrl:head>
     </rdf:Description>

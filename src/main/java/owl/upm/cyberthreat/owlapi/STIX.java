@@ -687,6 +687,12 @@ public class STIX {
 					OWLDataProperty dproperty = dataFactory.getOWLDataProperty(":id", pmO);	
 	    			createDataProperty(o, man, dataFactory, base, stix_instance, dproperty, field);
 				}
+				
+				field = stix_element.get("name").toString();
+				if(field !=null) {
+					OWLDataProperty dproperty = dataFactory.getOWLDataProperty(":name", pmO);	
+	    			createDataProperty(o, man, dataFactory, base, stix_instance, dproperty, field);
+				}
     			
 				field = stix_element.get("created_by_ref").toString();
 				if(field !=null) {
