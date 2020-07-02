@@ -62209,32 +62209,6 @@ isInitiatedBy only ThreatActor</rdfs:comment>
     
 
 
-    <!-- http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#Anomalia001 -->
-
-    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#Anomalia001">
-        <rdf:type rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#WiFi_Sensor_Anomaly"/>
-        <related-to rdf:resource="http://www.semanticweb.org/upm/ontologies/2019/11/cyberthreat_STIX#userid"/>
-        <has_essid rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Cisco</has_essid>
-        <pwr rdf:datatype="http://www.w3.org/2001/XMLSchema#float">400.0</pwr>
-        <start_time rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTimeStamp">2020-01-26T09:27:09.000Z</start_time>
-        <suspicious_value rdf:datatype="http://www.w3.org/2001/XMLSchema#float">1.0</suspicious_value>
-    </owl:NamedIndividual>
-    
-
-
-    <!-- http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#Anomalia002 -->
-
-    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#Anomalia002">
-        <rdf:type rdf:resource="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA#WiFi_Sensor_Anomaly"/>
-        <related-to rdf:resource="http://www.semanticweb.org/upm/ontologies/2019/11/cyberthreat_STIX#userid"/>
-        <has_essid rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Cisco</has_essid>
-        <pwr rdf:datatype="http://www.w3.org/2001/XMLSchema#float">380.0</pwr>
-        <start_time rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTimeStamp">2020-01-26T09:27:11.000Z</start_time>
-        <suspicious_value rdf:datatype="http://www.w3.org/2001/XMLSchema#float">1.0</suspicious_value>
-    </owl:NamedIndividual>
-    
-
-
     <!-- http://www.semanticweb.org/upm/ontologies/2019/11/cyberthreat_DRM#AV0 -->
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/upm/ontologies/2019/11/cyberthreat_DRM#AV0">
@@ -62319,38 +62293,6 @@ isInitiatedBy only ThreatActor</rdfs:comment>
         <rdf:type rdf:resource="http://www.semanticweb.org/upm/ontologies/2019/11/cyberthreat_DRM#Users"/>
         <code rdf:datatype="http://www.w3.org/2001/XMLSchema#string">3</code>
         <type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Users</type>
-    </owl:NamedIndividual>
-    
-
-
-    <!-- http://www.semanticweb.org/upm/ontologies/2019/11/cyberthreat_STIX#CVE-2019-15126 -->
-
-    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/upm/ontologies/2019/11/cyberthreat_STIX#CVE-2019-15126">
-        <rdf:type rdf:resource="http://www.semanticweb.org/upm/ontologies/2019/11/cyberthreat_STIX#Vulnerability"/>
-        <cyberthreat_STIX:created_by_ref rdf:resource="http://www.semanticweb.org/upm/ontologies/2019/11/cyberthreat_STIX#identity-f431f809-377b-45e0-aa1c-6a4751cae5ff"/>
-        <created rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTimeStamp">2020-05-02T08:17:27.000Z</created>
-        <id rdf:datatype="http://www.w3.org/2001/XMLSchema#string">vulnerability-0c7b5b88-8ff7-4a4d-aa9d-feb398cd0061</id>
-        <modified rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTimeStamp">2020-05-02T08:17:27.000Z</modified>
-        <name rdf:datatype="http://www.w3.org/2001/XMLSchema#string">CVE-2019-15126</name>
-        <type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">vulnerability</type>
-    </owl:NamedIndividual>
-    
-
-
-    <!-- http://www.semanticweb.org/upm/ontologies/2019/11/cyberthreat_STIX#identity-f431f809-377b-45e0-aa1c-6a4751cae5ff -->
-
-    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/upm/ontologies/2019/11/cyberthreat_STIX#identity-f431f809-377b-45e0-aa1c-6a4751cae5ff">
-        <rdf:type rdf:resource="http://www.semanticweb.org/upm/ontologies/2019/11/cyberthreat_STIX#Identity"/>
-        <name rdf:datatype="http://www.w3.org/2001/XMLSchema#string">identity-f431f809-377b-45e0-aa1c-6a4751cae5ff</name>
-    </owl:NamedIndividual>
-    
-
-
-    <!-- http://www.semanticweb.org/upm/ontologies/2019/11/cyberthreat_STIX#userid -->
-
-    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/upm/ontologies/2019/11/cyberthreat_STIX#userid">
-        <rdf:type rdf:resource="http://www.semanticweb.org/upm/ontologies/2019/11/cyberthreat_STIX#MAC-Addr"/>
-        <stix_value rdf:datatype="http://www.w3.org/2001/XMLSchema#string">00:00:00:00:00:00:01</stix_value>
     </owl:NamedIndividual>
     
 

@@ -1028,26 +1028,21 @@ public int loadSTIXInstances (OWLOntology o, OWLOntologyManager man, File filena
 			
 		
 			while(true) {
-				//File to load information
 				System.out.println("Loading data from BBDD into the ontology...\n");
 				boolean updated = false;
 				File ficheroJSONSensores = new File(pathAnomaliesFile);
 				updated = onto_object.isEmptyAnomaliesFile(ficheroJSONSensores);
 				if(updated) {
-					//se crcea nueva ontologia copiando las anomalias y sustituye la o actual por otra
 					loadedAnomalyInstances = onto_object.loadAnomaliesFromBBDD(o2, man2, ficheroJSONSensores, base, dataFactory2);
 					System.out.println("There have been loaded "+loadedAnomalyInstances+ " instances of new anomalies\n");
 
 				}
 				
-				//Load STIX elements
-				//File to load information
 				System.out.println("Loading STIX data into the ontology...\n");
 				boolean updatedSTIX = false;
 				File ficheroJSONSTIX = new File(pathSTIXFile);
 				updatedSTIX = onto_object.isEmptyAnomaliesFile(ficheroJSONSTIX);
 				if(updatedSTIX) {
-					//se crea nueva ontologia copiando las anomalias y sustituye la o actual por otra
 					int loadedSTIXInstances=0;
 					loadedSTIXInstances = onto_object.loadSTIXInstances(o2, man2, ficheroJSONSTIX, base, dataFactory2);
 					System.out.println("There have been loaded "+loadedSTIXInstances+ " instances of STIX\n");
@@ -1061,9 +1056,7 @@ public int loadSTIXInstances (OWLOntology o, OWLOntologyManager man, File filena
 				
 				try {
 					Thread.sleep(5000);
-					
-					//PONER QUE SI PASAN X SEGUNDOS Y NO HA LLEGADO NADA QUE VUELVA A RAZONAR O ALGO AUNQUE LO VEO UN POCO INUTIL PORQUE SINO HA CAMBIADO NADA PARA QUE LO VAS A HACER
-				
+									
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}			
@@ -1075,7 +1068,6 @@ public int loadSTIXInstances (OWLOntology o, OWLOntologyManager man, File filena
 				
 				OWLOntology o4 = null;
 				base = null;
-				//Copy in other ontology
 				File fileTmpCopyTR = new File("./owl-files/cibersituational-ontov2-tmp-copiaATR.owl");
 				copytmp = copyFileOWL(fileTmpCopyAssetsAS, fileTmpCopyTR);
 				
@@ -1085,12 +1077,8 @@ public int loadSTIXInstances (OWLOntology o, OWLOntologyManager man, File filena
 				iri = o4.getOntologyID().getOntologyIRI().get();
 				base = iri.toString();
 				
-				
-				
-				//Razona sobre la nueva ontologia, ejecuto reglas 1 vez
-				//Execute rules
+
 				System.out.println("Infering from rules...\n");
-				//Esto lo hago porque sino el razonador no me lo coge
 				onto_object.inferSWRLEngine(o4, man4, dataFactory4, base);
 				System.out.println("Done.\n");
 				
@@ -1107,7 +1095,6 @@ public int loadSTIXInstances (OWLOntology o, OWLOntologyManager man, File filena
 				}
 				loadedAnomalyInstances=0;
 				
-				//Load rules las de threat inventory y risk inventory
 				System.out.println("Loading rules...\n");
 				onto_object.deleteSWRLRules(o4, man4, dataFactory4, base, 0);
 				onto_object.loadSWRLRulesAnomaliesThreatsAndRisks(o4, man4, dataFactory4, base);
@@ -1119,19 +1106,17 @@ public int loadSTIXInstances (OWLOntology o, OWLOntologyManager man, File filena
 					break;
 				}
 				
-				//borrar reglas de amenazas y riesgos inventory
 				onto_object.deleteSWRLRules(o4, man4, dataFactory4, base,1);
 				onto_object.loadSWRLRiskAssessmentRules(o4, man4, dataFactory4, base);
-				//inferir para risk assessment
 				onto_object.inferSWRLEngine(o4, man4, dataFactory4, base);
 				
 				System.out.println("ACABAS DE INFERIR NUEVOS PR");
 				
 				RiskExtractor re = new RiskExtractor();
-				//Datos actuales rtd
+				
 				RiskTotalData rtd = re.infoExtractor(man4, o4, base, dataFactory4, riskClassObject);
 				RiskCalculation rc = new RiskCalculation();
-				//datos continuos del pasado
+			
 				Set<RiskTotalData> rtd_from_past = rc.extractDataFromJSON();
 				RiskTotalData rtdfinal = rc.riskCalculation(rtd_from_past, rtd);
 				re.jsonWriter(rtdfinal);

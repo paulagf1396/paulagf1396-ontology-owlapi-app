@@ -1,12 +1,18 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <catalog prefer="public" xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog">
+    <uri id="Imports Wizard Entry" name="http://www.semanticweb.org/paulagarcia/ontologies/2020/5/stix" uri="file:/Users/paulagarcia/Desktop/Master/Beca/stix-datatypes.owl"/>
     <group id="Folder Repository, directory=, recursive=true, Auto-Update=true, version=2" prefer="public" xml:base="">
-        <uri id="Automatically generated entry, Timestamp=1591284272935" name="duplicate:http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology" uri="cibersituational-ontov2.owl"/>
-        <uri id="Automatically generated entry, Timestamp=1591284272935" name="duplicate:http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology" uri="cibersituational-ontov2-tmp-04-06.owl"/>
-        <uri id="Automatically generated entry, Timestamp=1591284272935" name="duplicate:http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology" uri="cibersituational-ontov2-tmp-22-05.owl"/>
-        <uri id="Automatically generated entry, Timestamp=1591284272935" name="duplicate:http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology" uri="cibersituational-ontov2-tmp-backup.owl"/>
-        <uri id="Automatically generated entry, Timestamp=1591284272935" name="duplicate:http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA" uri="cyberthreat_ONA.owl"/>
-        <uri id="Automatically generated entry, Timestamp=1591284272935" name="duplicate:http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA" uri="cyberthreat_ONA-prueba.owl"/>
-        <uri id="Automatically generated entry, Timestamp=1591284272935" name="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_STIXDRM" uri="ontologias_merged_backup.owl"/>
+        <uri id="Automatically generated entry, Timestamp=1592898972805" name="duplicate:http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology" uri="cibersituational-ontov2.owl"/>
+        <uri id="Automatically generated entry, Timestamp=1592898972805" name="duplicate:http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology" uri="cibersituational-ontov2-tmp-copia.owl"/>
+        <uri id="Automatically generated entry, Timestamp=1592898972805" name="duplicate:http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology" uri="cibersituational-ontov2-tmp-04-06.owl"/>
+        <uri id="Automatically generated entry, Timestamp=1592898972805" name="duplicate:http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology" uri="cibersituational-ontov2-tmp-14-06.owl"/>
+        <uri id="Automatically generated entry, Timestamp=1592898972805" name="duplicate:http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology" uri="cibersituational-ontov2-tmp-22-05.owl"/>
+        <uri id="Automatically generated entry, Timestamp=1592898972805" name="duplicate:http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology" uri="cibersituational-ontov2-tmp-backup.owl"/>
+        <uri id="Automatically generated entry, Timestamp=1592898972805" name="duplicate:http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology" uri="cibersituational-ontov2-tmp-copiaAssetsAS.owl"/>
+        <uri id="Automatically generated entry, Timestamp=1592898972805" name="duplicate:http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology" uri="cibersituational-ontov2-tmp.owl"/>
+        <uri id="Automatically generated entry, Timestamp=1592898972805" name="duplicate:http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cibersituational-ontology" uri="cibersituational-ontov2-tmp-17-06.owl"/>
+        <uri id="Automatically generated entry, Timestamp=1592898972805" name="duplicate:http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA" uri="cyberthreat_ONA.owl"/>
+        <uri id="Automatically generated entry, Timestamp=1592898972805" name="duplicate:http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_ONA" uri="cyberthreat_ONA-prueba.owl"/>
+        <uri id="Automatically generated entry, Timestamp=1592898972805" name="http://www.semanticweb.org/paulagarcia/ontologies/2020/2/cyberthreat_STIXDRM" uri="ontologias_merged_backup.owl"/>
     </group>
 </catalog>
