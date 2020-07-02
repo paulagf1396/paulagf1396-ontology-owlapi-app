@@ -1110,10 +1110,9 @@ public int loadSTIXInstances (OWLOntology o, OWLOntologyManager man, File filena
 				onto_object.loadSWRLRiskAssessmentRules(o4, man4, dataFactory4, base);
 				onto_object.inferSWRLEngine(o4, man4, dataFactory4, base);
 				
-				System.out.println("ACABAS DE INFERIR NUEVOS PR");
 				
 				RiskExtractor re = new RiskExtractor();
-				
+
 				RiskTotalData rtd = re.infoExtractor(man4, o4, base, dataFactory4, riskClassObject);
 				RiskCalculation rc = new RiskCalculation();
 			
